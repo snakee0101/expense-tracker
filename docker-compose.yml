@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: expense-tracker-app
+    container_name: expense-tracker-app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www
+    depends_on:
+      - expense-tracker-db
+      - meilisearch
+    networks:
+      - expense-tracker-network
+
+  expense-tracker-db:
+    image: mysql:8.0
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_DATABASE: expense_tracker
+      MYSQL_USER: laravel_user
+      MYSQL_PASSWORD: laravel_password
+      MYSQL_ROOT_PASSWORD: root_password
+    volumes:
+      - mysql-data-expense-tracker:/var/lib/mysql
+    networks:
+      - expense-tracker-network
+
+  mysql-testing:
+    image: mysql:8.0
+    ports:
+      - "3309:52000"
+    environment:
+      MYSQL_DATABASE: expense_tracker_testing
+      MYSQL_USER: laravel_user
+      MYSQL_PASSWORD: laravel_password
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_TCP_PORT: 52000
+    volumes:
+      - mysql-data-expense-tracker2:/var/lib/mysql
+    networks:
+      - expense-tracker-network
+
+  meilisearch:
+    image: getmeili/meilisearch
+    ports:
+      - "7700:7700"
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: "masterKey" # set the master key (it must match MEILISEARCH_KEY in .env laravel file)
+    volumes:
+      - ./meilisearch-data:/var/meili_data
+    networks:
+      - expense-tracker-network # connect meilisearch to docker network to be able to access it outside
+
+  npm_server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run dev
+    volumes:
+      - .:/var/www
+    depends_on:
+      - expense-tracker-db
+      - meilisearch
+    networks:
+      - expense-tracker-network
+
+volumes:
+  mysql-data-expense-tracker:
+  mysql-data-expense-tracker2:
+
+networks:
+  expense-tracker-network:
