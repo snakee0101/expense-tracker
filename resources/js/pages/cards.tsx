@@ -2,7 +2,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
-import { formatMoney } from '../lib/helpers';
+import { formatMoney, formatCardDate, formatCardNumber } from '../lib/helpers';
 
 import { FaPlus } from 'react-icons/fa6';
 
@@ -31,7 +31,7 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function Wallets({ cards }) {
+export default function Cards({ cards }) {
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
@@ -66,7 +66,7 @@ export default function Wallets({ cards }) {
 
                     {cards.map((card) => (
                         <div
-                            className="mb-4 max-w-sm cursor-pointer space-y-6 rounded-xl bg-green-800 p-6 pb-30 font-sans text-white shadow-lg"
+                            className="mb-4 max-w-sm cursor-pointer space-y-6 rounded-xl bg-green-800 p-6 pb-15 font-sans text-white shadow-lg"
                             style={{
                                 background:
                                     selectedCardId == card.id
@@ -83,6 +83,18 @@ export default function Wallets({ cards }) {
                             <div className="text-3xl font-semibold">
                                 <span className="mr-1">$</span>
                                 {formatMoney(card.balance)}
+                            </div>
+
+                            <div className="text-xl flex justify-between">
+                                <div>
+                                    <span className="block text-sm text-gray-300">Card Number</span>
+                                    <span>{formatCardNumber(card.card_number)}</span>
+                                </div>
+
+                               <div>
+                                   <span className="block text-sm text-gray-300">Expiry Date</span>
+                                   <span>{formatCardDate(card.expiry_date)}</span>
+                               </div>
                             </div>
                         </div>
                     ))}
