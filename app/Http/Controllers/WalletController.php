@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Wallet;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class WalletController extends Controller
@@ -11,8 +13,25 @@ class WalletController extends Controller
     {
         return Inertia::render('wallets', [
             'wallets' => Wallet::where('user_id', auth()->id())
-                                ->orderBy('name')
+                                ->latest()
                                 ->get()
         ]);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => [
+                'min: 3',
+                Rule::unique('wallets')->where('user_id', auth()->id())
+            ]
+        ]);
+
+        Wallet::create([
+            'user_id' => auth()->id(),
+            'name' => $request->name
+        ]);
+
+        return to_route('wallet.index');
     }
 }

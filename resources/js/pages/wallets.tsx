@@ -56,23 +56,17 @@ export default function Wallets({ wallets }) {
 
             <Head title="Wallets" />
 
-            <div className='flex mb-4 mx-2'>
-                <CreateWalletModal setIsNotificationShown={setIsNotificationShown} setNotificationMessage={setNotificationMessage}/>
-            </div>
-
             <div className="min-h-screen flex">
                 <div className="w-4"></div>
 
-                <aside className="bg-green-100 p-4 min-h-screen shadow-xl rounded-lg" style={{ 'width': 400 }}>
+                <aside className="bg-green-100 p-4 max-h-screen shadow-xl rounded-lg overflow-y-scroll" style={{ 'width': 400 }}>
                     <div className='flex justify-between mb-4 items-center'>
                         <h2 className="text-xl font-bold">My Wallets</h2>
-                        <Button size='xs' color='dark' className='cursor-pointer'>
-                            <FaPlus className='mr-2' size={15}/> Add
-                        </Button>
+                        <CreateWalletModal setIsNotificationShown={setIsNotificationShown} setNotificationMessage={setNotificationMessage}/>
                     </div>
 
                     {wallets.map(wallet => (
-                        <div className="max-w-sm p-6 pb-30 rounded-xl bg-[#1E3D34] text-white font-sans shadow-lg space-y-6 mb-4 cursor-pointer"
+                        <div className="max-w-sm p-6 pb-30 rounded-xl bg-green-800 text-white font-sans shadow-lg space-y-6 mb-4 cursor-pointer"
                              style={{
                                  'background': selectedWalletId == wallet.id ? 'repeating-linear-gradient(-45deg, #1E3D34, #1E3D34 10px, rgba(75, 75, 75, 1) 10px, rgba(75, 75, 75, 1) 60px, #1E3D34 60px, #1E3D34 140px)' : '',
                              }}
@@ -103,25 +97,26 @@ export default function Wallets({ wallets }) {
 }
 
 export function CreateWalletModal({ setIsNotificationShown, setNotificationMessage }) {
-    /*    const [openModal, setOpenModal] = useState(false);
+        const [openModal, setOpenModal] = useState(false);
 
-        const { data, setData, post, processing, errors } = useForm({
+        const { data, setData, post, processing, errors, clearErrors } = useForm({
             name: '',
         });
 
         const onCloseModal = () => {
             setOpenModal(false);
+            clearErrors();
             setData('name', '');
         };
 
         const handleCreate = (event) => {
             event.preventDefault();
 
-            post(route('transaction_category.store'), {
+            post(route('wallet.store'), {
                 onSuccess: () => {
                     onCloseModal()
 
-                    setNotificationMessage('Transaction category created')
+                    setNotificationMessage('Wallet created')
                     setIsNotificationShown(true)
 
                     setTimeout(() => setIsNotificationShown(false), 2000)
@@ -131,19 +126,21 @@ export function CreateWalletModal({ setIsNotificationShown, setNotificationMessa
 
         return (
             <>
-                <Button onClick={() => setOpenModal(true)} size="xs">Create Category</Button>
+                <Button size='xs' color='dark' className='cursor-pointer' onClick={() => setOpenModal(true)}>
+                    <FaPlus className='mr-2' size={15}/> Add
+                </Button>
 
                 <Modal show={openModal} size="md" onClose={onCloseModal} popup>
                     <ModalHeader>
-                        Create New Category
+                        Create New Wallet
                     </ModalHeader>
                     <ModalBody>
                         <form className="space-y-6" onSubmit={handleCreate}>
                             <div>
-                                <Label htmlFor="category-name" value="Category Name" className="mb-2 block" />
+                                <Label htmlFor="wallet-name" value="Wallet Name" className="mb-2 block" />
                                 <TextInput
-                                    id="category-name"
-                                    placeholder="Enter category name"
+                                    id="wallet-name"
+                                    placeholder="Enter wallet name"
                                     value={data.name}
                                     onChange={(e) => setData('name', e.target.value)}
                                     required
@@ -158,6 +155,5 @@ export function CreateWalletModal({ setIsNotificationShown, setNotificationMessa
                     </ModalBody>
                 </Modal>
             </>
-        );*/
-    return (<></>);
+        );
 }
