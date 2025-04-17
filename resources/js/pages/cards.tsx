@@ -2,7 +2,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
-import { formatMoney, formatCardDate, formatCardNumber } from '../lib/helpers';
+import { formatMoney, formatCardDate, formatCardNumber, getDateFromExpiryDate } from '../lib/helpers';
 
 import { FaPlus } from 'react-icons/fa6';
 
@@ -115,27 +115,33 @@ export function CreateCardModal({ setIsNotificationShown, setNotificationMessage
 
     const { data, setData, post, processing, errors, clearErrors } = useForm({
         name: '',
+        card_number: '',
+        expiry_date: '',
     });
 
     const onCloseModal = () => {
         setOpenModal(false);
         clearErrors();
-        setData('name', '');
+        setData({
+            name: '',
+            card_number: '',
+            expiry_date: '',
+        });
     };
 
     const handleCreate = (event) => {
         event.preventDefault();
 
-        post(route('wallet.store'), {
+        console.log(data);
+
+       /* post(route('card.store'), {
             onSuccess: () => {
                 onCloseModal();
-
-                setNotificationMessage('Wallet created');
+                setNotificationMessage('Card created');
                 setIsNotificationShown(true);
-
                 setTimeout(() => setIsNotificationShown(false), 2000);
             },
-        });
+        });*/
     };
 
     return (
@@ -145,22 +151,50 @@ export function CreateCardModal({ setIsNotificationShown, setNotificationMessage
             </Button>
 
             <Modal show={openModal} size="md" onClose={onCloseModal} popup>
-                <ModalHeader>Create New Wallet</ModalHeader>
+                <ModalHeader>Create New Card</ModalHeader>
                 <ModalBody>
                     <form className="space-y-6" onSubmit={handleCreate}>
                         <div>
-                            <Label htmlFor="wallet-name" value="Wallet Name" className="mb-2 block" />
+                            <Label htmlFor="card-name">Card Name</Label>
                             <TextInput
-                                id="wallet-name"
-                                placeholder="Enter wallet name"
-                                value={data.name}
+                                id="card-name"
+                                type="text"
+                                placeholder="e.g. Travel Card"
                                 onChange={(e) => setData('name', e.target.value)}
                                 required
                             />
-                            {errors && <p className="text-red-600">{errors.name}</p>}
+                            {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
                         </div>
 
-                        <div className="flex w-full justify-end">
+                        <div>
+                            <Label htmlFor="card-number">Card Number</Label>
+                            <TextInput
+                                id="card-number"
+                                type="text"
+                                inputMode="numeric"
+                                placeholder="1234 5678 9012 3456"
+                                onChange={(e) =>
+                                    setData('card_number', e.target.value.replace(/\D/g, '').slice(0, 16))
+                                }
+                                required
+                            />
+                            {errors.card_number && <p className="text-red-600 text-sm">{errors.card_number}</p>}
+                        </div>
+
+                        <div>
+                            <Label htmlFor="expiry-date">Expiry Date</Label>
+                            <TextInput
+                                id="expiry-date"
+                                type="text"
+                                placeholder="09/29"
+                                onChange={e => setData('expiry_date', getDateFromExpiryDate(e.target.value))}
+                                required
+                            />
+
+                            {errors.expiry_date && <p className="text-red-600 text-sm">{errors.expiry_date}</p>}
+                        </div>
+
+                        <div className="flex justify-end">
                             <Button type="submit">Create</Button>
                         </div>
                     </form>

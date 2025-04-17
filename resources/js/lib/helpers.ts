@@ -25,3 +25,35 @@ export function formatCardNumber(cardNumber) {
         .replace(/(.{4})/g, '$1 ')
         .trim();
 }
+
+export function formatDate(date) {
+    const pad = (n) => n.toString().padStart(2, '0');
+
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1); // Months are zero-based
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    const seconds = pad(date.getSeconds());
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+export function getDateFromExpiryDate(unformattedDate :string) {
+    const [monthStr, yearStr] = unformattedDate.split("/");
+    const month = parseInt(monthStr, 10);
+    const year = parseInt("20" + yearStr, 10);
+    
+    const lastDayOfMonth = new Date(year, month, 0);
+    lastDayOfMonth.setHours(23, 59, 59);
+
+    // Format to "Y-m-d H:i:s"
+    const formattedDate = lastDayOfMonth.getFullYear() + "-" +
+        String(lastDayOfMonth.getMonth() + 1).padStart(2, '0') + "-" +
+        String(lastDayOfMonth.getDate()).padStart(2, '0') + " " +
+        String(lastDayOfMonth.getHours()).padStart(2, '0') + ":" +
+        String(lastDayOfMonth.getMinutes()).padStart(2, '0') + ":" +
+        String(lastDayOfMonth.getSeconds()).padStart(2, '0');
+
+    return formattedDate;
+}

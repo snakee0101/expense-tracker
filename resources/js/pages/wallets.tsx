@@ -137,7 +137,7 @@ export function CreateWalletModal({ setIsNotificationShown, setNotificationMessa
                     <ModalBody>
                         <form className="space-y-6" onSubmit={handleCreate}>
                             <div>
-                                <Label htmlFor="wallet-name" value="Wallet Name" className="mb-2 block" />
+                                <Label htmlFor="wallet-name" className="mb-2 block">Wallet Name</Label>
                                 <TextInput
                                     id="wallet-name"
                                     placeholder="Enter wallet name"
