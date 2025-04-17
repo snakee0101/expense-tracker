@@ -13,6 +13,11 @@ const mainNavItems: NavItem[] = [
         href: route('transaction_category.index'),
         icon: LayoutGrid,
     },
+    {
+        title: 'Wallets',
+        href: route('wallet.index'),
+        icon: LayoutGrid,
+    },
 ];
 
 export function AppSidebar() {

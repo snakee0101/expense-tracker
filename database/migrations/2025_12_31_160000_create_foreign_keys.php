@@ -13,10 +13,20 @@ return new class extends Migration
                     ->references('id')
                     ->on('users');
         });
+
+        Schema::table('wallets', function (Blueprint $table) {
+            $table->foreign('user_id', 'wallet_owner')
+                ->references('id')
+                ->on('users');
+        });
     }
 
     public function down(): void
     {
+        Schema::table('wallets', function (Blueprint $table) {
+            $table->dropForeign('wallet_owner');
+        });
+
         Schema::table('transaction_categories', function (Blueprint $table) {
             $table->dropForeign('category_owner');
         });

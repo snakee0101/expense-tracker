@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\TransactionCategoryController;
+use App\Http\Controllers\WalletController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 
@@ -10,6 +11,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('transaction_category', TransactionCategoryController::class);
+    Route::resource('wallet', WalletController::class);
 });
 
 require __DIR__.'/settings.php';
