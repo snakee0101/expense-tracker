@@ -10,6 +10,11 @@ import { useForm } from '@inertiajs/react';
 import { Datepicker, Button, Label, Modal, ModalBody, ModalHeader, TextInput, Toast, ToastToggle, createTheme, Progress, Card, Textarea } from 'flowbite-react';
 import { useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
+import { GoArrowUpRight } from "react-icons/go";
+import { GoArrowDownRight } from "react-icons/go";
+import { RiCoinsFill } from "react-icons/ri";
+import { TfiTarget } from "react-icons/tfi";
+import { GrPlan } from "react-icons/gr";
 
 import '../../css/app.css';
 import dayjs from 'dayjs';
@@ -61,6 +66,38 @@ export default function SavingsPlans({ savings_plans }) {
         return savings_plans.filter(plan => plan.id == selectedSavingsPlanId)[0];
     }
 
+    const totalTarget = savings_plans.reduce(function (total, plan) {
+        return total + Number(plan.target_balance);
+    }, 0);
+
+    const totalSavings = savings_plans.reduce(function (total, plan) {
+        return total + Number(plan.balance);
+    }, 0);
+
+    const stats = [
+        {
+            title: 'Total Savings',
+            value: `$ ${formatMoney(totalSavings)}`,
+            change: '??? %',
+            increase: true,
+            icon: <RiCoinsFill size={36} />
+        },
+        {
+            title: 'Total Target',
+            value: `$ ${formatMoney(totalTarget)}`,
+            change: '??? %',
+            increase: false,
+            icon: <TfiTarget size={36} />
+        },
+        {
+            title: 'Total Plans',
+            value: savings_plans.length,
+            change: '??? %',
+            increase: true,
+            icon: <GrPlan size={36} />
+        },
+    ];
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             {isNotificationShown && (
@@ -74,6 +111,34 @@ export default function SavingsPlans({ savings_plans }) {
             )}
 
             <Head title="Savings Plans" />
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 px-4 mb-4">
+                {stats.map((stat, index) => (
+                    <Card key={index}
+                        className="bg-green-50 flex rounded-2xl shadow-sm"
+                    >
+                        <div className="flex w-full flex-row justify-between items-center">
+                            <div className="flex flex-col">
+                                <h5 className="text-md font-medium text-gray-700">{stat.title}</h5>
+                                <p className="text-2xl font-bold text-gray-900 mt-1">
+                                    {stat.value}
+                                    <span className={`inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full ml-2 mt-2 ${stat.increase ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
+                                        {stat.increase ? (
+                                            <GoArrowUpRight className="w-4 h-4 mr-1" />
+                                        ) : (
+                                            <GoArrowDownRight className="w-4 h-4 mr-1" />
+                                        )}
+                                        {stat.change}
+                                    </span>
+                                </p>
+                            </div>
+                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white">
+                                {stat.icon}
+                            </div>
+                        </div>
+                    </Card>
+                ))}
+            </div>
 
             <div className="flex min-h-screen">
                 <div className="w-4"></div>
@@ -97,11 +162,12 @@ export default function SavingsPlans({ savings_plans }) {
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-lg font-semibold">{savingsPlanCompletionPercentage(savingsPlan)}%</div>
-                                    <div className={`text-sm font-medium
+                                    <p className="text-lg font-semibold">{savingsPlanCompletionPercentage(savingsPlan)}%</p>
+                                    <p style={{textWrap: 'nowrap'}}
+                                       className={`text-sm font-medium
                                                     ${selectedSavingsPlanId == savingsPlan.id ? 'text-black' : (
                                                         savingsPlanCompletionPercentage(savingsPlan) == 100 ? 'text-emerald-600' : 'text-red-600'
-                                                    )}`}>{savingsPlanCompletionPercentage(savingsPlan) == 100 ? 'Completed' : 'In Progress'}</div>
+                                                    )}`}>{savingsPlanCompletionPercentage(savingsPlan) == 100 ? 'Completed' : 'In Progress'}</p>
                                 </div>
                             </div>
                             <div className='mt-1 mb-3'>
