@@ -20,18 +20,20 @@ class CardController extends Controller
 
     public function store(Request $request)
     {
-        /*$request->validate([
+        $validated = $request->validate([
             'name' => [
                 'min: 3',
-                Rule::unique('wallets')->where('user_id', auth()->id())
-            ]
+                Rule::unique('cards')->where('user_id', auth()->id())
+            ],
+            'card_number' => ['required', 'regex:/^\d{13,19}$/'],
+            'expiry_date' => ['required', 'date-format:Y-m-d H:i:s']
         ]);
 
-        Wallet::create([
+        Card::create([
             'user_id' => auth()->id(),
-            'name' => $request->name
+            ...$validated
         ]);
 
-        return to_route('wallet.index');*/
+        return to_route('card.index');
     }
 }

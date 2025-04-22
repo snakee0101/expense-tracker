@@ -80,6 +80,14 @@
 }
 
 :root {
+    --color-green-1000: #1a4200;
+    --color-green-700: #2e7400;
+    --color-green-500: #51a31d;
+    --color-green-300: #6cc832;
+    --color-green-100: #9cee69;
+    --color-green-25: #eaffdc;
+
+
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);

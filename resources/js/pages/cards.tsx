@@ -10,6 +10,7 @@ import { useForm } from '@inertiajs/react';
 import { Button, Label, Modal, ModalBody, ModalHeader, TextInput, Toast, ToastToggle, createTheme } from 'flowbite-react';
 import { useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
+import '../../css/app.css';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -58,7 +59,7 @@ export default function Cards({ cards }) {
             <div className="flex min-h-screen">
                 <div className="w-4"></div>
 
-                <aside className="max-h-screen overflow-y-scroll rounded-lg bg-green-100 p-4 shadow-xl" style={{ width: 400 }}>
+                <aside className="max-h-screen overflow-y-scroll rounded-lg p-4 shadow-xl" style={{ width: 400, background: 'var(--color-green-25)' }}>
                     <div className="mb-4 flex items-center justify-between">
                         <h2 className="text-xl font-bold">My Cards</h2>
                         <CreateCardModal setIsNotificationShown={setIsNotificationShown} setNotificationMessage={setNotificationMessage} />
@@ -66,11 +67,11 @@ export default function Cards({ cards }) {
 
                     {cards.map((card) => (
                         <div
-                            className="mb-4 max-w-sm cursor-pointer space-y-6 rounded-xl bg-green-800 p-6 pb-15 font-sans text-white shadow-lg"
+                            className="mb-4 max-w-sm cursor-pointer space-y-6 rounded-xl bg-white p-6 pb-15 font-sans text-black shadow-lg"
                             style={{
                                 background:
                                     selectedCardId == card.id
-                                        ? 'repeating-linear-gradient(-45deg, #1E3D34, #1E3D34 10px, rgba(75, 75, 75, 1) 10px, rgba(75, 75, 75, 1) 60px, #1E3D34 60px, #1E3D34 140px)'
+                                        ? 'repeating-linear-gradient(-45deg, var(--color-green-300), var(--color-green-300) 10px, #fff 10px, #fff 60px, var(--color-green-300) 60px, var(--color-green-300) 140px)'
                                         : '',
                             }}
                             key={card.id}
@@ -87,12 +88,12 @@ export default function Cards({ cards }) {
 
                             <div className="text-xl flex justify-between">
                                 <div>
-                                    <span className="block text-sm text-gray-300">Card Number</span>
+                                    <span className="block text-sm text-gray-600">Card Number</span>
                                     <span>{formatCardNumber(card.card_number)}</span>
                                 </div>
 
                                <div>
-                                   <span className="block text-sm text-gray-300">Expiry Date</span>
+                                   <span className="block text-sm text-gray-600">Expiry Date</span>
                                    <span>{formatCardDate(card.expiry_date)}</span>
                                </div>
                             </div>
@@ -132,16 +133,14 @@ export function CreateCardModal({ setIsNotificationShown, setNotificationMessage
     const handleCreate = (event) => {
         event.preventDefault();
 
-        console.log(data);
-
-       /* post(route('card.store'), {
+        post(route('card.store'), {
             onSuccess: () => {
                 onCloseModal();
                 setNotificationMessage('Card created');
                 setIsNotificationShown(true);
                 setTimeout(() => setIsNotificationShown(false), 2000);
             },
-        });*/
+        });
     };
 
     return (
@@ -161,7 +160,6 @@ export function CreateCardModal({ setIsNotificationShown, setNotificationMessage
                                 type="text"
                                 placeholder="e.g. Travel Card"
                                 onChange={(e) => setData('name', e.target.value)}
-                                required
                             />
                             {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
                         </div>
@@ -172,11 +170,10 @@ export function CreateCardModal({ setIsNotificationShown, setNotificationMessage
                                 id="card-number"
                                 type="text"
                                 inputMode="numeric"
-                                placeholder="1234 5678 9012 3456"
+                                placeholder="0000 1111 2222 3333"
                                 onChange={(e) =>
                                     setData('card_number', e.target.value.replace(/\D/g, '').slice(0, 16))
                                 }
-                                required
                             />
                             {errors.card_number && <p className="text-red-600 text-sm">{errors.card_number}</p>}
                         </div>
@@ -188,7 +185,6 @@ export function CreateCardModal({ setIsNotificationShown, setNotificationMessage
                                 type="text"
                                 placeholder="09/29"
                                 onChange={e => setData('expiry_date', getDateFromExpiryDate(e.target.value))}
-                                required
                             />
 
                             {errors.expiry_date && <p className="text-red-600 text-sm">{errors.expiry_date}</p>}
