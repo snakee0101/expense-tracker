@@ -23,7 +23,10 @@ class SavingsPlanFactory extends Factory
             'balance' => $currentBalance,
             'target_balance' => $targetBalance,
             'due_date' => now()->addMonths(rand(5, 12)),
-            'savings_tips' => fake()->paragraph(),
+            'savings_tips' => "<ul>
+                <li><b>first</b> <u>savings</u> tip</li>
+                <li><i>second</i> <span style='color: blue'>savings</span> tip</li>
+            </ul>" . "<p>this is for plan: $targetBalance</p>",
         ];
     }
 

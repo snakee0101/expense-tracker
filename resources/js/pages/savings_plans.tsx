@@ -7,7 +7,7 @@ import { formatMoney, percent, formatCardDate, formatCardNumber, getDateFromExpi
 import { FaPlus } from 'react-icons/fa6';
 
 import { useForm } from '@inertiajs/react';
-import { Button, Label, Modal, ModalBody, ModalHeader, TextInput, Toast, ToastToggle, createTheme, Progress } from 'flowbite-react';
+import { Button, Label, Modal, ModalBody, ModalHeader, TextInput, Toast, ToastToggle, createTheme, Progress, Card } from 'flowbite-react';
 import { useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
 
@@ -53,6 +53,10 @@ export default function SavingsPlans({ savings_plans }) {
         const millisecondsInADay = 1000 * 60 * 60 * 24;
 
         return Math.ceil(differenceInMilliseconds / millisecondsInADay)
+    }
+
+    function selectedSavingsPlan() {
+        return savings_plans.filter(plan => plan.id == selectedSavingsPlanId)[0];
     }
 
     return (
@@ -110,7 +114,12 @@ export default function SavingsPlans({ savings_plans }) {
                 <div className="w-4"></div>
 
                 <main className="min-h-screen flex-1 p-6">
-                    <h1 className="mb-4 text-xl font-semibold">Main Content</h1>
+                    <Card className="savings-tips w-full">
+                        <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                            Saving tips
+                        </h5>
+                        <p className="font-normal text-gray-700 dark:text-gray-400" dangerouslySetInnerHTML={{ __html: selectedSavingsPlan().savings_tips }}></p>
+                    </Card>
                 </main>
             </div>
         </AppLayout>

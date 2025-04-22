@@ -187,3 +187,8 @@
     background: var(--color-green-25);
     width: 400px;
 }
+
+.savings-tips ul {
+    list-style: disc!important;
+    margin-left: 1em;
+}
