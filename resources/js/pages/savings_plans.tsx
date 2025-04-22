@@ -13,6 +13,8 @@ import { HiCheck } from 'react-icons/hi';
 
 import '../../css/app.css';
 import dayjs from 'dayjs';
+import Editor from 'react-simple-wysiwyg';
+import EditorProvider from 'react-simple-wysiwyg';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -160,6 +162,10 @@ export function CreateSavingsPlanModal({ setIsNotificationShown, setNotification
         });
     };
 
+    function onSavingsTipsChange(e) {
+        setData('savings_tips', e.target.value)
+    }
+
     return (
         <>
             <Button size="xs" color="dark" className="cursor-pointer" onClick={() => setOpenModal(true)}>
@@ -201,9 +207,8 @@ export function CreateSavingsPlanModal({ setIsNotificationShown, setNotification
                         </div>
 
                         <div>
-                            <Label htmlFor="due-date">Savings tips</Label>
-                            <Textarea id="due-date" placeholder="Savings tips..." rows={4} onChange={e => setData('savings_tips', e.target.value)} />
-
+                            <Label htmlFor="savings-tips">Savings tips</Label>
+                            <Editor value={data.savings_tips} onChange={onSavingsTipsChange} />
                             {errors.savings_tips && <p className="text-red-600 text-sm">{errors.savings_tips}</p>}
                         </div>
 

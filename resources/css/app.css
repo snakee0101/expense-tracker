@@ -192,3 +192,13 @@
     list-style: disc!important;
     margin-left: 1em;
 }
+
+.rsw-ce ul {
+    list-style: disc;
+    padding-left: 2em;
+}
+
+.rsw-ce ol {
+    list-style: decimal;
+    padding-left: 2em;
+}

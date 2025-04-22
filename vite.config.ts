@@ -19,4 +19,7 @@ export default defineConfig({
             'ziggy-js': resolve(__dirname, 'vendor/tightenco/ziggy'),
         },
     },
+    optimizeDeps: {
+        exclude: ['react-simple-wysiwyg']
+    },
 });
