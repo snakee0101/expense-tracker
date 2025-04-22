@@ -23,6 +23,11 @@ const mainNavItems: NavItem[] = [
         href: route('card.index'),
         icon: LayoutGrid,
     },
+    {
+        title: 'Savings Plans',
+        href: route('savings_plan.index'),
+        icon: LayoutGrid,
+    },
 ];
 
 export function AppSidebar() {

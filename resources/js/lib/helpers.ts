@@ -43,7 +43,7 @@ export function getDateFromExpiryDate(unformattedDate :string) {
     const [monthStr, yearStr] = unformattedDate.split("/");
     const month = parseInt(monthStr, 10);
     const year = parseInt("20" + yearStr, 10);
-    
+
     const lastDayOfMonth = new Date(year, month, 0);
     lastDayOfMonth.setHours(23, 59, 59);
 
@@ -56,4 +56,8 @@ export function getDateFromExpiryDate(unformattedDate :string) {
         String(lastDayOfMonth.getSeconds()).padStart(2, '0');
 
     return formattedDate;
+}
+
+export function percent(number) {
+    return (number * 100).toFixed(1);
 }

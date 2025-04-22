@@ -167,3 +167,23 @@
         @apply bg-background text-foreground;
     }
 }
+
+.card {
+    @apply mb-4 cursor-pointer space-y-6 rounded-xl shadow-lg;
+}
+
+.small-card {
+    @apply bg-white rounded-xl shadow-lg p-6 max-w-md mb-4 cursor-pointer;
+}
+
+.selected-card {
+    background: var(--color-green-300);
+    color: white;
+}
+
+.floating-sidebar {
+    @apply max-h-screen overflow-y-scroll rounded-lg p-4 shadow-xl;
+
+    background: var(--color-green-25);
+    width: 400px;
+}

@@ -2,21 +2,22 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
-import { formatMoney, formatCardDate, formatCardNumber, getDateFromExpiryDate } from '../lib/helpers';
+import { formatMoney, percent, formatCardDate, formatCardNumber, getDateFromExpiryDate } from '../lib/helpers';
 
 import { FaPlus } from 'react-icons/fa6';
 
 import { useForm } from '@inertiajs/react';
-import { Button, Label, Modal, ModalBody, ModalHeader, TextInput, Toast, ToastToggle, createTheme } from 'flowbite-react';
+import { Button, Label, Modal, ModalBody, ModalHeader, TextInput, Toast, ToastToggle, createTheme, Progress } from 'flowbite-react';
 import { useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
 
 import '../../css/app.css';
+import dayjs from 'dayjs';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Cards',
-        href: route('card.index'),
+        title: 'Savings Plans',
+        href: route('savings_plan.index'),
     },
 ];
 
@@ -33,14 +34,25 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function Cards({ cards }) {
+export default function SavingsPlans({ savings_plans }) {
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
-    const [selectedCardId, setSelectedCardId] = useState(cards[0].id);
+    const [selectedSavingsPlanId, setSelectedSavingsPlanId] = useState(savings_plans[0].id);
 
-    function selectCard(cardId) {
-        setSelectedCardId(cardId);
+    function selectSavingsPlan(savingsPlanId) {
+        setSelectedSavingsPlanId(savingsPlanId);
+    }
+
+    function savingsPlanCompletionPercentage(savingsPlan) {
+        return percent(savingsPlan.balance / savingsPlan.target_balance);
+    }
+
+    function daysRemainingUntil(targetDate) {
+        const differenceInMilliseconds = new Date(targetDate) - new Date();
+        const millisecondsInADay = 1000 * 60 * 60 * 24;
+
+        return Math.ceil(differenceInMilliseconds / millisecondsInADay)
     }
 
     return (
@@ -55,43 +67,42 @@ export default function Cards({ cards }) {
                 </Toast>
             )}
 
-            <Head title="Cards" />
+            <Head title="Savings Plans" />
 
             <div className="flex min-h-screen">
                 <div className="w-4"></div>
 
                 <aside className="floating-sidebar">
                     <div className="mb-4 flex items-center justify-between">
-                        <h2 className="text-xl font-bold">My Cards</h2>
-                        <CreateCardModal setIsNotificationShown={setIsNotificationShown} setNotificationMessage={setNotificationMessage} />
+                        <h2 className="text-xl font-bold">My Savings Plans</h2>
+                        <CreateSavingsPlanModal setIsNotificationShown={setIsNotificationShown} setNotificationMessage={setNotificationMessage} />
                     </div>
 
-                    {cards.map((card) => (
-                        <div
-                            className={`card p-6 pb-15 ${selectedCardId == card.id ? 'selected-card' : 'bg-white'}`}
-                            key={card.id}
-                            onClick={() => selectCard(card.id)}
-                        >
-                            <div className="flex items-start justify-between">
-                                <h2 className="font-medium">{card.name}</h2>
-                            </div>
-
-                            <div className="text-3xl font-semibold">
-                                <span className="mr-1">$</span>
-                                {formatMoney(card.balance)}
-                            </div>
-
-                            <div className="text-xl flex justify-between">
+                    {savings_plans.map((savingsPlan) => (
+                        <div className={`small-card ${selectedSavingsPlanId == savingsPlan.id ? 'selected-card' : 'bg-white'}`}
+                             onClick={() => selectSavingsPlan(savingsPlan.id)}
+                             key={savingsPlan.id}>
+                            <div className="flex justify-between items-start">
                                 <div>
-                                    <span className="block text-sm text-gray-600">Card Number</span>
-                                    <span>{formatCardNumber(card.card_number)}</span>
+                                    <h3 className="text-lg font-semibold">{savingsPlan.name}</h3>
+                                    <div className="text-sm mt-1">
+                                        <span className="font-medium">${formatMoney(savingsPlan.balance)}</span>
+                                        <span className=""> / ${formatMoney(savingsPlan.target_balance)}</span>
+                                    </div>
                                 </div>
-
-                               <div>
-                                   <span className="block text-sm text-gray-600">Expiry Date</span>
-                                   <span>{formatCardDate(card.expiry_date)}</span>
-                               </div>
+                                <div className="text-right">
+                                    <div className="text-lg font-semibold">{savingsPlanCompletionPercentage(savingsPlan)}%</div>
+                                    <div className={`text-sm font-medium
+                                                    ${selectedSavingsPlanId == savingsPlan.id ? 'text-black' : (
+                                                        savingsPlanCompletionPercentage(savingsPlan) == 100 ? 'text-emerald-600' : 'text-red-600'
+                                                    )}`}>{savingsPlanCompletionPercentage(savingsPlan) == 100 ? 'Completed' : 'In Progress'}</div>
+                                </div>
                             </div>
+                            <div className='mt-1 mb-3'>
+                                <p><span className='font-bold'>Due date</span>: {dayjs(savingsPlan.due_date).format('DD MMMM, YYYY')}</p>
+                                <p>{`(${daysRemainingUntil(savingsPlan.due_date)} days remaining)`}</p>
+                            </div>
+                            <Progress progress={savingsPlanCompletionPercentage(savingsPlan)} color="teal" />
                         </div>
                     ))}
                 </aside>
@@ -106,8 +117,9 @@ export default function Cards({ cards }) {
     );
 }
 
-export function CreateCardModal({ setIsNotificationShown, setNotificationMessage }) {
-    const [openModal, setOpenModal] = useState(false);
+export function CreateSavingsPlanModal({ setIsNotificationShown, setNotificationMessage }) {
+    return (<></>);
+/*    const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, post, processing, errors, clearErrors } = useForm({
         name: '',
@@ -192,5 +204,5 @@ export function CreateCardModal({ setIsNotificationShown, setNotificationMessage
                 </ModalBody>
             </Modal>
         </>
-    );
+    );*/
 }

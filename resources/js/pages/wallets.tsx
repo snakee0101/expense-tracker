@@ -14,6 +14,8 @@ import { Button, Label, Modal, ModalBody, ModalHeader, TextInput, createTheme } 
 import { useState } from "react";
 import { useForm } from '@inertiajs/react';
 
+import '../../css/app.css';
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Wallets',
@@ -59,17 +61,14 @@ export default function Wallets({ wallets }) {
             <div className="min-h-screen flex">
                 <div className="w-4"></div>
 
-                <aside className="bg-green-100 p-4 max-h-screen shadow-xl rounded-lg overflow-y-scroll" style={{ 'width': 400 }}>
+                <aside className="floating-sidebar">
                     <div className='flex justify-between mb-4 items-center'>
                         <h2 className="text-xl font-bold">My Wallets</h2>
                         <CreateWalletModal setIsNotificationShown={setIsNotificationShown} setNotificationMessage={setNotificationMessage}/>
                     </div>
 
                     {wallets.map(wallet => (
-                        <div className="max-w-sm p-6 pb-30 rounded-xl bg-green-800 text-white font-sans shadow-lg space-y-6 mb-4 cursor-pointer"
-                             style={{
-                                 'background': selectedWalletId == wallet.id ? 'repeating-linear-gradient(-45deg, #1E3D34, #1E3D34 10px, rgba(75, 75, 75, 1) 10px, rgba(75, 75, 75, 1) 60px, #1E3D34 60px, #1E3D34 140px)' : '',
-                             }}
+                        <div className={`card p-6 pb-30 ${selectedWalletId == wallet.id ? 'selected-card' : 'bg-white'}`}
                              key={wallet.id}
                              onClick={() => selectWallet(wallet.id)}
                         >
