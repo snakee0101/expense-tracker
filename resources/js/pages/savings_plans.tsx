@@ -2,12 +2,12 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
-import { formatMoney, percent, formatCardDate, formatCardNumber, getDateFromExpiryDate } from '../lib/helpers';
+import { formatMoney, percent, formatDate } from '../lib/helpers';
 
 import { FaPlus } from 'react-icons/fa6';
 
 import { useForm } from '@inertiajs/react';
-import { Button, Label, Modal, ModalBody, ModalHeader, TextInput, Toast, ToastToggle, createTheme, Progress, Card } from 'flowbite-react';
+import { Datepicker, Button, Label, Modal, ModalBody, ModalHeader, TextInput, Toast, ToastToggle, createTheme, Progress, Card, Textarea } from 'flowbite-react';
 import { useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
 
@@ -127,13 +127,13 @@ export default function SavingsPlans({ savings_plans }) {
 }
 
 export function CreateSavingsPlanModal({ setIsNotificationShown, setNotificationMessage }) {
-    return (<></>);
-/*    const [openModal, setOpenModal] = useState(false);
+    const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, post, processing, errors, clearErrors } = useForm({
         name: '',
-        card_number: '',
-        expiry_date: '',
+        target_balance: '',
+        due_date: '',
+        savings_tips: ''
     });
 
     const onCloseModal = () => {
@@ -141,18 +141,19 @@ export function CreateSavingsPlanModal({ setIsNotificationShown, setNotification
         clearErrors();
         setData({
             name: '',
-            card_number: '',
-            expiry_date: '',
+            target_balance: '',
+            due_date: '',
+            savings_tips: ''
         });
     };
 
     const handleCreate = (event) => {
         event.preventDefault();
 
-        post(route('card.store'), {
+        post(route('savings_plan.store'), {
             onSuccess: () => {
                 onCloseModal();
-                setNotificationMessage('Card created');
+                setNotificationMessage('Savings plan created');
                 setIsNotificationShown(true);
                 setTimeout(() => setIsNotificationShown(false), 2000);
             },
@@ -166,44 +167,44 @@ export function CreateSavingsPlanModal({ setIsNotificationShown, setNotification
             </Button>
 
             <Modal show={openModal} size="md" onClose={onCloseModal} popup>
-                <ModalHeader>Create New Card</ModalHeader>
+                <ModalHeader>Create Savings Plan</ModalHeader>
                 <ModalBody>
                     <form className="space-y-6" onSubmit={handleCreate}>
                         <div>
-                            <Label htmlFor="card-name">Card Name</Label>
+                            <Label htmlFor="plan-name">Savings plan name</Label>
                             <TextInput
-                                id="card-name"
+                                id="plan-name"
                                 type="text"
-                                placeholder="e.g. Travel Card"
+                                placeholder="e.g. Vacation"
                                 onChange={(e) => setData('name', e.target.value)}
                             />
                             {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
                         </div>
 
                         <div>
-                            <Label htmlFor="card-number">Card Number</Label>
+                            <Label htmlFor="target-balance">Target balance</Label>
                             <TextInput
-                                id="card-number"
+                                id="target-balance"
                                 type="text"
                                 inputMode="numeric"
-                                placeholder="0000 1111 2222 3333"
-                                onChange={(e) =>
-                                    setData('card_number', e.target.value.replace(/\D/g, '').slice(0, 16))
-                                }
+                                placeholder="500.50"
+                                onChange={(e) => setData('target_balance', e.target.value)}
                             />
-                            {errors.card_number && <p className="text-red-600 text-sm">{errors.card_number}</p>}
+                            {errors.target_balance && <p className="text-red-600 text-sm">{errors.target_balance}</p>}
                         </div>
 
                         <div>
-                            <Label htmlFor="expiry-date">Expiry Date</Label>
-                            <TextInput
-                                id="expiry-date"
-                                type="text"
-                                placeholder="09/29"
-                                onChange={e => setData('expiry_date', getDateFromExpiryDate(e.target.value))}
-                            />
+                            <Label htmlFor="due-date">Due Date</Label>
+                            <Datepicker onChange={date => setData('due_date', formatDate(date))} />
 
-                            {errors.expiry_date && <p className="text-red-600 text-sm">{errors.expiry_date}</p>}
+                            {errors.due_date && <p className="text-red-600 text-sm">{errors.due_date}</p>}
+                        </div>
+
+                        <div>
+                            <Label htmlFor="due-date">Savings tips</Label>
+                            <Textarea id="due-date" placeholder="Savings tips..." rows={4} onChange={e => setData('savings_tips', e.target.value)} />
+
+                            {errors.savings_tips && <p className="text-red-600 text-sm">{errors.savings_tips}</p>}
                         </div>
 
                         <div className="flex justify-end">
@@ -213,5 +214,5 @@ export function CreateSavingsPlanModal({ setIsNotificationShown, setNotification
                 </ModalBody>
             </Modal>
         </>
-    );*/
+    );
 }

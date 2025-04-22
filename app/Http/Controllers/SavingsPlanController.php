@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Card;
 use App\Models\SavingsPlan;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class SavingsPlanController extends Controller
@@ -34,7 +34,22 @@ class SavingsPlanController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => [
+                'min: 3',
+                Rule::unique('cards')->where('user_id', auth()->id())
+            ],
+            'target_balance' => ['required', 'numeric', 'gt:0'],
+            'due_date' => ['required', 'date-format:Y-m-d H:i:s'],
+            'savings_tips' => ['nullable']
+        ]);
+
+        SavingsPlan::create([
+            'user_id' => auth()->id(),
+            ...$validated
+        ]);
+
+        return to_route('savings_plan.index');
     }
 
     /**
