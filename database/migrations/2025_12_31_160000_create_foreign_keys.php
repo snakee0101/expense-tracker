@@ -31,10 +31,25 @@ return new class extends Migration
                     ->references('id')
                     ->on('users');
         });
+
+        Schema::table('transactions', function (Blueprint $table) {
+            $table->foreign('category_id', 'transaction_category_id')
+                ->references('id')
+                ->on('transaction_categories');
+
+            $table->foreign('user_id', 'transaction_user_id')
+                ->references('id')
+                ->on('users');
+        });
     }
 
     public function down(): void
     {
+        Schema::table('transactions', function (Blueprint $table) {
+            $table->dropForeign('transaction_category_id');
+            $table->dropForeign('transaction_user_id');
+        });
+
         Schema::table('savings_plans', function (Blueprint $table) {
             $table->dropForeign('savings_plan_owner');
         });

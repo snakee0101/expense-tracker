@@ -17,7 +17,10 @@ return new class extends Migration
             $table->timestamp('date');
             $table->decimal('amount');
             $table->string('note')->nullable();
-            $table->string('image_path');
+            $table->foreignId('category_id');
+            $table->foreignId('user_id');
+            $table->nullableMorphs('source');
+            $table->morphs('destination'); //transactions always have source and destination. If its one-sided transaction (like income/expense) - then only destination will be set
             $table->timestamps();
         });
     }

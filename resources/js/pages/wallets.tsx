@@ -15,6 +15,7 @@ import { useState } from "react";
 import { useForm } from '@inertiajs/react';
 
 import '../../css/app.css';
+import { CreateIncomeExpense } from '@/components/main/create-income-expense';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -36,7 +37,7 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function Wallets({ wallets }) {
+export default function Wallets({ wallets, transactionCategories }) {
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
@@ -87,8 +88,12 @@ export default function Wallets({ wallets }) {
                 <div className="w-4"></div>
 
                 <main className="flex-1 p-6 min-h-screen">
-                    <h1 className="text-xl font-semibold mb-4">Main Content</h1>
-
+                    <CreateIncomeExpense key={selectedWalletId}
+                                         transactionable={{ destination_type: 'App\\Models\\Wallet', destination_id: selectedWalletId }}
+                                         setIsNotificationShown={setIsNotificationShown}
+                                         setNotificationMessage={setNotificationMessage}
+                                         transactionCategories={transactionCategories}
+                    />
                 </main>
             </div>
         </AppLayout>

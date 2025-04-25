@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
 
 import '../../css/app.css';
+import { CreateIncomeExpense } from '@/components/main/create-income-expense';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -33,7 +34,7 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function Cards({ cards }) {
+export default function Cards({ cards, transactionCategories }) {
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
@@ -99,7 +100,12 @@ export default function Cards({ cards }) {
                 <div className="w-4"></div>
 
                 <main className="min-h-screen flex-1 p-6">
-                    <h1 className="mb-4 text-xl font-semibold">Main Content</h1>
+                    <CreateIncomeExpense key={selectedCardId}
+                                         transactionable={{ destination_type: 'App\\Models\\Card', destination_id: selectedCardId }}
+                                         setIsNotificationShown={setIsNotificationShown}
+                                         setNotificationMessage={setNotificationMessage}
+                                         transactionCategories={transactionCategories}
+                    />
                 </main>
             </div>
         </AppLayout>

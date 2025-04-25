@@ -7,7 +7,7 @@ import { formatMoney, percent, formatDate } from '../lib/helpers';
 import { FaPlus } from 'react-icons/fa6';
 
 import { useForm } from '@inertiajs/react';
-import { Datepicker, Button, Label, Modal, ModalBody, ModalHeader, TextInput, Toast, ToastToggle, createTheme, Progress, Card, Textarea } from 'flowbite-react';
+import { Datepicker, Button, Label, Modal, ModalBody, ModalHeader, TextInput, Toast, ToastToggle, createTheme, Progress, Card } from 'flowbite-react';
 import { useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
 import { GoArrowUpRight } from "react-icons/go";
@@ -19,7 +19,6 @@ import { GrPlan } from "react-icons/gr";
 import '../../css/app.css';
 import dayjs from 'dayjs';
 import Editor from 'react-simple-wysiwyg';
-import EditorProvider from 'react-simple-wysiwyg';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

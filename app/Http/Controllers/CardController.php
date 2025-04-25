@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Card;
+use App\Models\TransactionCategory;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -12,9 +13,8 @@ class CardController extends Controller
     public function index()
     {
         return Inertia::render('cards', [
-            'cards' => Card::where('user_id', auth()->id())
-                                ->latest()
-                                ->get()
+            'cards' => Card::where('user_id', auth()->id())->latest()->get(),
+            'transactionCategories' => TransactionCategory::where('user_id', auth()->id())->latest()->get()
         ]);
     }
 

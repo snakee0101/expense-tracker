@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TransactionCategory;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -12,9 +13,8 @@ class WalletController extends Controller
     public function index()
     {
         return Inertia::render('wallets', [
-            'wallets' => Wallet::where('user_id', auth()->id())
-                                ->latest()
-                                ->get()
+            'wallets' => Wallet::where('user_id', auth()->id())->latest()->get(),
+            'transactionCategories' => TransactionCategory::where('user_id', auth()->id())->latest()->get()
         ]);
     }
 

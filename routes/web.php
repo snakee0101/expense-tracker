@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CardController;
+use App\Http\Controllers\IncomeExpenseController;
 use App\Http\Controllers\SavingsPlanController;
 use App\Http\Controllers\TransactionCategoryController;
 use App\Http\Controllers\WalletController;
@@ -16,6 +17,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('wallet', WalletController::class);
     Route::resource('card', CardController::class);
     Route::resource('savings_plan', SavingsPlanController::class);
+
+    Route::post('income_expense', [IncomeExpenseController::class, 'store'])->name('income_expense.store');
 });
 
 require __DIR__.'/settings.php';
