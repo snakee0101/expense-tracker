@@ -17,6 +17,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('wallet', WalletController::class);
     Route::resource('card', CardController::class);
     Route::resource('savings_plan', SavingsPlanController::class);
+    Route::post('savings_plan/transaction', [SavingsPlanController::class, 'transaction'])->name('savings_plan.transaction');
 
     Route::post('income_expense', [IncomeExpenseController::class, 'store'])->name('income_expense.store');
 });
