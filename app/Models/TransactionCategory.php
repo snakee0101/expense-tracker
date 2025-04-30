@@ -12,7 +12,7 @@ class TransactionCategory extends Model
 
     protected $appends = ['imageUrl'];
 
-    protected $fillable = ['name', 'user_id'];
+    protected $guarded = [];
 
     public function getImageUrlAttribute()
     {

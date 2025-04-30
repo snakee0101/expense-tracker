@@ -29,11 +29,13 @@ class TransactionCategoryController extends Controller
             'name' => [
                 'min: 3',
                 Rule::unique('transaction_categories')->where('user_id', auth()->id())
-            ]
+            ],
+            'image' => ['required', 'image', 'file', 'max:1024']
         ]);
 
         TransactionCategory::create([
             'user_id' => auth()->id(),
+            'image_path' => $request->file('image')->store('images', 'public'),
             'name' => $request->name
         ]);
 

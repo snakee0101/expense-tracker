@@ -3,7 +3,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
 import { router } from '@inertiajs/react';
-import { Pagination, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from 'flowbite-react';
+import { FileInput, Pagination, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from 'flowbite-react';
 import {getPageUrl} from '../lib/helpers';
 
 import { Toast, ToastToggle } from "flowbite-react";
@@ -64,7 +64,16 @@ export default function TransactionCategories({ transactionCategoryPaginator }) 
                 <TableBody className="divide-y">
                     {transactionCategoryPaginator.data.map((transactionCategory) => (
                         <TableRow key={transactionCategory.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                            <TableCell>{transactionCategory.name}</TableCell>
+                            <TableCell>
+                                <div className="flex w-full flex-row items-center">
+                                    <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-white">
+                                        <img src={transactionCategory.imageUrl} className='rounded-full' />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <h5 className="text-gray-700">{transactionCategory.name}</h5>
+                                    </div>
+                                </div>
+                            </TableCell>
                             <TableCell>
                                 Actions
                             </TableCell>
@@ -88,19 +97,21 @@ export default function TransactionCategories({ transactionCategoryPaginator }) 
 export function CreateCategoryModal({ setIsNotificationShown, setNotificationMessage }) {
     const [openModal, setOpenModal] = useState(false);
 
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
+        image: null
     });
 
     const onCloseModal = () => {
         setOpenModal(false);
-        setData('name', '');
+        reset();
     };
 
     const handleCreate = (event) => {
         event.preventDefault();
 
         post(route('transaction_category.store'), {
+            forceFormData: true,
             onSuccess: () => {
                 onCloseModal()
 
@@ -123,15 +134,24 @@ export function CreateCategoryModal({ setIsNotificationShown, setNotificationMes
                 <ModalBody>
                     <form className="space-y-6" onSubmit={handleCreate}>
                         <div>
-                            <Label htmlFor="category-name" value="Category Name" className="mb-2 block" />
+                            <Label htmlFor="category-name" className="mb-2 block">Category Name</Label>
                             <TextInput
                                 id="category-name"
                                 placeholder="Enter category name"
                                 value={data.name}
                                 onChange={(e) => setData('name', e.target.value)}
-                                required
                             />
-                            {errors && <p className='text-red-600'>{errors.name}</p>}
+                            {errors && <p className='text-red-600 text-sm'>{errors.name}</p>}
+                        </div>
+
+                        <div>
+                            <Label htmlFor="category-image">Category Image</Label>
+                            <FileInput
+                                id="category-image"
+                                accept="image/*"
+                                onChange={(e) => setData('image', e.target.files[0])}
+                            />
+                            {errors.image && <p className="text-red-600 text-sm">{errors.image}</p>}
                         </div>
 
                         <div className="w-full flex justify-end">
