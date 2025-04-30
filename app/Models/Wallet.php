@@ -7,7 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Wallet extends Model
 {
+    protected $appends = ['typeName'];
+
     use HasFactory;
 
     protected $fillable = ['name', 'balance', 'user_id'];
+
+    public function getTypeNameAttribute()
+    {
+        return class_basename($this);
+    }
 }

@@ -109,7 +109,7 @@ export default function Transfers({ contacts, transactionCategories, accounts })
                         >
                             <div className="flex w-full flex-row items-center">
                                 <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white mr-3">
-                                    <img src={contact.avatar_path} />
+                                    <img src={contact.avatar_path} className='rounded-full'/>
                                 </div>
                                 <div className="flex flex-col">
                                     <h5 className="text-lg text-gray-700 font-bold">{contact.name}</h5>

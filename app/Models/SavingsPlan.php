@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class SavingsPlan extends Model
 {
+    protected $appends = ['typeName'];
+
     /** @use HasFactory<\Database\Factories\SavingsPlanFactory> */
     use HasFactory;
 
@@ -21,4 +23,9 @@ class SavingsPlan extends Model
     protected $casts = [
         'due_date' => 'datetime'
     ];
+
+    public function getTypeNameAttribute()
+    {
+        return class_basename($this);
+    }
 }

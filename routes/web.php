@@ -5,6 +5,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\IncomeExpenseController;
 use App\Http\Controllers\SavingsPlanController;
 use App\Http\Controllers\TransactionCategoryController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransferController;
 use App\Http\Controllers\WalletController;
 use Inertia\Inertia;
@@ -16,6 +17,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('transaction_category', TransactionCategoryController::class);
+    Route::resource('transaction', TransactionController::class);
     Route::resource('wallet', WalletController::class);
     Route::resource('card', CardController::class);
     Route::resource('savings_plan', SavingsPlanController::class);

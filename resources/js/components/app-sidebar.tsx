@@ -9,6 +9,11 @@ import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
+        title: 'Transactions',
+        href: route('transaction.index'),
+        icon: LayoutGrid,
+    },
+    {
         title: 'Transaction Categories',
         href: route('transaction_category.index'),
         icon: LayoutGrid,
