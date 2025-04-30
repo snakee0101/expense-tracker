@@ -2,7 +2,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
-import { formatCardNumber } from '../lib/helpers';
+import { formatCardNumber, formatDate } from '../lib/helpers';
 
 import { useForm } from '@inertiajs/react';
 import {
@@ -13,13 +13,14 @@ import {
     Button,
     Modal,
     ModalBody,
-    ModalHeader, Label, TextInput, FileInput
+    ModalHeader, Label, TextInput, FileInput, Select, Textarea, Datepicker
 } from 'flowbite-react';
 import { useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
 import '../../css/app.css';
 import { CreateSavingsPlanModal } from '@/pages/savings_plans';
 import { FaPlus } from 'react-icons/fa6';
+import dayjs from 'dayjs';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -47,6 +48,37 @@ export default function Transfers({ contacts, transactionCategories, accounts })
 
     const [selectedContactId, setSelectedContactId] = useState(contacts[0].id);
 
+    const { data, setData, post, errors, reset } = useForm({
+        name: '',
+        related_account_id: null,
+        related_account_type: null,
+        amount: null,
+        date: dayjs().format('YYYY-MM-DD'),
+        time: dayjs().format('HH:mm:ss'),
+        note: null,
+        contact_id: contacts[0].id,
+        category_id: null
+    });
+
+    function selectContact(contactId)
+    {
+        setSelectedContactId(contactId);
+
+        setData('contact_id', contactId);
+    }
+
+    const handleCreateTransfer = (event) => {
+        event.preventDefault();
+
+        post(route('transfer.store'), {
+            onSuccess: () => {
+                setNotificationMessage('Transfer created');
+                setIsNotificationShown(true);
+                setTimeout(() => setIsNotificationShown(false), 3000);
+            },
+        });
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             {isNotificationShown && (
@@ -73,7 +105,7 @@ export default function Transfers({ contacts, transactionCategories, accounts })
                     {contacts.map((contact, index) => (
                         <Card key={index}
                               className={`cursor-pointer bg-green-50 flex rounded-2xl shadow-sm mb-3 ${selectedContactId == contact.id ? 'selected-card' : 'bg-white'}`}
-                              onClick={() => setSelectedContactId(contact.id)}
+                              onClick={() => selectContact(contact.id)}
                         >
                             <div className="flex w-full flex-row items-center">
                                 <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white mr-3">
@@ -91,7 +123,95 @@ export default function Transfers({ contacts, transactionCategories, accounts })
                 <div className="w-4"></div>
 
                 <main className="min-h-screen flex-1 p-6">
-                    main content
+                    <form className="max-w-xl mx-auto p-6 bg-green-50 rounded-xl shadow-md" onSubmit={handleCreateTransfer}>
+                        <h3 className='font-bold text-xl mb-4'>Create Transfer</h3>
+
+                        {/* Transaction name */}
+                        <div className="mb-4">
+                            <Label htmlFor="name">Transaction name</Label>
+                            <TextInput
+                                id="name"
+                                name="name"
+                                placeholder="Transaction name"
+                                value={data.name}
+                                onChange={e => setData('name', e.target.value)}
+                            />
+                            {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
+                        </div>
+
+                        {/* Select Account */}
+                        <div className="mb-4">
+                            <Label htmlFor="recipient">Select Account</Label>
+                            <Select id="account" onChange={e => {
+                                setData('related_account_id', JSON.parse(e.target.value).id);
+                                setData('related_account_type', JSON.parse(e.target.value).type);
+                            }}>
+                                <option></option>
+                                {accounts.map(account => (
+                                    <option key={account.id + account.type}
+                                            value={JSON.stringify({id: account.id, type: account.type})}
+                                    >{account.type == 'App\\Models\\Wallet' ? 'Wallet' : 'Card'} "{account.name}": ${account.balance}</option>
+                                ))}
+                            </Select>
+                            {errors.related_account_id && <p className="text-red-600 text-sm">{errors.related_account_id}</p>}
+                        </div>
+
+                        {/* Amount */}
+                        <div className="mb-4">
+                            <Label htmlFor="amount">Amount</Label>
+                            <TextInput
+                                id="amount"
+                                type="text"
+                                placeholder="250.00"
+                                onChange={e => setData('amount', e.target.value)}
+                            />
+                            {errors.amount && <p className="text-red-600 text-sm">{errors.amount}</p>}
+                        </div>
+
+                        {/* Transaction Date */}
+                        <div className="mb-4">
+                            <Label htmlFor="transaction-date">Transaction Date</Label>
+                            <Datepicker onChange={date => setData('date', dayjs(date).format('YYYY-MM-DD'))} />
+
+                            {errors.date && <p className="text-red-600 text-sm">{errors.date}</p>}
+                        </div>
+
+                        {/* Transaction Time */}
+                        <div className="mb-4">
+                            <Label htmlFor="transaction-time">Transaction Time</Label>
+                            <br />
+                            <input type="time" id="transaction-time" value={data.time} onChange={e => setData('time', e.target.value)} />
+                            {errors.time && <p className="text-red-600 text-sm">{errors.time}</p>}
+                        </div>
+
+                        {/* Transaction Category */}
+                        <div className="mb-4">
+                            <Label htmlFor="category">Transaction category</Label>
+                            <Select id="category" onChange={e => setData('category_id', e.target.value)}>
+                                <option></option>
+                                {transactionCategories.map(category => (
+                                    <option key={category.id} value={category.id}>{category.name}</option>
+                                ))}
+                            </Select>
+                            {errors.category_id && <p className="text-red-600 text-sm">{errors.category_id}</p>}
+                        </div>
+
+                        {/* Note */}
+                        <div className="mb-4">
+                            <Label htmlFor="note">Note</Label>
+                            <Textarea
+                                id="note"
+                                placeholder="Payment for shared vacation expenses"
+                                rows={3}
+                                onChange={e => setData('note', e.target.value)}
+                            />
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex justify-end gap-2 mt-4">
+                            <Button type="submit">Send Money</Button>
+                        </div>
+                    </form>
                 </main>
             </div>
         </AppLayout>

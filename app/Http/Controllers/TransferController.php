@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Card;
 use App\Models\Contact;
+use App\Models\Transaction;
 use App\Models\TransactionCategory;
 use App\Models\Wallet;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -44,5 +47,27 @@ class TransferController extends Controller
                                 ->get(),
             'accounts' => $accounts
         ]);
+    }
+
+    public function store(Request $request)
+    {
+        Transaction::create([
+            'name' => $request->name,
+            'date' => Carbon::parse("{$request->date} {$request->time}"),
+            'amount' => $request->amount,
+            'note' => $request->note,
+            'user_id' => auth()->id(),
+            'category_id' => $request->category_id,
+            'source_id' => $request->related_account_id,
+            'source_type' => $request->related_account_type,
+            'destination_id' => $request->contact_id,
+            'destination_type' => Contact::class,
+        ]);
+
+        //change balance of wallet/card where you transfer money from
+        $account = ($request->related_account_type)::findOrFail($request->related_account_id);
+        $account->decrement('balance', $request->amount);
+
+        return to_route('transfer.index');
     }
 }
