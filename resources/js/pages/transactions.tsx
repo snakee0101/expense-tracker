@@ -32,8 +32,6 @@ const toastThemeWithAbsolutePositioning = createTheme({
 export default function Transactions({ transactions }) {
     const onPageChange = (page: number) => router.visit(getPageUrl(transactions, page));
 
-    console.log(transactions.data[0]);
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Transactions" />
@@ -55,7 +53,7 @@ export default function Transactions({ transactions }) {
                             <TableCell className='py-1 px-3'>
                                 <div className="flex w-full flex-row items-center">
                                     <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-white">
-                                        <img src={'https://cdn.vectorstock.com/i/1000v/78/57/react-icon-in-a-hexagon-vector-36587857.jpg'} className='rounded-full' />
+                                        <img src={transaction.category.imageUrl} className='rounded-full' />
                                     </div>
                                     <div className="flex flex-col">
                                         <h5 className="text-lg font-bold text-gray-700">{transaction.name}</h5>
@@ -63,8 +61,8 @@ export default function Transactions({ transactions }) {
                                     </div>
                                 </div>
                             </TableCell>
-                            <TableCell>{transaction.source.typeName} "{transaction.source.name}"</TableCell>
-                            <TableCell>{transaction.destination.typeName} "{transaction.destination.name}"</TableCell>
+                            <TableCell><b>{transaction.source?.typeName}</b> {transaction.source?.name}</TableCell>
+                            <TableCell><b>{transaction.destination?.typeName}</b> {transaction.destination?.name}</TableCell>
                             <TableCell>
                                 <p className="text-black font-bold">{dayjs(transaction.date).format('YYYY-MM-DD')}</p>
                                 <p className="text-gray-400">{dayjs(transaction.date).format('hh:mm A')}</p>

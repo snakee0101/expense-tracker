@@ -14,6 +14,7 @@ class TransactionCategoryFactory extends Factory
     {
         return [
             'name' => fake()->unique()->sentence(2),
+            'image_path' => 'public/images/category_image.png',
         ];
     }
 
