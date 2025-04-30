@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CardController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\IncomeExpenseController;
 use App\Http\Controllers\SavingsPlanController;
 use App\Http\Controllers\TransactionCategoryController;
@@ -19,6 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('card', CardController::class);
     Route::resource('savings_plan', SavingsPlanController::class);
     Route::resource('transfer', TransferController::class);
+    Route::resource('contact', ContactController::class);
     Route::post('savings_plan/transaction', [SavingsPlanController::class, 'transaction'])->name('savings_plan.transaction');
 
     Route::post('income_expense', [IncomeExpenseController::class, 'store'])->name('income_expense.store');
