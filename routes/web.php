@@ -4,6 +4,7 @@ use App\Http\Controllers\CardController;
 use App\Http\Controllers\IncomeExpenseController;
 use App\Http\Controllers\SavingsPlanController;
 use App\Http\Controllers\TransactionCategoryController;
+use App\Http\Controllers\TransferController;
 use App\Http\Controllers\WalletController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +18,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('wallet', WalletController::class);
     Route::resource('card', CardController::class);
     Route::resource('savings_plan', SavingsPlanController::class);
+    Route::resource('transfer', TransferController::class);
     Route::post('savings_plan/transaction', [SavingsPlanController::class, 'transaction'])->name('savings_plan.transaction');
 
     Route::post('income_expense', [IncomeExpenseController::class, 'store'])->name('income_expense.store');

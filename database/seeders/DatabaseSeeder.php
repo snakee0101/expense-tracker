@@ -13,5 +13,6 @@ class DatabaseSeeder extends Seeder
         $this->call(WalletSeeder::class);
         $this->call(CardSeeder::class);
         $this->call(SavingsPlanSeeder::class);
+        $this->call(ContactSeeder::class);
     }
 }

@@ -28,6 +28,11 @@ const mainNavItems: NavItem[] = [
         href: route('savings_plan.index'),
         icon: LayoutGrid,
     },
+    {
+        title: 'Transfers',
+        href: route('transfer.index'),
+        icon: LayoutGrid,
+    },
 ];
 
 export function AppSidebar() {

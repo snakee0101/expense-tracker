@@ -41,10 +41,20 @@ return new class extends Migration
                 ->references('id')
                 ->on('users');
         });
+
+        Schema::table('contacts', function (Blueprint $table) {
+            $table->foreign('user_id', 'contact_owner_id')
+                ->references('id')
+                ->on('users');
+        });
     }
 
     public function down(): void
     {
+        Schema::table('contacts', function (Blueprint $table) {
+            $table->dropForeign('contact_owner_id');
+        });
+
         Schema::table('transactions', function (Blueprint $table) {
             $table->dropForeign('transaction_category_id');
             $table->dropForeign('transaction_user_id');
