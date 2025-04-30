@@ -6,37 +6,44 @@ import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
+import { GrTransaction } from "react-icons/gr";
+import { MdOutlineCategory } from "react-icons/md";
+import { SlWallet } from "react-icons/sl";
+import { RiBankCardFill } from "react-icons/ri";
+import { MdOutlineSavings } from "react-icons/md";
+import { FaMoneyBillTransfer } from "react-icons/fa6";
+
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Transactions',
         href: route('transaction.index'),
-        icon: LayoutGrid,
+        icon: GrTransaction,
     },
     {
         title: 'Transaction Categories',
         href: route('transaction_category.index'),
-        icon: LayoutGrid,
+        icon: MdOutlineCategory,
     },
     {
         title: 'Wallets',
         href: route('wallet.index'),
-        icon: LayoutGrid,
+        icon: SlWallet,
     },
     {
         title: 'Cards',
         href: route('card.index'),
-        icon: LayoutGrid,
+        icon: RiBankCardFill,
     },
     {
         title: 'Savings Plans',
         href: route('savings_plan.index'),
-        icon: LayoutGrid,
+        icon: MdOutlineSavings,
     },
     {
         title: 'Transfers',
         href: route('transfer.index'),
-        icon: LayoutGrid,
+        icon: FaMoneyBillTransfer,
     },
 ];
 
