@@ -57,7 +57,8 @@ export default function Transfers({ contacts, transactionCategories, accounts })
         time: dayjs().format('HH:mm:ss'),
         note: null,
         contact_id: contacts[0].id,
-        category_id: null
+        category_id: null,
+        receipts: []
     });
 
     function selectContact(contactId)
@@ -76,6 +77,7 @@ export default function Transfers({ contacts, transactionCategories, accounts })
                 setIsNotificationShown(true);
                 setTimeout(() => setIsNotificationShown(false), 3000);
             },
+            forceFormData: true,
         });
     };
 
@@ -166,6 +168,13 @@ export default function Transfers({ contacts, transactionCategories, accounts })
                                 onChange={e => setData('amount', e.target.value)}
                             />
                             {errors.amount && <p className="text-red-600 text-sm">{errors.amount}</p>}
+                        </div>
+
+                        {/* Receipts */}
+                        <div className="mb-4">
+                            <Label htmlFor="files">Upload receipts</Label>
+                            <FileInput id="files" multiple
+                                       onChange={e => setData('receipts', e.target.files)} />
                         </div>
 
                         {/* Transaction Date */}

@@ -54,7 +54,7 @@ class TransferController extends Controller
     {
         $transactionDate = Carbon::parse("{$request->date} {$request->time}");
 
-        Transaction::create([
+        $transaction = Transaction::create([
             'name' => $request->name,
             'date' => $transactionDate,
             'amount' => $request->amount,
@@ -72,6 +72,15 @@ class TransferController extends Controller
             //change balance of wallet/card where you transfer money from
             $account = ($request->related_account_type)::findOrFail($request->related_account_id);
             $account->decrement('balance', $request->amount);
+        }
+
+        foreach ($request->file('receipts') ?? [] as $file) {
+            $filePath = $file->store('attachments', 'public');
+
+            $transaction->attachments()->create([
+                'original_filename' => $file->getClientOriginalName(),
+                'storage_location' => $filePath
+            ]);
         }
 
         return to_route('transfer.index');

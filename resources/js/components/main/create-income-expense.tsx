@@ -1,6 +1,17 @@
 import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
-import { Button, Datepicker, Label, Modal, ModalBody, ModalHeader, Radio, TextInput, Select } from 'flowbite-react';
+import {
+    Button,
+    Datepicker,
+    Label,
+    Modal,
+    ModalBody,
+    ModalHeader,
+    Radio,
+    TextInput,
+    Select,
+    FileInput
+} from 'flowbite-react';
 import { FaPlus } from 'react-icons/fa6';
 import { formatDate } from '@/lib/helpers';
 import Editor from 'react-simple-wysiwyg';
@@ -18,7 +29,8 @@ export function CreateIncomeExpense({ transactionable, setIsNotificationShown, s
         note: null,
         category_id: null,
         destination_type: transactionable.destination_type,
-        destination_id: transactionable.destination_id
+        destination_id: transactionable.destination_id,
+        receipts: []
     });
 
     const onCloseModal = () => {
@@ -33,7 +45,8 @@ export function CreateIncomeExpense({ transactionable, setIsNotificationShown, s
             note: null,
             category_id: null,
             destination_type: transactionable.destination_type,
-            destination_id: transactionable.destination_id
+            destination_id: transactionable.destination_id,
+            receipts: []
         });
     };
 
@@ -47,6 +60,7 @@ export function CreateIncomeExpense({ transactionable, setIsNotificationShown, s
                 setIsNotificationShown(true);
                 setTimeout(() => setIsNotificationShown(false), 3000);
             },
+            forceFormData: true,
         });
     };
 
@@ -95,6 +109,12 @@ export function CreateIncomeExpense({ transactionable, setIsNotificationShown, s
                                 onChange={e => setData('amount', e.target.value)}
                                 placeholder="0.00"
                             />
+                        </div>
+
+                        <div className="mb-4">
+                            <Label htmlFor="files">Upload receipts</Label>
+                            <FileInput id="files" multiple
+                                       onChange={e => setData('receipts', e.target.files)} />
                         </div>
 
                         <div className="mb-4 flex max-w-md flex-col gap-4">
