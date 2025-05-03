@@ -8,6 +8,8 @@ import { formatMoney, getPageUrl } from '../lib/helpers';
 
 import { createTheme } from 'flowbite-react';
 import dayjs from 'dayjs';
+import { ImAttachment } from "react-icons/im";
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -45,6 +47,7 @@ export default function Transactions({ transactions, transactionStatusList }) {
                     <TableHeadCell>Amount</TableHeadCell>
                     <TableHeadCell>Note</TableHeadCell>
                     <TableHeadCell>Status</TableHeadCell>
+                    <TableHeadCell>Attachments</TableHeadCell>
                     <TableHeadCell>Actions</TableHeadCell>
                 </TableHead>
                 <TableBody className="divide-y">
@@ -73,6 +76,16 @@ export default function Transactions({ transactions, transactionStatusList }) {
                                 <TransactionStatus status={transaction.status}
                                                    statusList={transactionStatusList}
                                 />
+                            </TableCell>
+                            <TableCell>
+                                <dl>
+                                    {transaction.attachments.map(attachment => (
+                                        <dd className='flex items-center mb-1'>
+                                            <ImAttachment size={16}/>
+                                            <a href={route('download_attachment', attachment.id)} className='text-blue-500 underline hover:no-underline ml-1'>{attachment.original_filename}</a>
+                                        </dd>
+                                    ))}
+                                </dl>
                             </TableCell>
                             <TableCell>Actions</TableCell>
                         </TableRow>

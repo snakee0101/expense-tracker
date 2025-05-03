@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\IncomeExpenseController;
@@ -24,6 +25,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('transfer', TransferController::class);
     Route::resource('contact', ContactController::class);
     Route::post('savings_plan/transaction', [SavingsPlanController::class, 'transaction'])->name('savings_plan.transaction');
+    Route::get('download_attachment/{attachment}', [AttachmentController::class, 'download'])->name('download_attachment');
 
     Route::post('income_expense', [IncomeExpenseController::class, 'store'])->name('income_expense.store');
 });
