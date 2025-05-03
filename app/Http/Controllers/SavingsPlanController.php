@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TransactionStatus;
 use App\Models\Card;
 use App\Models\SavingsPlan;
 use App\Models\Transaction;
@@ -125,9 +126,10 @@ class SavingsPlanController extends Controller
         }
 
         //create a transaction
+        $transactionDate = Carbon::parse("{$request->date} {$request->time}");
         Transaction::create([
             'name' => $request->name,
-            'date' => Carbon::parse("{$request->date} {$request->time}"),
+            'date' => $transactionDate,
             'amount' => $request->amount,
             'note' => $request->note,
             'user_id' => auth()->id(),
@@ -136,15 +138,18 @@ class SavingsPlanController extends Controller
             $relatedModelTypeField => $request->related_account_type,
             $savingsPlanIdField => $request->savings_plan_id,
             $savingsPlanTypeField => SavingsPlan::class,
+            'status' => $transactionDate->isFuture() ? TransactionStatus::Pending : TransactionStatus::Completed
         ]);
 
-        //change balance of savings plan
-        $savingsPlan = SavingsPlan::findOrFail($request->savings_plan_id);
-        $savingsPlan->increment('balance', $request->amount * ($request->boolean('is_withdraw') ? -1 : 1));
+        if ($transactionDate->isNowOrPast()) {
+            //change balance of savings plan
+            $savingsPlan = SavingsPlan::findOrFail($request->savings_plan_id);
+            $savingsPlan->increment('balance', $request->amount * ($request->boolean('is_withdraw') ? -1 : 1));
 
-        //change balance of wallet/card
-        $account = ($request->related_account_type)::findOrFail($request->related_account_id);
-        $account->increment('balance', $request->amount * ($request->boolean('is_withdraw') ? 1 : -1));
+            //change balance of wallet/card
+            $account = ($request->related_account_type)::findOrFail($request->related_account_id);
+            $account->increment('balance', $request->amount * ($request->boolean('is_withdraw') ? 1 : -1));
+        }
 
         return to_route('savings_plan.index');
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TransactionStatus;
 use App\Models\Card;
 use App\Models\Contact;
 use App\Models\Transaction;
@@ -51,9 +52,11 @@ class TransferController extends Controller
 
     public function store(Request $request)
     {
+        $transactionDate = Carbon::parse("{$request->date} {$request->time}");
+
         Transaction::create([
             'name' => $request->name,
-            'date' => Carbon::parse("{$request->date} {$request->time}"),
+            'date' => $transactionDate,
             'amount' => $request->amount,
             'note' => $request->note,
             'user_id' => auth()->id(),
@@ -62,11 +65,14 @@ class TransferController extends Controller
             'source_type' => $request->related_account_type,
             'destination_id' => $request->contact_id,
             'destination_type' => Contact::class,
+            'status' => $transactionDate->isFuture() ? TransactionStatus::Pending : TransactionStatus::Completed
         ]);
 
-        //change balance of wallet/card where you transfer money from
-        $account = ($request->related_account_type)::findOrFail($request->related_account_id);
-        $account->decrement('balance', $request->amount);
+        if ($transactionDate->isNowOrPast()) {
+            //change balance of wallet/card where you transfer money from
+            $account = ($request->related_account_type)::findOrFail($request->related_account_id);
+            $account->decrement('balance', $request->amount);
+        }
 
         return to_route('transfer.index');
     }

@@ -2,12 +2,20 @@
 
 namespace App\Models;
 
+use App\Enums\TransactionStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Transaction extends Model
 {
+    protected function casts(): array
+    {
+        return [
+            'status' => TransactionStatus::class
+        ];
+    }
+
     protected $guarded = [];
 
     public function category(): HasOne
