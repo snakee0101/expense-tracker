@@ -3,7 +3,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
 import { router } from '@inertiajs/react';
-import { Pagination, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from 'flowbite-react';
+import { Badge, Pagination, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from 'flowbite-react';
 import { formatMoney, getPageUrl } from '../lib/helpers';
 
 import { createTheme } from 'flowbite-react';
@@ -29,7 +29,7 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function Transactions({ transactions }) {
+export default function Transactions({ transactions, transactionStatusList }) {
     const onPageChange = (page: number) => router.visit(getPageUrl(transactions, page));
 
     return (
@@ -69,7 +69,11 @@ export default function Transactions({ transactions }) {
                             </TableCell>
                             <TableCell>${formatMoney(transaction.amount)}</TableCell>
                             <TableCell className={'break-all'}>{transaction.note ?? '-'}</TableCell>
-                            <TableCell>4</TableCell>
+                            <TableCell>
+                                <TransactionStatus status={transaction.status}
+                                                   statusList={transactionStatusList}
+                                />
+                            </TableCell>
                             <TableCell>Actions</TableCell>
                         </TableRow>
                     ))}
@@ -83,4 +87,23 @@ export default function Transactions({ transactions }) {
             )}
         </AppLayout>
     );
+}
+
+function TransactionStatus({status, statusList})
+{
+    let badgeColor = null;
+
+    switch (status) {
+        case 1: //Pending
+            badgeColor = 'warning';
+            break;
+        case 2: //Completed
+            badgeColor = 'success';
+            break;
+        case 3: //Cancelled
+            badgeColor = 'failure';
+            break;
+    }
+
+    return <Badge color={badgeColor} className='inline'>{statusList[status]}</Badge>;
 }
