@@ -13,7 +13,7 @@ class Card extends Model
 
     protected $dates = ['expiry_date'];
 
-    protected $fillable = ['user_id', 'name', 'card_number', 'expiry_date', 'balance'];
+    protected $guarded = [];
 
     public function getTypeNameAttribute()
     {

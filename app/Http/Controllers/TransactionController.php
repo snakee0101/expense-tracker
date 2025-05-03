@@ -13,8 +13,8 @@ class TransactionController extends Controller
         return Inertia::render('transactions', [
             'transactions' => Transaction::where('user_id', auth()->id())
                                                                 ->with('category', 'source', 'destination')
-                                                                ->latest()
-                                                                ->paginate(),
+                                                                ->latest('date')
+                                                                ->paginate(10),
             'transactionStatusList' => TransactionStatus::toSelectOptions()
         ]);
     }

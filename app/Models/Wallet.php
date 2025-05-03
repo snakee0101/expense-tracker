@@ -11,7 +11,7 @@ class Wallet extends Model
 
     use HasFactory;
 
-    protected $fillable = ['name', 'balance', 'user_id'];
+    protected $guarded = [];
 
     public function getTypeNameAttribute()
     {
