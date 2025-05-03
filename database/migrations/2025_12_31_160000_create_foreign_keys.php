@@ -47,10 +47,20 @@ return new class extends Migration
                 ->references('id')
                 ->on('users');
         });
+
+        Schema::table('attachments', function (Blueprint $table) {
+            $table->foreign('transaction_id', 'fk_transaction_id')
+                ->references('id')
+                ->on('transactions');
+        });
     }
 
     public function down(): void
     {
+        Schema::table('attachments', function (Blueprint $table) {
+            $table->dropForeign('fk_transaction_id');
+        });
+
         Schema::table('contacts', function (Blueprint $table) {
             $table->dropForeign('contact_owner_id');
         });

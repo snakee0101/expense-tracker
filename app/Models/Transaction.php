@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\TransactionStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -31,5 +32,10 @@ class Transaction extends Model
     public function destination(): MorphTo
     {
         return $this->morphTo('destination');
+    }
+
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(Attachment::class);
     }
 }
