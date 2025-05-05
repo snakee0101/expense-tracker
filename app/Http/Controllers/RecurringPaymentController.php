@@ -33,7 +33,8 @@ class RecurringPaymentController extends Controller
 
         return Inertia::render('recurring_payments', [
             'payments' => RecurringPayment::where('user_id', auth()->id())
-                                        ->latest()
+                                        ->latest('period_starting_date')
+                                        ->with('source')
                                         ->paginate(10),
             'transactionCategories' => TransactionCategory::where('user_id', auth()->id())
                 ->latest()

@@ -76,7 +76,7 @@ export default function RecurringPayments({ payments, transactionCategories, acc
                 <TableHead>
                     <TableHeadCell>Transaction Name</TableHeadCell>
                     <TableHeadCell>Source</TableHeadCell>
-                    <TableHeadCell>Period Start Date</TableHeadCell>
+                    <TableHeadCell>Period Starting Date</TableHeadCell>
                     <TableHeadCell>Repeat Period (Days)</TableHeadCell>
                     <TableHeadCell>Amount</TableHeadCell>
                     <TableHeadCell>Note</TableHeadCell>
@@ -88,13 +88,15 @@ export default function RecurringPayments({ payments, transactionCategories, acc
                             <TableCell className='py-1 px-3'>
                                 name + category
                             </TableCell>
-                            <TableCell></TableCell>
                             <TableCell>
-
+                                <b>{payment.source?.typeName}</b> {payment.source?.name}
                             </TableCell>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
-                            <TableCell className={'break-all'}></TableCell>
+                            <TableCell>
+                                {dayjs(payment.period_starting_date).format('YYYY-MM-DD')}
+                            </TableCell>
+                            <TableCell>{payment.repeat_period}</TableCell>
+                            <TableCell>${formatMoney(payment.amount)}</TableCell>
+                            <TableCell className={'break-all'}>{payment.note ?? '-'}</TableCell>
                             <TableCell></TableCell>
                         </TableRow>
                     ))}
