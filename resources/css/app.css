@@ -181,6 +181,10 @@
     color: white;
 }
 
+.selected-card * {
+    color: white;
+}
+
 .floating-sidebar {
     @apply max-h-screen overflow-y-scroll rounded-lg p-4 shadow-xl;
 
