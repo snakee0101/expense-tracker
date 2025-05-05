@@ -29,23 +29,23 @@ export default function NewPage() {
         note: '',
         image: null
     });
-    
+
     function formatDate(date) {
         const pad = (n) => n.toString().padStart(2, '0');
-      
+
         const year = date.getFullYear();
         const month = pad(date.getMonth() + 1); // Months are zero-based
         const day = pad(date.getDate());
         const hours = pad(date.getHours());
         const minutes = pad(date.getMinutes());
         const seconds = pad(date.getSeconds());
-      
+
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
       }
-    
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         post('/save_transaction');
     };
 
@@ -85,6 +85,7 @@ export default function NewPage() {
                     id="amount"
                     name="amount"
                     type="number"
+                    step="0.01"
                     value={data.amount}
                     onChange={e => setData('amount', e.target.value)}
                     placeholder="0.00"

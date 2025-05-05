@@ -12,6 +12,7 @@ import { SlWallet } from "react-icons/sl";
 import { RiBankCardFill } from "react-icons/ri";
 import { MdOutlineSavings } from "react-icons/md";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
+import { IoCalendarNumberOutline } from "react-icons/io5";
 
 
 const mainNavItems: NavItem[] = [
@@ -44,6 +45,11 @@ const mainNavItems: NavItem[] = [
         title: 'Transfers',
         href: route('transfer.index'),
         icon: FaMoneyBillTransfer,
+    },
+    {
+        title: 'Recurring Payments',
+        href: route('recurring_payment.index'),
+        icon: IoCalendarNumberOutline,
     },
 ];
 

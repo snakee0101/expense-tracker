@@ -14,6 +14,10 @@ return new class extends Migration
             $table->string('name');
             $table->date('period_starting_date');
             $table->unsignedInteger('repeat_period'); //in days
+            $table->morphs('source'); //card/wallet, where is money withdrawn from
+            $table->foreignId('category_id');
+            $table->decimal('amount');
+            $table->string('note')->nullable();
             $table->timestamps();
         });
     }

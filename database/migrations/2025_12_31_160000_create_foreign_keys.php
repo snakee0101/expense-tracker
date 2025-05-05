@@ -58,6 +58,10 @@ return new class extends Migration
             $table->foreign('user_id', 'fk_recurring_payment_owner_id')
                 ->references('id')
                 ->on('users');
+
+            $table->foreign('category_id', 'recurring_payment_transaction_category_id')
+                ->references('id')
+                ->on('transaction_categories');
         });
     }
 
@@ -65,6 +69,7 @@ return new class extends Migration
     {
         Schema::table('recurring_payments', function (Blueprint $table) {
             $table->dropForeign('fk_recurring_payment_owner_id');
+            $table->dropForeign('recurring_payment_transaction_category_id');
         });
 
         Schema::table('attachments', function (Blueprint $table) {

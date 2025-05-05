@@ -338,7 +338,7 @@ export function AddOrWithdrawFromSavingsPlan({ savingsPlanId, setIsNotificationS
             note: null,
             category_id: null,
             savings_plan_id: savingsPlanId,
-            related_account_id: null,
+            source_id: null,
             related_account_type: null,
         });
     };
