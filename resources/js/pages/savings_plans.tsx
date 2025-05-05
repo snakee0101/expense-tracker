@@ -115,7 +115,7 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
         <AppLayout breadcrumbs={breadcrumbs}>
             {isNotificationShown && (
                 <Toast theme={toastThemeWithAbsolutePositioning.toast}>
-                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-none bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
                         <HiCheck className="h-5 w-5" />
                     </div>
                     <div className="ml-3 text-sm font-normal">{notificationMessage}</div>
@@ -128,7 +128,7 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 px-4 mb-4">
                 {stats.map((stat, index) => (
                     <Card key={index}
-                        className="bg-green-50 flex rounded-2xl shadow-sm"
+                        className="bg-green-50 flex rounded-none shadow-sm"
                     >
                         <div className="flex w-full flex-row justify-between items-center">
                             <div className="flex flex-col">
@@ -195,7 +195,7 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
                 <div className="w-4"></div>
 
                 <main className="min-h-screen flex-1 p-6">
-                    <Card className="savings-tips w-full">
+                    <Card className="savings-tips w-full rounded-none">
                         <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                             Saving tips
                         </h5>

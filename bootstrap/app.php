@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\CompletePendingTransactions;
+use App\Actions\ProcessRecurringPayments;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
@@ -27,4 +28,5 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })->withSchedule(function (Illuminate\Console\Scheduling\Schedule $schedule) {
         $schedule->call(new CompletePendingTransactions)->everyMinute();
+        $schedule->call(new ProcessRecurringPayments)->daily();
     })->create();

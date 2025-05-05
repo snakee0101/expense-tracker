@@ -169,11 +169,11 @@
 }
 
 .card {
-    @apply mb-4 cursor-pointer space-y-6 rounded-xl shadow-lg;
+    @apply mb-4 cursor-pointer space-y-6 shadow-lg rounded-none;
 }
 
 .small-card {
-    @apply bg-white rounded-xl shadow-lg p-6 max-w-md mb-4 cursor-pointer;
+    @apply bg-white shadow-lg p-6 max-w-md mb-4 cursor-pointer rounded-none;
 }
 
 .selected-card {
@@ -186,7 +186,7 @@
 }
 
 .floating-sidebar {
-    @apply max-h-screen overflow-y-scroll rounded-lg p-4 shadow-xl;
+    @apply max-h-screen overflow-y-scroll rounded-none p-4 shadow-xl;
 
     background: var(--color-green-25);
     width: 400px;
@@ -205,4 +205,8 @@
 .rsw-ce ol {
     list-style: decimal;
     padding-left: 2em;
+}
+
+button, input {
+    @apply rounded-none;
 }

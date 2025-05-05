@@ -34,7 +34,7 @@ class RecurringPaymentController extends Controller
         return Inertia::render('recurring_payments', [
             'payments' => RecurringPayment::where('user_id', auth()->id())
                                         ->latest('period_starting_date')
-                                        ->with('source')
+                                        ->with('destination', 'category')
                                         ->paginate(10),
             'transactionCategories' => TransactionCategory::where('user_id', auth()->id())
                 ->latest()
@@ -51,10 +51,12 @@ class RecurringPaymentController extends Controller
             'note' => $request->note == '' ? null : $request->note,
             'amount' => $request->amount,
             'category_id' => $request->category_id,
-            'source_id' => $request->source_id,
-            'source_type' => $request->source_type,
+            'destination_id' => $request->destination_id,
+            'destination_type' => $request->destination_type,
             'period_starting_date' => $request->period_starting_date,
             'repeat_period' => $request->repeat_period,
         ]);
+
+        return to_route('recurring_payment.index');
     }
 }

@@ -75,7 +75,7 @@ export default function RecurringPayments({ payments, transactionCategories, acc
             <Table>
                 <TableHead>
                     <TableHeadCell>Transaction Name</TableHeadCell>
-                    <TableHeadCell>Source</TableHeadCell>
+                    <TableHeadCell>Destination</TableHeadCell>
                     <TableHeadCell>Period Starting Date</TableHeadCell>
                     <TableHeadCell>Repeat Period (Days)</TableHeadCell>
                     <TableHeadCell>Amount</TableHeadCell>
@@ -86,10 +86,18 @@ export default function RecurringPayments({ payments, transactionCategories, acc
                     {payments.data.map((payment) => (
                         <TableRow key={payment.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                             <TableCell className='py-1 px-3'>
-                                name + category
+                                <div className="flex w-full flex-row items-center">
+                                    <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-white">
+                                        <img src={payment.category.imageUrl} className='rounded-full' />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <h5 className="text-lg font-bold text-gray-700">{payment.name}</h5>
+                                        <h5 className="text-md text-gray-500">{payment.category.name}</h5>
+                                    </div>
+                                </div>
                             </TableCell>
                             <TableCell>
-                                <b>{payment.source?.typeName}</b> {payment.source?.name}
+                                <b>{payment.destination?.typeName}</b> {payment.destination?.name}
                             </TableCell>
                             <TableCell>
                                 {dayjs(payment.period_starting_date).format('YYYY-MM-DD')}
@@ -120,8 +128,8 @@ export function CreateRecurringPaymentModal({ setIsNotificationShown, setNotific
         note: null,
         amount: 0,
         category_id: null,
-        source_id: null,
-        source_type: null,
+        destination_id: null,
+        destination_type: null,
         period_starting_date: null,
         repeat_period: null
     });
@@ -195,10 +203,10 @@ export function CreateRecurringPaymentModal({ setIsNotificationShown, setNotific
                         </div>
 
                         <div className="mb-4">
-                            <Label htmlFor="recipient">Account to withdraw money from</Label>
+                            <Label htmlFor="account">Account to withdraw money from</Label>
                             <Select id="account" onChange={e => {
-                                setData('source_id', JSON.parse(e.target.value).id);
-                                setData('source_type', JSON.parse(e.target.value).type);
+                                setData('destination_id', JSON.parse(e.target.value).id);
+                                setData('destination_type', JSON.parse(e.target.value).type);
                             }}>
                                 <option></option>
                                 {accounts.map(account => (
@@ -207,7 +215,7 @@ export function CreateRecurringPaymentModal({ setIsNotificationShown, setNotific
                                     >{account.type == 'App\\Models\\Wallet' ? 'Wallet' : 'Card'} "{account.name}": ${account.balance}</option>
                                 ))}
                             </Select>
-                            {errors.source_id && <p className="text-red-600 text-sm">{errors.source_id}</p>}
+                            {errors.destination_id && <p className="text-red-600 text-sm">{errors.destination_id}</p>}
                         </div>
 
                         <div className="mb-4">
