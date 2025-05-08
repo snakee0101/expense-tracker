@@ -3,6 +3,7 @@ import { useForm } from '@inertiajs/react';
 import { Button, Datepicker, Label, Modal, ModalBody, ModalHeader, Select, Textarea, TextInput } from 'flowbite-react';
 import { FaPlus } from 'react-icons/fa6';
 import { formatDate } from '@/lib/helpers';
+import dayjs from 'dayjs';
 
 export default function CreateRecurringPaymentModal({ setIsNotificationShown, setNotificationMessage, transactionCategories, accounts }) {
     const [openModal, setOpenModal] = useState(false);
@@ -14,7 +15,7 @@ export default function CreateRecurringPaymentModal({ setIsNotificationShown, se
         category_id: null,
         destination_id: null,
         destination_type: null,
-        period_starting_date: null,
+        period_starting_date: dayjs().format('YYYY-MM-DD HH:mm:ss'),
         repeat_period: null
     });
 
