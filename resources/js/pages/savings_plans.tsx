@@ -44,9 +44,11 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function SavingsPlans({ savings_plans, transactionCategories, relatedAccounts }) {
+export default function SavingsPlans({ savings_plans, transactionCategories, relatedAccounts, total_savings_gain }) {
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
+
+    console.log(savings_plans);
 
     const [selectedSavingsPlanId, setSelectedSavingsPlanId] = useState(savings_plans[0].id);
 
@@ -81,21 +83,21 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
         {
             title: 'Total Savings',
             value: `$ ${formatMoney(totalSavings)}`,
-            change: '??? %',
-            increase: true,
+            change: total_savings_gain + ' %',
+            increase: total_savings_gain > 0,
             icon: <RiCoinsFill size={36} />
         },
         {
             title: 'Total Target',
             value: `$ ${formatMoney(totalTarget)}`,
-            change: '??? %',
+            change: null,
             increase: false,
             icon: <TfiTarget size={36} />
         },
         {
             title: 'Total Plans',
             value: savings_plans.length,
-            change: '??? %',
+            change: null,
             increase: true,
             icon: <GrPlan size={36} />
         },
@@ -126,15 +128,15 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
                                 <h5 className="text-md font-medium text-gray-700">{stat.title}</h5>
                                 <p className="text-2xl font-bold text-gray-900 mt-1">
                                     {stat.value}
-                                    <span
+                                    {stat.change != null && <span
                                         className={`inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full ml-2 mt-2 ${stat.increase ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
                                         {stat.increase ? (
-                                            <GoArrowUpRight className="w-4 h-4 mr-1" />
+                                             <GoArrowUpRight className="w-4 h-4 mr-1" />
                                         ) : (
-                                            <GoArrowDownRight className="w-4 h-4 mr-1" />
+                                             <GoArrowDownRight className="w-4 h-4 mr-1" />
                                         )}
                                         {stat.change}
-                                    </span>
+                                    </span>}
                                 </p>
                             </div>
                             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white">
