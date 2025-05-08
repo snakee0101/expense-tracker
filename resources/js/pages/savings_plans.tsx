@@ -128,6 +128,7 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
                                 <h5 className="text-md font-medium text-gray-700">{stat.title}</h5>
                                 <p className="text-2xl font-bold text-gray-900 mt-1">
                                     {stat.value}
+
                                     {stat.change != null && <span
                                         className={`inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full ml-2 mt-2 ${stat.increase ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
                                         {stat.increase ? (
@@ -137,6 +138,8 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
                                         )}
                                         {stat.change}
                                     </span>}
+
+                                    {stat.change != null && <span className='text-sm ml-2 font-thin'>Compared to previous month</span>}
                                 </p>
                             </div>
                             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white">

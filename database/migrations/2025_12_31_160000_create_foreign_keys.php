@@ -63,10 +63,20 @@ return new class extends Migration
                 ->references('id')
                 ->on('transaction_categories');
         });
+
+        Schema::table('spending_limits', function (Blueprint $table) {
+            $table->foreign('user_id', 'spending_limit_owner_id')
+                ->references('id')
+                ->on('users');
+        });
     }
 
     public function down(): void
     {
+        Schema::table('spending_limits', function (Blueprint $table) {
+            $table->dropForeign( 'spending_limit_owner_id');
+        });
+
         Schema::table('recurring_payments', function (Blueprint $table) {
             $table->dropForeign('fk_recurring_payment_owner_id');
             $table->dropForeign('recurring_payment_transaction_category_id');
