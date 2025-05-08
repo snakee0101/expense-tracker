@@ -3,6 +3,7 @@
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IncomeExpenseController;
 use App\Http\Controllers\RecurringPaymentController;
 use App\Http\Controllers\SavingsPlanController;
@@ -30,6 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('download_attachment/{attachment}', [AttachmentController::class, 'download'])->name('download_attachment');
 
     Route::post('income_expense', [IncomeExpenseController::class, 'store'])->name('income_expense.store');
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
 });
 
 require __DIR__.'/settings.php';

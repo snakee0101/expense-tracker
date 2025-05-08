@@ -13,9 +13,15 @@ import { RiBankCardFill } from "react-icons/ri";
 import { MdOutlineSavings } from "react-icons/md";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
 import { IoCalendarNumberOutline } from "react-icons/io5";
+import { MdOutlineDashboard } from "react-icons/md";
 
 
 const mainNavItems: NavItem[] = [
+    {
+        title: 'Dashboard',
+        href: route('dashboard'),
+        icon: MdOutlineDashboard,
+    },
     {
         title: 'Transactions',
         href: route('transaction.index'),
