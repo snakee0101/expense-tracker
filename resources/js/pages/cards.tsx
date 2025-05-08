@@ -2,17 +2,15 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
-import { formatMoney, formatCardDate, formatCardNumber, getDateFromExpiryDate } from '../lib/helpers';
+import { formatMoney, formatCardDate, formatCardNumber } from '../lib/helpers';
 
-import { FaPlus } from 'react-icons/fa6';
-
-import { useForm } from '@inertiajs/react';
-import { Button, Label, Modal, ModalBody, ModalHeader, TextInput, Toast, ToastToggle, createTheme } from 'flowbite-react';
+import { Toast, ToastToggle, createTheme } from 'flowbite-react';
 import { useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
 
 import '../../css/app.css';
 import { CreateIncomeExpense } from '@/components/main/create-income-expense';
+import CreateCardModal from '@/components/cards/create-card-modal';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -48,7 +46,8 @@ export default function Cards({ cards, transactionCategories }) {
         <AppLayout breadcrumbs={breadcrumbs}>
             {isNotificationShown && (
                 <Toast theme={toastThemeWithAbsolutePositioning.toast}>
-                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+                    <div
+                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
                         <HiCheck className="h-5 w-5" />
                     </div>
                     <div className="ml-3 text-sm font-normal">{notificationMessage}</div>
@@ -64,7 +63,8 @@ export default function Cards({ cards, transactionCategories }) {
                 <aside className="floating-sidebar">
                     <div className="mb-4 flex items-center justify-between">
                         <h2 className="text-xl font-bold">My Cards</h2>
-                        <CreateCardModal setIsNotificationShown={setIsNotificationShown} setNotificationMessage={setNotificationMessage} />
+                        <CreateCardModal setIsNotificationShown={setIsNotificationShown}
+                                         setNotificationMessage={setNotificationMessage} />
                     </div>
 
                     {cards.map((card) => (
@@ -88,10 +88,10 @@ export default function Cards({ cards, transactionCategories }) {
                                     <span>{formatCardNumber(card.card_number)}</span>
                                 </div>
 
-                               <div>
-                                   <span className="block text-sm text-gray-600">Expiry Date</span>
-                                   <span>{formatCardDate(card.expiry_date)}</span>
-                               </div>
+                                <div>
+                                    <span className="block text-sm text-gray-600">Expiry Date</span>
+                                    <span>{formatCardDate(card.expiry_date)}</span>
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -101,7 +101,10 @@ export default function Cards({ cards, transactionCategories }) {
 
                 <main className="min-h-screen flex-1 p-6">
                     <CreateIncomeExpense key={selectedCardId}
-                                         transactionable={{ destination_type: 'App\\Models\\Card', destination_id: selectedCardId }}
+                                         transactionable={{
+                                             destination_type: 'App\\Models\\Card',
+                                             destination_id: selectedCardId
+                                         }}
                                          setIsNotificationShown={setIsNotificationShown}
                                          setNotificationMessage={setNotificationMessage}
                                          transactionCategories={transactionCategories}
@@ -109,94 +112,5 @@ export default function Cards({ cards, transactionCategories }) {
                 </main>
             </div>
         </AppLayout>
-    );
-}
-
-export function CreateCardModal({ setIsNotificationShown, setNotificationMessage }) {
-    const [openModal, setOpenModal] = useState(false);
-
-    const { data, setData, post, processing, errors, clearErrors } = useForm({
-        name: '',
-        card_number: '',
-        expiry_date: '',
-    });
-
-    const onCloseModal = () => {
-        setOpenModal(false);
-        clearErrors();
-        setData({
-            name: '',
-            card_number: '',
-            expiry_date: '',
-        });
-    };
-
-    const handleCreate = (event) => {
-        event.preventDefault();
-
-        post(route('card.store'), {
-            onSuccess: () => {
-                onCloseModal();
-                setNotificationMessage('Card created');
-                setIsNotificationShown(true);
-                setTimeout(() => setIsNotificationShown(false), 2000);
-            },
-        });
-    };
-
-    return (
-        <>
-            <Button size="xs" color="dark" className="cursor-pointer" onClick={() => setOpenModal(true)}>
-                <FaPlus className="mr-2" size={15} /> Add
-            </Button>
-
-            <Modal show={openModal} size="md" onClose={onCloseModal} popup>
-                <ModalHeader>Create New Card</ModalHeader>
-                <ModalBody>
-                    <form className="space-y-6" onSubmit={handleCreate}>
-                        <div>
-                            <Label htmlFor="card-name">Card Name</Label>
-                            <TextInput
-                                id="card-name"
-                                type="text"
-                                placeholder="e.g. Travel Card"
-                                onChange={(e) => setData('name', e.target.value)}
-                            />
-                            {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
-                        </div>
-
-                        <div>
-                            <Label htmlFor="card-number">Card Number</Label>
-                            <TextInput
-                                id="card-number"
-                                type="text"
-                                inputMode="numeric"
-                                placeholder="0000 1111 2222 3333"
-                                onChange={(e) =>
-                                    setData('card_number', e.target.value.replace(/\D/g, '').slice(0, 16))
-                                }
-                            />
-                            {errors.card_number && <p className="text-red-600 text-sm">{errors.card_number}</p>}
-                        </div>
-
-                        <div>
-                            <Label htmlFor="expiry-date">Expiry Date</Label>
-                            <TextInput
-                                id="expiry-date"
-                                type="text"
-                                placeholder="09/29"
-                                onChange={e => setData('expiry_date', getDateFromExpiryDate(e.target.value))}
-                            />
-
-                            {errors.expiry_date && <p className="text-red-600 text-sm">{errors.expiry_date}</p>}
-                        </div>
-
-                        <div className="flex justify-end">
-                            <Button type="submit">Create</Button>
-                        </div>
-                    </form>
-                </ModalBody>
-            </Modal>
-        </>
     );
 }

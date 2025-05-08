@@ -1,34 +1,23 @@
 import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
-import {
-    Button,
-    Datepicker,
-    Label,
-    Modal,
-    ModalBody,
-    ModalHeader,
-    Radio,
-    TextInput,
-    Select,
-    FileInput
-} from 'flowbite-react';
-import { FaPlus } from 'react-icons/fa6';
 import dayjs from 'dayjs';
+import { Button, Datepicker, Label, Modal, ModalBody, ModalHeader, Radio, Select, TextInput } from 'flowbite-react';
+import { FaPlus } from 'react-icons/fa6';
 
-export function CreateIncomeExpense({ transactionable, setIsNotificationShown, setNotificationMessage, transactionCategories }) {
+export default function AddOrWithdrawFromSavingsPlan({ savingsPlanId, setIsNotificationShown, setNotificationMessage, transactionCategories, relatedAccounts }) {
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, post, processing, errors, clearErrors } = useForm({
         name: '',
         date: dayjs().format('YYYY-MM-DD'),
         time: dayjs().format('HH:mm:ss'),
-        is_income: true,
+        is_withdraw: true,
         amount: 0,
         note: null,
         category_id: null,
-        destination_type: transactionable.destination_type,
-        destination_id: transactionable.destination_id,
-        receipts: []
+        savings_plan_id: savingsPlanId,
+        related_account_id: null,
+        related_account_type: null,
     });
 
     const onCloseModal = () => {
@@ -38,38 +27,37 @@ export function CreateIncomeExpense({ transactionable, setIsNotificationShown, s
             name: '',
             date: dayjs().format('YYYY-MM-DD'),
             time: dayjs().format('HH:mm:ss'),
-            is_income: true,
+            is_withdraw: true,
             amount: 0,
             note: null,
             category_id: null,
-            destination_type: transactionable.destination_type,
-            destination_id: transactionable.destination_id,
-            receipts: []
+            savings_plan_id: savingsPlanId,
+            source_id: null,
+            related_account_type: null,
         });
     };
 
     const handleCreate = (event) => {
         event.preventDefault();
 
-        post(route('income_expense.store'), {
+        post(route('savings_plan.transaction'), {
             onSuccess: () => {
                 onCloseModal();
                 setNotificationMessage('Transaction created');
                 setIsNotificationShown(true);
                 setTimeout(() => setIsNotificationShown(false), 3000);
             },
-            forceFormData: true,
         });
     };
 
     return (
         <>
             <Button size="xs" color="dark" className="cursor-pointer" onClick={() => setOpenModal(true)}>
-                <FaPlus className="mr-2" size={15} /> Create Income/Expense
+                <FaPlus className="mr-2" size={15} /> Add To/Withdraw From Savings plan
             </Button>
 
             <Modal show={openModal} size="md" onClose={onCloseModal} popup>
-                <ModalHeader>Create Income/Expense</ModalHeader>
+                <ModalHeader>Add To/Withdraw From Savings plan</ModalHeader>
                 <ModalBody>
                     <form className="space-y-6" onSubmit={handleCreate}>
                         <div>
@@ -109,21 +97,15 @@ export function CreateIncomeExpense({ transactionable, setIsNotificationShown, s
                             />
                         </div>
 
-                        <div className="mb-4">
-                            <Label htmlFor="files">Upload receipts</Label>
-                            <FileInput id="files" multiple
-                                       onChange={e => setData('receipts', e.target.files)} />
-                        </div>
-
                         <div className="mb-4 flex max-w-md flex-col gap-4">
                             <Label>Transaction type</Label>
                             <div className="flex items-center gap-2">
-                                <Radio id="income" name="is_income" value={1} defaultChecked onChange={e => e.target.checked && setData('is_income', e.target.value)} />
-                                <Label htmlFor="income">Income</Label>
+                                <Radio id="withdraw" name="is_withdraw" value={1} defaultChecked onChange={e => e.target.checked && setData('is_withdraw', e.target.value)} />
+                                <Label htmlFor="withdraw">Withdraw from savings plan</Label>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Radio id="expense" name="is_income" value={0} onChange={e => e.target.checked && setData('is_income', e.target.value)} />
-                                <Label htmlFor="expense">Expense</Label>
+                                <Radio id="add" name="is_withdraw" value={0} onChange={e => e.target.checked && setData('is_withdraw', e.target.value)} />
+                                <Label htmlFor="add">Add to savings plan</Label>
                             </div>
                         </div>
 
@@ -137,6 +119,19 @@ export function CreateIncomeExpense({ transactionable, setIsNotificationShown, s
                                 onChange={e => setData('note', e.target.value)}
                                 placeholder="Additional details..."
                             />
+                        </div>
+
+                        <div className="mb-4">
+                            <Label htmlFor="account">Account to withdraw from/to transfer to</Label>
+                            <Select id="account" required onChange={e => {
+                                setData('related_account_id', JSON.parse(e.target.value).id);
+                                setData('related_account_type', JSON.parse(e.target.value).type);
+                            }}>
+                                <option selected></option>
+                                {relatedAccounts.map(account => (
+                                    <option value={JSON.stringify({id: account.id, type: account.type})}>{account.type == 'App\\Models\\Wallet' ? 'Wallet' : 'Card'} "{account.name}": ${account.balance}</option>
+                                ))}
+                            </Select>
                         </div>
 
                         <div className="mb-4">

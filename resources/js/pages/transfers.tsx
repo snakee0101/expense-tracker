@@ -21,6 +21,7 @@ import '../../css/app.css';
 import { CreateSavingsPlanModal } from '@/pages/savings_plans';
 import { FaPlus } from 'react-icons/fa6';
 import dayjs from 'dayjs';
+import CreateContactModal from '@/components/transfers/create-contact-modal';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -61,8 +62,7 @@ export default function Transfers({ contacts, transactionCategories, accounts })
         receipts: []
     });
 
-    function selectContact(contactId)
-    {
+    function selectContact(contactId) {
         setSelectedContactId(contactId);
 
         setData('contact_id', contactId);
@@ -85,7 +85,8 @@ export default function Transfers({ contacts, transactionCategories, accounts })
         <AppLayout breadcrumbs={breadcrumbs}>
             {isNotificationShown && (
                 <Toast theme={toastThemeWithAbsolutePositioning.toast}>
-                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+                    <div
+                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
                         <HiCheck className="h-5 w-5" />
                     </div>
                     <div className="ml-3 text-sm font-normal">{notificationMessage}</div>
@@ -101,7 +102,8 @@ export default function Transfers({ contacts, transactionCategories, accounts })
                 <aside className="floating-sidebar">
                     <div className="mb-4 flex items-center justify-between">
                         <h2 className="text-xl font-bold">My Contacts</h2>
-                        <CreateContactModal setIsNotificationShown={setIsNotificationShown} setNotificationMessage={setNotificationMessage} />
+                        <CreateContactModal setIsNotificationShown={setIsNotificationShown}
+                                            setNotificationMessage={setNotificationMessage} />
                     </div>
 
                     {contacts.map((contact, index) => (
@@ -111,7 +113,7 @@ export default function Transfers({ contacts, transactionCategories, accounts })
                         >
                             <div className="flex w-full flex-row items-center">
                                 <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white mr-3">
-                                    <img src={contact.avatar_path} className='rounded-full'/>
+                                    <img src={contact.avatar_path} className='rounded-full' />
                                 </div>
                                 <div className="flex flex-col">
                                     <h5 className="text-lg text-gray-700 font-bold">{contact.name}</h5>
@@ -125,7 +127,8 @@ export default function Transfers({ contacts, transactionCategories, accounts })
                 <div className="w-4"></div>
 
                 <main className="min-h-screen flex-1 p-6">
-                    <form className="max-w-xl mx-auto p-6 bg-green-50 rounded-xl shadow-md" onSubmit={handleCreateTransfer}>
+                    <form className="max-w-xl mx-auto p-6 bg-green-50 rounded-xl shadow-md"
+                          onSubmit={handleCreateTransfer}>
                         <h3 className='font-bold text-xl mb-4'>Create Transfer</h3>
 
                         {/* Transaction name */}
@@ -151,8 +154,9 @@ export default function Transfers({ contacts, transactionCategories, accounts })
                                 <option></option>
                                 {accounts.map(account => (
                                     <option key={account.id + account.type}
-                                            value={JSON.stringify({id: account.id, type: account.type})}
-                                    >{account.type == 'App\\Models\\Wallet' ? 'Wallet' : 'Card'} "{account.name}": ${account.balance}</option>
+                                            value={JSON.stringify({ id: account.id, type: account.type })}
+                                    >{account.type == 'App\\Models\\Wallet' ? 'Wallet' : 'Card'} "{account.name}":
+                                        ${account.balance}</option>
                                 ))}
                             </Select>
                             {errors.source_id && <p className="text-red-600 text-sm">{errors.source_id}</p>}
@@ -189,7 +193,8 @@ export default function Transfers({ contacts, transactionCategories, accounts })
                         <div className="mb-4">
                             <Label htmlFor="transaction-time">Transaction Time</Label>
                             <br />
-                            <input type="time" id="transaction-time" value={data.time} onChange={e => setData('time', e.target.value)} />
+                            <input type="time" id="transaction-time" value={data.time}
+                                   onChange={e => setData('time', e.target.value)} />
                             {errors.time && <p className="text-red-600 text-sm">{errors.time}</p>}
                         </div>
 
@@ -224,89 +229,5 @@ export default function Transfers({ contacts, transactionCategories, accounts })
                 </main>
             </div>
         </AppLayout>
-    );
-}
-
-function CreateContactModal({ setIsNotificationShown, setNotificationMessage }) {
-    const [openModal, setOpenModal] = useState(false);
-
-    const { data, setData, post, errors, clearErrors, reset } = useForm({
-        name: '',
-        card_number: '',
-        avatar: null,
-    });
-
-    const onCloseModal = () => {
-        setOpenModal(false);
-        clearErrors();
-        reset();
-    };
-
-    const handleCreate = (event) => {
-        event.preventDefault();
-
-        post(route('contact.store'), {
-            forceFormData: true,
-            onSuccess: () => {
-                onCloseModal();
-                setNotificationMessage('Contact created');
-                setIsNotificationShown(true);
-                setTimeout(() => setIsNotificationShown(false), 2000);
-            },
-        });
-    };
-
-    return (
-        <>
-            <Button size="xs" color="dark" className="cursor-pointer" onClick={() => setOpenModal(true)}>
-                <FaPlus className="mr-2" size={15} /> Add
-            </Button>
-
-            <Modal show={openModal} size="md" onClose={onCloseModal} popup>
-                <ModalHeader>Create Contact</ModalHeader>
-                <ModalBody>
-                    <form className="space-y-6" onSubmit={handleCreate} encType="multipart/form-data">
-                        <div>
-                            <Label htmlFor="name">Name</Label>
-                            <TextInput
-                                id="name"
-                                type="text"
-                                placeholder="Full Name"
-                                value={data.name}
-                                onChange={(e) => setData('name', e.target.value)}
-                            />
-                            {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
-                        </div>
-
-                        <div>
-                            <Label htmlFor="card-number">Card Number</Label>
-                            <TextInput
-                                id="card-number"
-                                type="text"
-                                inputMode="numeric"
-                                placeholder="1234 5678 9012 3456"
-                                value={data.card_number}
-                                onChange={(e) => setData('card_number', e.target.value)}
-                            />
-                            {errors.card_number && <p className="text-red-600 text-sm">{errors.card_number}</p>}
-                        </div>
-
-                        <div>
-                            <Label htmlFor="avatar">Avatar</Label>
-                            <FileInput
-                                id="avatar"
-                                accept="image/*"
-                                onChange={(e) => setData('avatar', e.target.files[0])}
-                            />
-                            {errors.avatar && <p className="text-red-600 text-sm">{errors.avatar}</p>}
-                        </div>
-
-                        <div className="flex justify-end">
-                            <Button type="submit">Create</Button>
-                        </div>
-                    </form>
-                </ModalBody>
-            </Modal>
-        </>
     );
 }

@@ -2,20 +2,16 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
-import { router } from '@inertiajs/react';
-import { Pagination, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from 'flowbite-react';
 import {formatMoney} from '../lib/helpers';
-
-import { FaPlus } from "react-icons/fa6";
 
 import { Toast, ToastToggle } from "flowbite-react";
 import { HiCheck } from "react-icons/hi";
-import { Button, Label, Modal, ModalBody, ModalHeader, TextInput, createTheme } from "flowbite-react";
+import { createTheme } from "flowbite-react";
 import { useState } from "react";
-import { useForm } from '@inertiajs/react';
 
 import '../../css/app.css';
 import { CreateIncomeExpense } from '@/components/main/create-income-expense';
+import CreateWalletModal from '@/components/wallets/create-wallet-modal';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -50,7 +46,8 @@ export default function Wallets({ wallets, transactionCategories }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             {isNotificationShown && <Toast theme={toastThemeWithAbsolutePositioning.toast}>
-                <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+                <div
+                    className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
                     <HiCheck className="h-5 w-5" />
                 </div>
                 <div className="ml-3 text-sm font-normal">{notificationMessage}</div>
@@ -65,13 +62,15 @@ export default function Wallets({ wallets, transactionCategories }) {
                 <aside className="floating-sidebar">
                     <div className='flex justify-between mb-4 items-center'>
                         <h2 className="text-xl font-bold">My Wallets</h2>
-                        <CreateWalletModal setIsNotificationShown={setIsNotificationShown} setNotificationMessage={setNotificationMessage}/>
+                        <CreateWalletModal setIsNotificationShown={setIsNotificationShown}
+                                           setNotificationMessage={setNotificationMessage} />
                     </div>
 
                     {wallets.map(wallet => (
-                        <div className={`card p-6 pb-30 ${selectedWalletId == wallet.id ? 'selected-card' : 'bg-white'}`}
-                             key={wallet.id}
-                             onClick={() => selectWallet(wallet.id)}
+                        <div
+                            className={`card p-6 pb-30 ${selectedWalletId == wallet.id ? 'selected-card' : 'bg-white'}`}
+                            key={wallet.id}
+                            onClick={() => selectWallet(wallet.id)}
                         >
                             <div className="flex justify-between items-start">
                                 <h2 className="font-medium">{wallet.name}</h2>
@@ -89,7 +88,10 @@ export default function Wallets({ wallets, transactionCategories }) {
 
                 <main className="flex-1 p-6 min-h-screen">
                     <CreateIncomeExpense key={selectedWalletId}
-                                         transactionable={{ destination_type: 'App\\Models\\Wallet', destination_id: selectedWalletId }}
+                                         transactionable={{
+                                             destination_type: 'App\\Models\\Wallet',
+                                             destination_id: selectedWalletId
+                                         }}
                                          setIsNotificationShown={setIsNotificationShown}
                                          setNotificationMessage={setNotificationMessage}
                                          transactionCategories={transactionCategories}
@@ -98,66 +100,4 @@ export default function Wallets({ wallets, transactionCategories }) {
             </div>
         </AppLayout>
     );
-}
-
-export function CreateWalletModal({ setIsNotificationShown, setNotificationMessage }) {
-        const [openModal, setOpenModal] = useState(false);
-
-        const { data, setData, post, processing, errors, clearErrors } = useForm({
-            name: '',
-        });
-
-        const onCloseModal = () => {
-            setOpenModal(false);
-            clearErrors();
-            setData('name', '');
-        };
-
-        const handleCreate = (event) => {
-            event.preventDefault();
-
-            post(route('wallet.store'), {
-                onSuccess: () => {
-                    onCloseModal()
-
-                    setNotificationMessage('Wallet created')
-                    setIsNotificationShown(true)
-
-                    setTimeout(() => setIsNotificationShown(false), 2000)
-                }
-            });
-        };
-
-        return (
-            <>
-                <Button size='xs' color='dark' className='cursor-pointer' onClick={() => setOpenModal(true)}>
-                    <FaPlus className='mr-2' size={15}/> Add
-                </Button>
-
-                <Modal show={openModal} size="md" onClose={onCloseModal} popup>
-                    <ModalHeader>
-                        Create New Wallet
-                    </ModalHeader>
-                    <ModalBody>
-                        <form className="space-y-6" onSubmit={handleCreate}>
-                            <div>
-                                <Label htmlFor="wallet-name" className="mb-2 block">Wallet Name</Label>
-                                <TextInput
-                                    id="wallet-name"
-                                    placeholder="Enter wallet name"
-                                    value={data.name}
-                                    onChange={(e) => setData('name', e.target.value)}
-                                    required
-                                />
-                                {errors && <p className='text-red-600'>{errors.name}</p>}
-                            </div>
-
-                            <div className="w-full flex justify-end">
-                                <Button type="submit">Create</Button>
-                            </div>
-                        </form>
-                    </ModalBody>
-                </Modal>
-            </>
-        );
 }
