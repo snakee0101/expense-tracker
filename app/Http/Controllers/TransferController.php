@@ -61,8 +61,8 @@ class TransferController extends Controller
             'note' => $request->note,
             'user_id' => auth()->id(),
             'category_id' => $request->category_id,
-            'source_id' => $request->related_account_id,
-            'source_type' => $request->related_account_type,
+            'source_id' => $request->source_id,
+            'source_type' => $request->source_type,
             'destination_id' => $request->contact_id,
             'destination_type' => Contact::class,
             'status' => $transactionDate->isFuture() ? TransactionStatus::Pending : TransactionStatus::Completed
@@ -70,7 +70,7 @@ class TransferController extends Controller
 
         if ($transactionDate->isNowOrPast()) {
             //change balance of wallet/card where you transfer money from
-            $account = ($request->related_account_type)::findOrFail($request->related_account_id);
+            $account = ($request->source_type)::findOrFail($request->source_id);
             $account->decrement('balance', $request->amount);
         }
 

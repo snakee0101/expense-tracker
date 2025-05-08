@@ -52,7 +52,7 @@ export default function Transfers({ contacts, transactionCategories, accounts })
     const { data, setData, post, errors, reset } = useForm({
         name: '',
         source_id: null,
-        related_account_type: null,
+        source_type: null,
         amount: null,
         date: dayjs().format('YYYY-MM-DD'),
         time: dayjs().format('HH:mm:ss'),
@@ -149,7 +149,7 @@ export default function Transfers({ contacts, transactionCategories, accounts })
                             <Label htmlFor="recipient">Select Account</Label>
                             <Select id="account" onChange={e => {
                                 setData('source_id', JSON.parse(e.target.value).id);
-                                setData('related_account_type', JSON.parse(e.target.value).type);
+                                setData('source_type', JSON.parse(e.target.value).type);
                             }}>
                                 <option></option>
                                 {accounts.map(account => (
