@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\TransactionStatus;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,14 +13,20 @@ class SpendingLimit extends Model
 
     protected $guarded = [];
 
-    public function amountSpent()
+    /** 
+     * Calculates spending limit relative to specific date,
+     * Also, you could filter transactions with specific statuses (useful when processing pending transactions)
+    */
+    public function amountSpent(CarbonImmutable|null $currentDate = null, array $statuses = [TransactionStatus::Completed]): null|float
     {
-        if (now()->dayOfMonth <= $this->day_of_month_period_start) { //suppose period starts at 15th day, but now is 7th
-            $startingDate = now()->subMonth()->setDay($this->day_of_month_period_start)->setTime(0,0,0); //then the date range starts at 15th day of previous month and ends now
-            $endingDate = now();
+        $currentDate ??= new CarbonImmutable(now());
+
+        if ($currentDate->dayOfMonth <= $this->day_of_month_period_start) { //suppose period starts at 15th day, but now is 7th
+            $startingDate = $currentDate->subMonth()->setDay($this->day_of_month_period_start)->setTime(0,0,0); //then the date range starts at 15th day of previous month and ends now
+            $endingDate = $currentDate;
         } else {
-            $startingDate = now()->setDay($this->day_of_month_period_start)->setTime(0,0,0); //otherwise the period starts at $spendingLimit->day_of_month_period_start at current month and ends now
-            $endingDate = now();
+            $startingDate = $currentDate->setDay($this->day_of_month_period_start)->setTime(0,0,0); //otherwise the period starts at $spendingLimit->day_of_month_period_start at current month and ends now
+            $endingDate = $currentDate;
         }
 
         /**
@@ -37,7 +44,7 @@ class SpendingLimit extends Model
                 Contact::class
             ])
             ->where('user_id', auth()->id())
-            ->where('status', TransactionStatus::Completed)
+            ->whereIn('status', $statuses)
             ->whereBetween('date', [$startingDate, $endingDate])
             ->value('amount_spent');
     }

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SpendingLimit;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
+use App\Models\SpendingLimit;
 
 class DashboardController extends Controller
 {
