@@ -8,7 +8,7 @@ use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    public function __invoke(Request $request)
+    public function index(Request $request)
     {
         $spendingLimit = SpendingLimit::firstWhere('user_id', auth()->id());
 

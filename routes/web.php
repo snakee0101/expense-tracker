@@ -1,18 +1,19 @@
 <?php
 
-use App\Http\Controllers\AttachmentController;
-use App\Http\Controllers\CardController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\IncomeExpenseController;
-use App\Http\Controllers\RecurringPaymentController;
-use App\Http\Controllers\SavingsPlanController;
-use App\Http\Controllers\TransactionCategoryController;
-use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\TransferController;
-use App\Http\Controllers\WalletController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CardController;
+use App\Http\Controllers\WalletController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\TransferController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AttachmentController;
+use App\Http\Controllers\SavingsPlanController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\IncomeExpenseController;
+use App\Http\Controllers\SpendingLimitController;
+use App\Http\Controllers\RecurringPaymentController;
+use App\Http\Controllers\TransactionCategoryController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -31,7 +32,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('download_attachment/{attachment}', [AttachmentController::class, 'download'])->name('download_attachment');
 
     Route::post('income_expense', [IncomeExpenseController::class, 'store'])->name('income_expense.store');
-    Route::get('dashboard', DashboardController::class)->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('spending_limit', [SpendingLimitController::class, 'store'])->name('spending_limit.store');
+    Route::delete('spending_limit', [SpendingLimitController::class, 'destroy'])->name('spending_limit.destroy');
 });
 
 require __DIR__.'/settings.php';

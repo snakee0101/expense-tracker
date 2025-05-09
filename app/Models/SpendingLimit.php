@@ -12,7 +12,7 @@ class SpendingLimit extends Model
 
     protected $guarded = [];
 
-    public function amountSpent(): float
+    public function amountSpent()
     {
         if (now()->dayOfMonth <= $this->day_of_month_period_start) { //suppose period starts at 15th day, but now is 7th
             $startingDate = now()->subMonth()->setDay($this->day_of_month_period_start)->setTime(0,0,0); //then the date range starts at 15th day of previous month and ends now
