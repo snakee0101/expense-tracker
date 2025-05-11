@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InboxController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CardController;
@@ -35,6 +36,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('spending_limit', [SpendingLimitController::class, 'store'])->name('spending_limit.store');
     Route::delete('spending_limit', [SpendingLimitController::class, 'destroy'])->name('spending_limit.destroy');
+
+    Route::get('inbox', [InboxController::class, 'index'])->name('inbox.index');
 });
 
 require __DIR__.'/settings.php';
