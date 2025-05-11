@@ -84,7 +84,10 @@ export default function Inbox({ notifications }) {
                             key={notification.id}>
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <h3 className="text-lg font-semibold">{notification.data.header}</h3>
+                                    <div className='flex justify-between'>
+                                        <h3 className="text-lg font-semibold">{notification.data.header} dfgdfgdfg</h3>
+                                        <p>{dayjs(notification.created_at).format('MMM D HH:mm')}</p>
+                                    </div>
                                     <div className="text-sm mt-1">
                                         {notification.data.description}
                                     </div>

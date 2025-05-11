@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Notifications\InboxMessage;
 use Illuminate\Database\Seeder;
+use Illuminate\Notifications\DatabaseNotification;
 
 class NotificationSeeder extends Seeder
 {
@@ -35,5 +36,9 @@ class NotificationSeeder extends Seeder
                 <li><b>Financial Health Score</b>: <span style='color: red'>Use our new tool to get</span> a snapshot of your financial health based on your income, expenses, and savings.</li>
             </ul>"));
         });
+
+        foreach (DatabaseNotification::all() as $increment => $databaseNotification) {
+            $databaseNotification->update(['created_at' => $databaseNotification->created_at->subWeeks($increment)]);
+        }
     }
 }
