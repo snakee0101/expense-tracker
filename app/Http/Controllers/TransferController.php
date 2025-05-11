@@ -8,7 +8,9 @@ use App\Models\Contact;
 use App\Models\Transaction;
 use App\Models\TransactionCategory;
 use App\Models\Wallet;
+use App\Rules\WithinSpendingLimit;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -53,6 +55,10 @@ class TransferController extends Controller
     public function store(Request $request)
     {
         $transactionDate = Carbon::parse("{$request->date} {$request->time}");
+
+        $request->validate([
+            'amount' => new WithinSpendingLimit(isSpending: true, transactionDate: new CarbonImmutable($transactionDate))
+        ]);
 
         $transaction = Transaction::create([
             'name' => $request->name,

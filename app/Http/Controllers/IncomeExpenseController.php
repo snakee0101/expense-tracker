@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TransactionStatus;
-use App\Models\Attachment;
 use App\Models\Transaction;
+use App\Rules\WithinSpendingLimit;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 
 class IncomeExpenseController extends Controller
@@ -14,6 +15,10 @@ class IncomeExpenseController extends Controller
     {
         $income = $request->boolean('is_income') ? $request->amount : -$request->amount;
         $transaction_date = Carbon::parse("{$request->date} {$request->time}");
+
+        $request->validate([
+            'amount' => new WithinSpendingLimit(isSpending: $request->boolean('is_income') == false, transactionDate: new CarbonImmutable($transaction_date))
+        ]);
 
         $transaction = Transaction::create([
             'name' => $request->name,

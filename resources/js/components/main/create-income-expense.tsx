@@ -107,6 +107,7 @@ export function CreateIncomeExpense({ transactionable, setIsNotificationShown, s
                                 onChange={e => setData('amount', e.target.value)}
                                 placeholder="0.00"
                             />
+                            {errors.amount && <p className="text-red-600 text-sm">{errors.amount}</p>}
                         </div>
 
                         <div className="mb-4">
