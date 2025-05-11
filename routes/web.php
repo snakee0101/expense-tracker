@@ -38,6 +38,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('spending_limit', [SpendingLimitController::class, 'destroy'])->name('spending_limit.destroy');
 
     Route::get('inbox', [InboxController::class, 'index'])->name('inbox.index');
+    Route::post('inbox/read_notification/{notificationId}', [InboxController::class, 'read_notification'])->name('inbox.read_notification');
 });
 
 require __DIR__.'/settings.php';

@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 
 import { formatMoney, percent } from '../lib/helpers';
 
@@ -48,9 +48,13 @@ export default function Inbox({ notifications }) {
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
+    const {post} = useForm();
+
     const [selectedNotificationId, setSelectedNotificationId] = useState(notifications[0].id);
 
     function selectNotification(notificationId) {
+        post(route('inbox.read_notification', {notificationId: notificationId}));
+
         setSelectedNotificationId(notificationId);
     }
 
@@ -85,7 +89,7 @@ export default function Inbox({ notifications }) {
                             <div className="flex justify-between items-start">
                                 <div>
                                     <div className='flex justify-between'>
-                                        <h3 className="text-lg font-semibold">{notification.data.header} dfgdfgdfg</h3>
+                                        <h3 className="text-lg font-semibold">{notification.data.header}</h3>
                                         <p>{dayjs(notification.created_at).format('MMM D HH:mm')}</p>
                                     </div>
                                     <div className="text-sm mt-1">
