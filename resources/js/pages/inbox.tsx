@@ -2,27 +2,21 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 
-import { formatMoney, percent } from '../lib/helpers';
-
 import {
     Toast,
     ToastToggle,
     createTheme,
-    Progress,
-    Card
+    Card,
+    Button
 } from 'flowbite-react';
 import { useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
-import { GoArrowUpRight } from "react-icons/go";
-import { GoArrowDownRight } from "react-icons/go";
-import { RiCoinsFill } from "react-icons/ri";
-import { TfiTarget } from "react-icons/tfi";
-import { GrPlan } from "react-icons/gr";
 
 import '../../css/app.css';
 import dayjs from 'dayjs';
-import CreateSavingsPlanModal from '@/components/savings_plans/create-savings-plan-modal';
-import AddOrWithdrawFromSavingsPlan from '@/components/savings_plans/add-or-withdraw-from-savings-plan';
+
+import { RiDeleteBin6Line } from "react-icons/ri";
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -50,7 +44,7 @@ export default function Inbox({ notifications }) {
 
     const {post} = useForm();
 
-    const [selectedNotificationId, setSelectedNotificationId] = useState(notifications[0].id);
+    const [selectedNotificationId, setSelectedNotificationId] = useState(notifications[0]?.id ?? null);
 
     function selectNotification(notificationId) {
         post(route('inbox.read_notification', {notificationId: notificationId}));
@@ -60,6 +54,10 @@ export default function Inbox({ notifications }) {
 
     function selectedNotification() {
         return notifications.filter(notification => notification.id == selectedNotificationId)[0];
+    }
+
+    function deleteNotification(notification_id) {
+        post(route('inbox.delete_notification', {notificationId: notification_id}));
     }
 
     return (
@@ -81,7 +79,9 @@ export default function Inbox({ notifications }) {
                 <div className="w-4"></div>
 
                 <aside className="floating-sidebar">
-                    {notifications.map((notification) => (
+                    <h2 className="text-xl font-bold mb-3">My Notifications</h2>
+
+                    {notifications.length > 0 && notifications.map((notification) => (
                         <div
                             className={`small-card ${selectedNotificationId == notification.id ? 'selected-card' : 'bg-white'} ${notification.read_at ? 'text-gray-400' : 'text-black'}`}
                             onClick={() => selectNotification(notification.id)}
@@ -95,6 +95,11 @@ export default function Inbox({ notifications }) {
                                     <div className="text-sm mt-1">
                                         {notification.data.description}
                                     </div>
+                                    <div className='flex flex-row-reverse mt-2'>
+                                        <Button size="xs" color="red" outline className='cursor-pointer' onClick={() => deleteNotification(notification.id)}>
+                                            <RiDeleteBin6Line size={18}/>
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -106,10 +111,10 @@ export default function Inbox({ notifications }) {
                 <main className="min-h-screen flex-1 p-6">
                     <Card className="savings-tips w-full rounded-none">
                         <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            {selectedNotification().data.header}
+                            {selectedNotification()?.data?.header ?? ''}
                         </h5>
                         <p className="font-normal text-gray-700 dark:text-gray-400"
-                           dangerouslySetInnerHTML={{ __html: selectedNotification().data.htmlContent }}></p>
+                           dangerouslySetInnerHTML={{ __html: selectedNotification()?.data?.htmlContent ?? '' }}></p>
                     </Card>
                 </main>
             </div>

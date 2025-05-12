@@ -18,6 +18,17 @@ class InboxController extends Controller
     {
         $notification = auth()->user()->notifications->find($notificationId);
 
-        $notification->markAsRead();
+        if($notification) {
+            $notification->markAsRead();
+        }
+    }
+
+    public function delete_notification(Request $request, $notificationId)
+    {
+        $notification = auth()->user()->notifications->find($notificationId);
+
+        $notification->delete();
+
+        return to_route('inbox.index');
     }
 }
