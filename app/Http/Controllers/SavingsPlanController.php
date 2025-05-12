@@ -8,6 +8,7 @@ use App\Models\SavingsPlan;
 use App\Models\Transaction;
 use App\Models\TransactionCategory;
 use App\Models\Wallet;
+use App\Rules\CheckCardExpiration;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -29,7 +30,7 @@ class SavingsPlanController extends Controller
             ];
         });
 
-        $relatedAccounts->push(...Card::where('user_id', auth()->id())->get()->map(function (Card $card) {
+        $relatedAccounts->push(...Card::where('user_id', auth()->id())->whereDate('expiry_date', '>=', now())->get()->map(function (Card $card) {
             return [
                 'id' => $card->id,
                 'type' => Card::class,
@@ -151,6 +152,12 @@ class SavingsPlanController extends Controller
             $savingsPlanTypeField = 'destination_type';
         }
 
+        $account = ($request->related_account_type)::findOrFail($request->related_account_id);
+
+        $request->validate([
+            'card' => new CheckCardExpiration($account)
+        ]);
+
         //create a transaction
         $transactionDate = Carbon::parse("{$request->date} {$request->time}");
         Transaction::create([
@@ -173,7 +180,6 @@ class SavingsPlanController extends Controller
             $savingsPlan->increment('balance', $request->amount * ($request->boolean('is_withdraw') ? -1 : 1));
 
             //change balance of wallet/card
-            $account = ($request->related_account_type)::findOrFail($request->related_account_id);
             $account->increment('balance', $request->amount * ($request->boolean('is_withdraw') ? 1 : -1));
         }
 

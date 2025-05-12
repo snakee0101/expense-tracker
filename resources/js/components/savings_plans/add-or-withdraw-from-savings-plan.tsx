@@ -18,6 +18,7 @@ export default function AddOrWithdrawFromSavingsPlan({ savingsPlanId, setIsNotif
         savings_plan_id: savingsPlanId,
         related_account_id: null,
         related_account_type: null,
+        card: ''
     });
 
     const onCloseModal = () => {
@@ -34,6 +35,7 @@ export default function AddOrWithdrawFromSavingsPlan({ savingsPlanId, setIsNotif
             savings_plan_id: savingsPlanId,
             source_id: null,
             related_account_type: null,
+            card: ''
         });
     };
 
@@ -132,6 +134,7 @@ export default function AddOrWithdrawFromSavingsPlan({ savingsPlanId, setIsNotif
                                     <option value={JSON.stringify({id: account.id, type: account.type})}>{account.type == 'App\\Models\\Wallet' ? 'Wallet' : 'Card'} "{account.name}": ${account.balance}</option>
                                 ))}
                             </Select>
+                            {errors.card && <p className="text-red-600 text-sm">{errors.card}</p>}
                         </div>
 
                         <div className="mb-4">
