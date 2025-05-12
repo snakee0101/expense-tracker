@@ -3,13 +3,14 @@ import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
 import { router } from '@inertiajs/react';
-import { Badge, Pagination, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from 'flowbite-react';
+import { Badge, Pagination, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Button } from 'flowbite-react';
 import { formatMoney, getPageUrl } from '../lib/helpers';
 
 import { createTheme } from 'flowbite-react';
 import dayjs from 'dayjs';
 import { ImAttachment } from "react-icons/im";
-
+import Link from "next/link";
+import { RiFileExcel2Fill } from "react-icons/ri";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -37,6 +38,14 @@ export default function Transactions({ transactions, transactionStatusList }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Transactions" />
+
+            <div className='flex flex-row-reverse p-2'>
+                <a href={route('transaction.export')}>
+                    <Button className='rounded-none'>
+                        <RiFileExcel2Fill size={24} className='mr-2'/> Export
+                    </Button>
+                </a>
+            </div>
 
             <Table>
                 <TableHead>
