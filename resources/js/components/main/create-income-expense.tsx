@@ -28,7 +28,8 @@ export function CreateIncomeExpense({ transactionable, setIsNotificationShown, s
         category_id: null,
         destination_type: transactionable.destination_type,
         destination_id: transactionable.destination_id,
-        receipts: []
+        receipts: [],
+        card: '' //fake attribute to place validation errors in if card is expired
     });
 
     const onCloseModal = () => {
@@ -44,7 +45,8 @@ export function CreateIncomeExpense({ transactionable, setIsNotificationShown, s
             category_id: null,
             destination_type: transactionable.destination_type,
             destination_id: transactionable.destination_id,
-            receipts: []
+            receipts: [],
+            card: ''
         });
     };
 
@@ -80,6 +82,7 @@ export function CreateIncomeExpense({ transactionable, setIsNotificationShown, s
                                 onChange={e => setData('name', e.target.value)}
                             />
                             {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
+                            {errors.card && <p className="text-red-600 text-sm">{errors.card}</p>}
                         </div>
 
                         <div>

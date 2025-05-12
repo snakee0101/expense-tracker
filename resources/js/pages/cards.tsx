@@ -36,7 +36,7 @@ export default function Cards({ cards, transactionCategories }) {
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
-    const [selectedCardId, setSelectedCardId] = useState(cards[0].id);
+    const [selectedCardId, setSelectedCardId] = useState(cards.find(card => card.is_expired == false).id);
 
     function selectCard(cardId) {
         setSelectedCardId(cardId);
@@ -69,12 +69,13 @@ export default function Cards({ cards, transactionCategories }) {
 
                     {cards.map((card) => (
                         <div
-                            className={`card p-6 pb-15 ${selectedCardId == card.id ? 'selected-card' : 'bg-white'}`}
+                            className={`card p-6 pb-15 ${selectedCardId == card.id ? 'selected-card' : 'bg-white'} ${card.is_expired && 'text-gray-400'}`}
                             key={card.id}
                             onClick={() => selectCard(card.id)}
                         >
                             <div className="flex items-start justify-between">
                                 <h2 className="font-medium">{card.name}</h2>
+                                {card.is_expired && <span className='text-sm text-red-800'>Expired</span>}
                             </div>
 
                             <div className="text-3xl font-semibold">

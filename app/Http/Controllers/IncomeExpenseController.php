@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TransactionStatus;
+use App\Models\Card;
 use App\Models\Transaction;
+use App\Rules\CheckCardExpiration;
 use App\Rules\WithinSpendingLimit;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class IncomeExpenseController extends Controller
 {
@@ -16,8 +19,11 @@ class IncomeExpenseController extends Controller
         $income = $request->boolean('is_income') ? $request->amount : -$request->amount;
         $transaction_date = Carbon::parse("{$request->date} {$request->time}");
 
+        $destination = ($request->destination_type)::findOrFail($request->destination_id);
+
         $request->validate([
-            'amount' => new WithinSpendingLimit(isSpending: $request->boolean('is_income') == false, transactionDate: new CarbonImmutable($transaction_date))
+            'amount' => new WithinSpendingLimit(isSpending: $request->boolean('is_income') == false, transactionDate: new CarbonImmutable($transaction_date)),
+            'card' => new CheckCardExpiration($destination)
         ]);
 
         $transaction = Transaction::create([
@@ -33,7 +39,6 @@ class IncomeExpenseController extends Controller
         ]);
 
         if ($transaction_date->isNowOrPast()) {
-            $destination = ($request->destination_type)::findOrFail($request->destination_id);
             $destination->increment('balance', $income);
         }
 
