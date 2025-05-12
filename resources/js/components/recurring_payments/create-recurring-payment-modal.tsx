@@ -16,7 +16,8 @@ export default function CreateRecurringPaymentModal({ setIsNotificationShown, se
         destination_id: null,
         destination_type: null,
         period_starting_date: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-        repeat_period: null
+        repeat_period: null,
+        card: ''
     });
 
     const onCloseModal = () => {
@@ -101,6 +102,7 @@ export default function CreateRecurringPaymentModal({ setIsNotificationShown, se
                                 ))}
                             </Select>
                             {errors.destination_id && <p className="text-red-600 text-sm">{errors.destination_id}</p>}
+                            {errors.card && <p className="text-red-600 text-sm">{errors.card}</p>}
                         </div>
 
                         <div className="mb-4">

@@ -6,6 +6,7 @@ use App\Models\Card;
 use App\Models\RecurringPayment;
 use App\Models\TransactionCategory;
 use App\Models\Wallet;
+use App\Rules\CheckCardExpiration;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -45,6 +46,12 @@ class RecurringPaymentController extends Controller
 
     public function store(Request $request)
     {
+        $account = ($request->destination_type)::findOrFail($request->destination_id);
+
+        $request->validate([
+            'card' => new CheckCardExpiration($account)
+        ]);
+
         RecurringPayment::create([
             'name' => $request->name,
             'user_id' => auth()->id(),
