@@ -8,6 +8,7 @@ use App\Models\Contact;
 use App\Models\Transaction;
 use App\Models\TransactionCategory;
 use App\Models\Wallet;
+use App\Rules\CheckCardExpiration;
 use App\Rules\WithinSpendingLimit;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
@@ -28,7 +29,7 @@ class TransferController extends Controller
             ];
         });
 
-        $accounts->push(...Card::where('user_id', auth()->id())->get()->map(function (Card $card) {
+        $accounts->push(...Card::where('user_id', auth()->id())->whereDate('expiry_date', '>=', now())->get()->map(function (Card $card) {
             return [
                 'id' => $card->id,
                 'type' => Card::class,
@@ -55,9 +56,11 @@ class TransferController extends Controller
     public function store(Request $request)
     {
         $transactionDate = Carbon::parse("{$request->date} {$request->time}");
+        $account = ($request->source_type)::findOrFail($request->source_id);
 
         $request->validate([
-            'amount' => new WithinSpendingLimit(isSpending: true, transactionDate: new CarbonImmutable($transactionDate))
+            'amount' => new WithinSpendingLimit(isSpending: true, transactionDate: new CarbonImmutable($transactionDate)),
+            'card' => new CheckCardExpiration($account)
         ]);
 
         $transaction = Transaction::create([
@@ -76,7 +79,6 @@ class TransferController extends Controller
 
         if ($transactionDate->isNowOrPast()) {
             //change balance of wallet/card where you transfer money from
-            $account = ($request->source_type)::findOrFail($request->source_id);
             $account->decrement('balance', $request->amount);
         }
 

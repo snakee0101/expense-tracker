@@ -59,7 +59,8 @@ export default function Transfers({ contacts, transactionCategories, accounts })
         note: null,
         contact_id: contacts[0].id,
         category_id: null,
-        receipts: []
+        receipts: [],
+        card: ''
     });
 
     function selectContact(contactId) {
@@ -160,6 +161,7 @@ export default function Transfers({ contacts, transactionCategories, accounts })
                                 ))}
                             </Select>
                             {errors.source_id && <p className="text-red-600 text-sm">{errors.source_id}</p>}
+                            {errors.card && <p className="text-red-600 text-sm">{errors.card}</p>}
                         </div>
 
                         {/* Amount */}
