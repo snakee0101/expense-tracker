@@ -29,7 +29,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('card', CardController::class);
     Route::resource('savings_plan', SavingsPlanController::class);
     Route::resource('transfer', TransferController::class);
-    Route::resource('contact', ContactController::class);
+
+    Route::resource('contact', ContactController::class)->except('update');
+    Route::post('contact/{contact}/update', [ContactController::class, 'update'])->name('contact.update');
+
     Route::post('savings_plan/transaction', [SavingsPlanController::class, 'transaction'])->name('savings_plan.transaction');
     Route::get('download_attachment/{attachment}', [AttachmentController::class, 'download'])->name('download_attachment');
 

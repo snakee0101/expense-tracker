@@ -22,6 +22,8 @@ import { CreateSavingsPlanModal } from '@/pages/savings_plans';
 import { FaPlus } from 'react-icons/fa6';
 import dayjs from 'dayjs';
 import CreateContactModal from '@/components/transfers/create-contact-modal';
+import EditSavingsPlanModal from '@/components/savings_plans/edit-savings-plan-modal';
+import EditContactModal from '@/components/transfers/edit-contact-modal';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -109,7 +111,7 @@ export default function Transfers({ contacts, transactionCategories, accounts })
 
                     {contacts.map((contact, index) => (
                         <Card key={index}
-                              className={`cursor-pointer bg-green-50 flex rounded-2xl shadow-sm mb-3 ${selectedContactId == contact.id ? 'selected-card' : 'bg-white'}`}
+                              className={`cursor-pointer bg-green-50 flex rounded-none shadow-sm mb-3 ${selectedContactId == contact.id ? 'selected-card' : 'bg-white'}`}
                               onClick={() => selectContact(contact.id)}
                         >
                             <div className="flex w-full flex-row items-center">
@@ -118,8 +120,17 @@ export default function Transfers({ contacts, transactionCategories, accounts })
                                 </div>
                                 <div className="flex flex-col">
                                     <h5 className="text-lg text-gray-700 font-bold">{contact.name}</h5>
-                                    <h5 className="text-md text-gray-700">{formatCardNumber(contact.card_number)}</h5>
+                                    <div className='flex'>
+                                        <h5 className="text-md text-gray-700 mr-4">{formatCardNumber(contact.card_number)}</h5>
+                                        <EditContactModal key={contact.id}
+                                                          contact={contact}
+                                                          setIsNotificationShown={setIsNotificationShown}
+                                                          setNotificationMessage={setNotificationMessage} />
+                                    </div>
                                 </div>
+                            </div>
+                            <div className='text-right'>
+
                             </div>
                         </Card>
                     ))}
@@ -128,7 +139,7 @@ export default function Transfers({ contacts, transactionCategories, accounts })
                 <div className="w-4"></div>
 
                 <main className="min-h-screen flex-1 p-6">
-                    <form className="max-w-xl mx-auto p-6 bg-green-50 rounded-xl shadow-md"
+                    <form className="max-w-xl mx-auto p-6 bg-green-50 rounded-none shadow-md"
                           onSubmit={handleCreateTransfer}>
                         <h3 className='font-bold text-xl mb-4'>Create Transfer</h3>
 
