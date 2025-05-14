@@ -12,6 +12,7 @@ import { useState } from "react";
 import '../../css/app.css';
 import { CreateIncomeExpense } from '@/components/main/create-income-expense';
 import CreateWalletModal from '@/components/wallets/create-wallet-modal';
+import EditWalletModal from '@/components/wallets/edit-wallet-modal';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -68,7 +69,7 @@ export default function Wallets({ wallets, transactionCategories }) {
 
                     {wallets.map(wallet => (
                         <div
-                            className={`card p-6 pb-30 ${selectedWalletId == wallet.id ? 'selected-card' : 'bg-white'}`}
+                            className={`card p-6 pb-20 ${selectedWalletId == wallet.id ? 'selected-card' : 'bg-white'}`}
                             key={wallet.id}
                             onClick={() => selectWallet(wallet.id)}
                         >
@@ -79,6 +80,13 @@ export default function Wallets({ wallets, transactionCategories }) {
                             <div className="text-3xl font-semibold">
                                 <span className='mr-1'>$</span>
                                 {formatMoney(wallet.balance)}
+                            </div>
+
+                            <div className='text-right'>
+                                <EditWalletModal key={selectedWalletId}
+                                                 wallet={wallet}
+                                                 setIsNotificationShown={setIsNotificationShown}
+                                                 setNotificationMessage={setNotificationMessage} />
                             </div>
                         </div>
                     ))}

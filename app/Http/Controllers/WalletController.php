@@ -34,4 +34,20 @@ class WalletController extends Controller
 
         return to_route('wallet.index');
     }
+
+    public function update(Request $request, Wallet $wallet)
+    {
+        $request->validate([
+            'name' => [
+                'min: 3',
+                Rule::unique('wallets')->where('user_id', auth()->id())->ignore($wallet->id)
+            ]
+        ]);
+
+        $wallet->update([
+            'name' => $request->name
+        ]);
+
+        return to_route('wallet.index');
+    }
 }
