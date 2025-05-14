@@ -16,14 +16,14 @@ export default function EditWalletModal({ wallet, setIsNotificationShown, setNot
         setData('name', '');
     };
 
-    const handleCreate = (event) => {
+    const handleEdit = (event) => {
         event.preventDefault();
 
         put(route('wallet.update', {'wallet': wallet.id}), {
             onSuccess: () => {
                 onCloseModal()
 
-                setNotificationMessage('Wallet created')
+                setNotificationMessage('Wallet updated')
                 setIsNotificationShown(true)
 
                 setTimeout(() => setIsNotificationShown(false), 2000)
@@ -44,7 +44,7 @@ export default function EditWalletModal({ wallet, setIsNotificationShown, setNot
                     Edit Wallet
                 </ModalHeader>
                 <ModalBody>
-                    <form className="space-y-6" onSubmit={handleCreate}>
+                    <form className="space-y-6" onSubmit={handleEdit}>
                         <div>
                             <Label htmlFor="wallet-name" className="mb-2 block">Wallet Name</Label>
                             <TextInput

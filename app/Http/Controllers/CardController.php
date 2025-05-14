@@ -36,4 +36,20 @@ class CardController extends Controller
 
         return to_route('card.index');
     }
+
+    public function update(Request $request, Card $card)
+    {
+        $validated = $request->validate([
+            'name' => [
+                'min: 3',
+                Rule::unique('cards')->where('user_id', auth()->id())->ignore($card->id)
+            ],
+            'card_number' => ['required', 'regex:/^\d{13,19}$/'],
+            'expiry_date' => ['required', 'date-format:Y-m-d H:i:s']
+        ]);
+
+        $card->update($validated);
+
+        return to_route('card.index');
+    }
 }

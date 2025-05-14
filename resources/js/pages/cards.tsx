@@ -11,6 +11,8 @@ import { HiCheck } from 'react-icons/hi';
 import '../../css/app.css';
 import { CreateIncomeExpense } from '@/components/main/create-income-expense';
 import CreateCardModal from '@/components/cards/create-card-modal';
+import EditWalletModal from '@/components/wallets/edit-wallet-modal';
+import EditCardModal from '@/components/cards/edit-card-modal';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -69,7 +71,7 @@ export default function Cards({ cards, transactionCategories }) {
 
                     {cards.map((card) => (
                         <div
-                            className={`card p-6 pb-15 ${selectedCardId == card.id ? 'selected-card' : 'bg-white'} ${card.is_expired && 'text-gray-400'}`}
+                            className={`card p-6 pb-10 ${selectedCardId == card.id ? 'selected-card' : 'bg-white'} ${card.is_expired && 'text-gray-400'}`}
                             key={card.id}
                             onClick={() => selectCard(card.id)}
                         >
@@ -93,6 +95,13 @@ export default function Cards({ cards, transactionCategories }) {
                                     <span className="block text-sm text-gray-600">Expiry Date</span>
                                     <span>{formatCardDate(card.expiry_date)}</span>
                                 </div>
+                            </div>
+
+                            <div className='text-right'>
+                                <EditCardModal key={selectedCardId}
+                                                 card={card}
+                                                 setIsNotificationShown={setIsNotificationShown}
+                                                 setNotificationMessage={setNotificationMessage} />
                             </div>
                         </div>
                     ))}
