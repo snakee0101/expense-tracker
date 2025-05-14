@@ -21,7 +21,9 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('transaction_category', TransactionCategoryController::class);
+    Route::resource('transaction_category', TransactionCategoryController::class)->except('update');
+    Route::post('transaction_category/{transactionCategory}/update', [TransactionCategoryController::class, 'update'])->name('transaction_category.update');
+
     Route::resource('transaction', TransactionController::class);
     Route::get('transactions/export', [TransactionController::class, 'export'])->name('transaction.export');
     Route::resource('recurring_payment', RecurringPaymentController::class);

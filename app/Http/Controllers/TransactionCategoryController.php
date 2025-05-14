@@ -54,7 +54,25 @@ class TransactionCategoryController extends Controller
 
     public function update(Request $request, TransactionCategory $transactionCategory)
     {
-        //
+        $request->validate([
+            'name' => [
+                'min: 3',
+                Rule::unique('transaction_categories', 'name')
+                    ->where('user_id', auth()->id())
+                    ->ignoreModel($transactionCategory)
+            ],
+            'image' => ['nullable', 'image', 'file', 'max:1024']
+        ]);
+
+        $data = $request->only('name');
+
+        if($request->hasFile('image')) {
+            $data['image_path'] = $request->file('image')->store('images', 'public');
+        }
+
+        $transactionCategory->update($data);
+
+        return to_route('transaction_category.index');
     }
 
     public function destroy(TransactionCategory $transactionCategory)
