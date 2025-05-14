@@ -42,7 +42,9 @@ class CardController extends Controller
         $validated = $request->validate([
             'name' => [
                 'min: 3',
-                Rule::unique('cards')->where('user_id', auth()->id())->ignore($card->id)
+                Rule::unique('cards')
+                    ->where('user_id', auth()->id())
+                    ->ignoreModel($card)
             ],
             'card_number' => ['required', 'regex:/^\d{13,19}$/'],
             'expiry_date' => ['required', 'date-format:Y-m-d H:i:s']

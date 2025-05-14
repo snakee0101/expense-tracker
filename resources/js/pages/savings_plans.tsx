@@ -23,6 +23,8 @@ import '../../css/app.css';
 import dayjs from 'dayjs';
 import CreateSavingsPlanModal from '@/components/savings_plans/create-savings-plan-modal';
 import AddOrWithdrawFromSavingsPlan from '@/components/savings_plans/add-or-withdraw-from-savings-plan';
+import EditCardModal from '@/components/cards/edit-card-modal';
+import EditSavingsPlanModal from '@/components/savings_plans/edit-savings-plan-modal';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -47,8 +49,6 @@ const toastThemeWithAbsolutePositioning = createTheme({
 export default function SavingsPlans({ savings_plans, transactionCategories, relatedAccounts, total_savings_gain }) {
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
-
-    console.log(savings_plans);
 
     const [selectedSavingsPlanId, setSelectedSavingsPlanId] = useState(savings_plans[0].id);
 
@@ -182,11 +182,17 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
                                        )}`}>{savingsPlanCompletionPercentage(savingsPlan) == 100 ? 'Completed' : 'In Progress'}</p>
                                 </div>
                             </div>
-                            <div className='mt-1 mb-3'>
+                            <div className='mt-1'>
                                 <p><span
                                     className='font-bold'>Due date</span>: {dayjs(savingsPlan.due_date).format('DD MMMM, YYYY')}
                                 </p>
                                 <p>{`(${daysRemainingUntil(savingsPlan.due_date)} days remaining)`}</p>
+                            </div>
+                            <div className='text-right my-2'>
+                                <EditSavingsPlanModal key={selectedSavingsPlanId}
+                                               savingsPlan={selectedSavingsPlan()}
+                                               setIsNotificationShown={setIsNotificationShown}
+                                               setNotificationMessage={setNotificationMessage} />
                             </div>
                             <Progress progress={savingsPlanCompletionPercentage(savingsPlan)} color="teal" />
                         </div>

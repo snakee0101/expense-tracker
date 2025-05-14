@@ -16,9 +16,6 @@ use Inertia\Inertia;
 
 class SavingsPlanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $relatedAccounts = Wallet::where('user_id', auth()->id())->get()->map(function (Wallet $wallet) {
@@ -74,15 +71,13 @@ class SavingsPlanController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => [
                 'min: 3',
-                Rule::unique('cards')->where('user_id', auth()->id())
+                Rule::unique('savings_plans')
+                    ->where('user_id', auth()->id())
             ],
             'target_balance' => ['required', 'numeric', 'gt:0'],
             'due_date' => ['required', 'date-format:Y-m-d H:i:s'],
@@ -97,45 +92,25 @@ class SavingsPlanController extends Controller
         return to_route('savings_plan.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function update(Request $request, SavingsPlan $savings_plan)
     {
-        //
+        $validated = $request->validate([
+            'name' => [
+                'min: 3',
+                Rule::unique('savings_plans')
+                    ->where('user_id', auth()->id())
+                    ->ignoreModel($savings_plan)
+            ],
+            'target_balance' => ['required', 'numeric', 'gt:0'],
+            'due_date' => ['required', 'date-format:Y-m-d H:i:s'],
+            'savings_tips' => ['nullable']
+        ]);
+
+        $savings_plan->update($validated);
+
+        return to_route('savings_plan.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(SavingsPlan $savingsPlan)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(SavingsPlan $savingsPlan)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, SavingsPlan $savingsPlan)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(SavingsPlan $savingsPlan)
-    {
-        //
-    }
 
     public function transaction(Request $request)
     {
