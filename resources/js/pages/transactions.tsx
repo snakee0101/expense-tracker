@@ -11,6 +11,8 @@ import dayjs from 'dayjs';
 import { ImAttachment } from "react-icons/im";
 import Link from "next/link";
 import { RiFileExcel2Fill } from "react-icons/ri";
+import { MdOutlineCancel } from "react-icons/md";
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -96,7 +98,11 @@ export default function Transactions({ transactions, transactionStatusList }) {
                                     ))}
                                 </dl>
                             </TableCell>
-                            <TableCell>Actions</TableCell>
+                            <TableCell>
+                                <a href={route('transaction.cancel', {transaction: transaction.id})} className='text-red-600 hover:underline flex items-center'>
+                                    <MdOutlineCancel className='mr-1' size={18}/> Cancel
+                                </a>
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

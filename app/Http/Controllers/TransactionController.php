@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\CancelTransaction;
 use App\Enums\TransactionStatus;
 use App\Exports\TransactionsExport;
 use App\Models\Transaction;
@@ -30,5 +31,15 @@ class TransactionController extends Controller
                                     ->get();
 
         return Excel::download(new TransactionsExport($transactions), 'transactions.xlsx');
+    }
+
+    public function cancel(Request $request, Transaction $transaction)
+    {
+        app()->call(
+            CancelTransaction::class,
+            ['transaction' => $transaction]
+        );
+
+        return to_route('transaction.index');
     }
 }

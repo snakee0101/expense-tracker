@@ -26,6 +26,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('transaction', TransactionController::class);
     Route::get('transactions/export', [TransactionController::class, 'export'])->name('transaction.export');
+    Route::get('transactions/{transaction}/cancel', [TransactionController::class, 'cancel'])->name('transaction.cancel');
+
     Route::resource('recurring_payment', RecurringPaymentController::class);
     Route::resource('wallet', WalletController::class);
     Route::resource('card', CardController::class);
