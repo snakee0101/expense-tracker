@@ -1,9 +1,20 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 
 import { router } from '@inertiajs/react';
-import { Badge, Pagination, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Button } from 'flowbite-react';
+import {
+    Badge,
+    Pagination,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeadCell,
+    TableRow,
+    Button,
+    Toast, ToastToggle
+} from 'flowbite-react';
 import { formatMoney, getPageUrl } from '../lib/helpers';
 
 import { createTheme } from 'flowbite-react';
@@ -13,6 +24,9 @@ import Link from "next/link";
 import { RiFileExcel2Fill } from "react-icons/ri";
 import { MdOutlineCancel } from "react-icons/md";
 import { CiRedo } from "react-icons/ci";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { HiCheck } from 'react-icons/hi';
+import { useState } from 'react';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -38,9 +52,39 @@ const toastThemeWithAbsolutePositioning = createTheme({
 export default function Transactions({ transactions, transactionStatusList }) {
     const onPageChange = (page: number) => router.visit(getPageUrl(transactions, page));
 
+    const [isNotificationShown, setIsNotificationShown] = useState(false);
+    const [notificationMessage, setNotificationMessage] = useState('');
+
+    const { data, setData, delete: destroy, errors, reset } = useForm({});
+
+        function handleDelete(event, transaction) {
+        event.preventDefault();
+
+        if(confirm('Are you sure to delete a transaction? The operation is irreversible')) {
+            destroy(route('transaction.destroy', {transaction: transaction.id}), {
+                onSuccess: () => {
+                    setNotificationMessage('Transaction deleted');
+                    setIsNotificationShown(true);
+                    setTimeout(() => setIsNotificationShown(false), 3000);
+                },
+            });
+        }
+    }
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Transactions" />
+
+            {isNotificationShown && (
+                <Toast theme={toastThemeWithAbsolutePositioning.toast}>
+                    <div
+                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+                        <HiCheck className="h-5 w-5" />
+                    </div>
+                    <div className="ml-3 text-sm font-normal">{notificationMessage}</div>
+                    <ToastToggle />
+                </Toast>
+            )}
 
             <div className='flex flex-row-reverse p-2'>
                 <a href={route('transaction.export')}>
@@ -101,14 +145,16 @@ export default function Transactions({ transactions, transactionStatusList }) {
                             </TableCell>
                             <TableCell>
                                 {transaction.status == 3
-                                    ? (<a href={route('transaction.redo', {transaction: transaction.id})} className='text-green-600 hover:underline flex items-center'>
+                                    ? (<a href={route('transaction.redo', {transaction: transaction.id})} className='text-green-600 hover:underline flex items-center mb-1'>
                                             <CiRedo className='mr-1' size={18}/> Redo
                                         </a>)
-                                    : (<a href={route('transaction.cancel', {transaction: transaction.id})} className='text-red-600 hover:underline flex items-center'>
+                                    : (<a href={route('transaction.cancel', {transaction: transaction.id})} className='text-red-600 hover:underline flex items-center mb-1'>
                                             <MdOutlineCancel className='mr-1' size={18}/> Cancel
                                         </a>)
                                 }
-
+                                <a href="#" onClick={(event) => handleDelete(event, transaction)} className='text-red-800 hover:underline flex items-center'>
+                                    <RiDeleteBin6Line className='mr-1' size={18}/> Delete
+                                </a>
                             </TableCell>
                         </TableRow>
                     ))}
