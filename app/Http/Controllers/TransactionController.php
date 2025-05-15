@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\CancelTransaction;
+use App\Actions\RedoTransaction;
 use App\Enums\TransactionStatus;
 use App\Exports\TransactionsExport;
 use App\Models\Transaction;
@@ -37,6 +38,16 @@ class TransactionController extends Controller
     {
         app()->call(
             CancelTransaction::class,
+            ['transaction' => $transaction]
+        );
+
+        return to_route('transaction.index');
+    }
+
+    public function redo(Request $request, Transaction $transaction)
+    {
+        app()->call(
+            RedoTransaction::class,
             ['transaction' => $transaction]
         );
 

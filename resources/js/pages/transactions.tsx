@@ -12,6 +12,7 @@ import { ImAttachment } from "react-icons/im";
 import Link from "next/link";
 import { RiFileExcel2Fill } from "react-icons/ri";
 import { MdOutlineCancel } from "react-icons/md";
+import { CiRedo } from "react-icons/ci";
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -99,9 +100,15 @@ export default function Transactions({ transactions, transactionStatusList }) {
                                 </dl>
                             </TableCell>
                             <TableCell>
-                                <a href={route('transaction.cancel', {transaction: transaction.id})} className='text-red-600 hover:underline flex items-center'>
-                                    <MdOutlineCancel className='mr-1' size={18}/> Cancel
-                                </a>
+                                {transaction.status == 3
+                                    ? (<a href={route('transaction.redo', {transaction: transaction.id})} className='text-green-600 hover:underline flex items-center'>
+                                            <CiRedo className='mr-1' size={18}/> Redo
+                                        </a>)
+                                    : (<a href={route('transaction.cancel', {transaction: transaction.id})} className='text-red-600 hover:underline flex items-center'>
+                                            <MdOutlineCancel className='mr-1' size={18}/> Cancel
+                                        </a>)
+                                }
+
                             </TableCell>
                         </TableRow>
                     ))}
