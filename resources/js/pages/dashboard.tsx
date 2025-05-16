@@ -31,7 +31,7 @@ export default function Dashboard({spendingLimit, amountSpent, expenseBreakdown}
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
 
-            <div className='flex flex-row m-2'>
+            <div className='flex flex-row m-2 items-start'>
                 <SpendingLimit spendingLimit={spendingLimit} amountSpent={amountSpent} />
                 <ExpenseBreakdown breakdown={expenseBreakdown} />
             </div>

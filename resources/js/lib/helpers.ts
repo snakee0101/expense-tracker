@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export function getPageUrl(paginator, pageNumber) {
     const link = paginator.links.find(item => item.label === String(pageNumber));
     return link ? link.url : null;
@@ -37,6 +39,10 @@ export function formatDate(date) {
     const seconds = pad(date.getSeconds());
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+export function extractDateFromDateTime(date) {
+    return dayjs(date, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD');
 }
 
 export function getDateFromExpiryDate(unformattedDate :string) {
