@@ -7,6 +7,7 @@ use App\Models\Card;
 use App\Models\Contact;
 use App\Models\Transaction;
 use App\Models\Wallet;
+use Carbon\Carbon;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\SpendingLimit;
@@ -17,8 +18,8 @@ class DashboardController extends Controller
     {
         $spendingLimit = SpendingLimit::firstWhere('user_id', auth()->id());
 
-        $startingDate = now()->subMonth();
-        $endingDate = now();
+        $expenseBreakdownStartingDate = $request->has('expenseBreakdownDateRangeStart') ? Carbon::parse($request->expenseBreakdownDateRangeStart) : now()->subMonth();
+        $expenseBreakdownEndingDate = $request->has('expenseBreakdownDateRangeEnd') ? Carbon::parse($request->expenseBreakdownDateRangeEnd) : now();
 
         $expenseBreakdown = Transaction::with('category')
             ->selectRaw('category_id, SUM(
@@ -33,7 +34,7 @@ class DashboardController extends Controller
             ])
             ->where('user_id', auth()->id())
             ->where('status', TransactionStatus::Completed)
-            ->whereBetween('date', [$startingDate, $endingDate])
+            ->whereBetween('date', [$expenseBreakdownStartingDate, $expenseBreakdownEndingDate])
             ->groupBy('category_id')
             ->get();
 
