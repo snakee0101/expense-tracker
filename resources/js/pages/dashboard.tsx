@@ -26,14 +26,14 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function Dashboard({spendingLimit, amountSpent, expenseBreakdown}) {
+export default function Dashboard({spendingLimit, amountSpent, expenseBreakdown, expenseBreakdownStartingDate, expenseBreakdownEndingDate}) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
 
             <div className='flex flex-row m-2 items-start'>
                 <SpendingLimit spendingLimit={spendingLimit} amountSpent={amountSpent} />
-                <ExpenseBreakdown breakdown={expenseBreakdown} />
+                <ExpenseBreakdown breakdown={expenseBreakdown} expenseBreakdownStartingDate={expenseBreakdownStartingDate} expenseBreakdownEndingDate={expenseBreakdownEndingDate} />
             </div>
         </AppLayout>
     );

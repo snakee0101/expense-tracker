@@ -8,6 +8,7 @@ use App\Models\Contact;
 use App\Models\Transaction;
 use App\Models\Wallet;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\SpendingLimit;
@@ -18,8 +19,20 @@ class DashboardController extends Controller
     {
         $spendingLimit = SpendingLimit::firstWhere('user_id', auth()->id());
 
-        $expenseBreakdownStartingDate = $request->has('expenseBreakdownDateRangeStart') ? Carbon::parse($request->expenseBreakdownDateRangeStart) : now()->subMonth();
-        $expenseBreakdownEndingDate = $request->has('expenseBreakdownDateRangeEnd') ? Carbon::parse($request->expenseBreakdownDateRangeEnd) : now();
+        //TODO: Error expense breakdown is not recognized on the frontend
+        if (Cache::has('expenseBreakdownDateRangeStart')) {
+            $expenseBreakdownStartingDate = $request->has('expenseBreakdownDateRangeStart') ? Carbon::parse($request->expenseBreakdownDateRangeStart) : Carbon::parse(Cache::get('expenseBreakdownDateRangeStart'));
+            $expenseBreakdownEndingDate = $request->has('expenseBreakdownDateRangeEnd') ? Carbon::parse($request->expenseBreakdownDateRangeEnd) : Carbon::parse(Cache::get('expenseBreakdownDateRangeEnd'));
+        } else {
+            $expenseBreakdownStartingDate = $request->has('expenseBreakdownDateRangeStart') ? Carbon::parse($request->expenseBreakdownDateRangeStart) : now()->subMonth();
+            $expenseBreakdownEndingDate = $request->has('expenseBreakdownDateRangeEnd') ? Carbon::parse($request->expenseBreakdownDateRangeEnd) : now();
+        }
+
+        Cache::delete('expenseBreakdownDateRangeStart');
+        Cache::delete('expenseBreakdownDateRangeEnd');
+
+        Cache::rememberForever('expenseBreakdownDateRangeStart', fn () => $expenseBreakdownStartingDate->format('Y-m-d H:i:s'));
+        Cache::rememberForever('expenseBreakdownDateRangeEnd', fn () => $expenseBreakdownEndingDate->format('Y-m-d H:i:s'));
 
         $expenseBreakdown = Transaction::with('category')
             ->selectRaw('category_id, SUM(
@@ -41,7 +54,9 @@ class DashboardController extends Controller
         return Inertia::render('dashboard', [
             'spendingLimit' => $spendingLimit,
             'amountSpent' => $spendingLimit->amountSpent(),
-            'expenseBreakdown' => $expenseBreakdown
+            'expenseBreakdown' => $expenseBreakdown,
+            'expenseBreakdownStartingDate' => $expenseBreakdownStartingDate,
+            'expenseBreakdownEndingDate' => $expenseBreakdownEndingDate
         ]);
     }
 }

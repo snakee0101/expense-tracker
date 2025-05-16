@@ -95,12 +95,7 @@ function getFilterFromDates(startStr, endStr) {
     return `custom`;
 }
 
-function getQueryParam(param) {
-    const params = new URLSearchParams(window.location.search);
-    return params.get(param);
-}
-
-export default function ExpenseBreakdown({breakdown}) {
+export default function ExpenseBreakdown({breakdown, expenseBreakdownStartingDate, expenseBreakdownEndingDate}) {
     let data = [];
     let colors = generateUniqueChartColors(breakdown.length);
 
@@ -123,7 +118,7 @@ export default function ExpenseBreakdown({breakdown}) {
     const [dateRangeStart, setDateRangeStart] = useState(null);
     const [dateRangeEnd, setDateRangeEnd] = useState(null);
 
-    let selectedFilter = getFilterFromDates(getQueryParam('expenseBreakdownDateRangeStart'), getQueryParam('expenseBreakdownDateRangeEnd'));
+    let selectedFilter = getFilterFromDates(expenseBreakdownStartingDate, expenseBreakdownEndingDate);
 
     function handleSelectFilter(event) {
         let expenseBreakdownDateRangeStart = null;
@@ -209,7 +204,7 @@ export default function ExpenseBreakdown({breakdown}) {
                     <option value='this month'>This month</option>
                     <option value='this week'>This week</option>
                     <option value='this day'>This day</option>
-                    <option value='custom'>Custom {getQueryParam('expenseBreakdownDateRangeStart') && <span>{extractDateFromDateTime(getQueryParam('expenseBreakdownDateRangeStart'))} - {extractDateFromDateTime(getQueryParam('expenseBreakdownDateRangeEnd'))}</span>}</option>
+                    <option value='custom'>Custom <span>{extractDateFromDateTime(expenseBreakdownStartingDate)} - {extractDateFromDateTime(expenseBreakdownEndingDate)}</span></option>
                 </Select>
             </div>
 
