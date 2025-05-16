@@ -112,13 +112,35 @@ class DashboardController extends Controller
             ->get()
             ->toArray();
 
+        //Accounts
+        $accounts = Wallet::where('user_id', auth()->id())->get()->map(function (Wallet $wallet) {
+            return [
+                'id' => $wallet->id,
+                'type' => 'wallet',
+                'name' => $wallet->name,
+                'balance' => $wallet->balance,
+                'card_number' => null
+            ];
+        });
+
+        $accounts->push(...Card::where('user_id', auth()->id())->whereDate('expiry_date', '>=', now())->get()->map(function (Card $card) {
+            return [
+                'id' => $card->id,
+                'type' => 'card',
+                'name' => $card->name,
+                'balance' => $card->balance,
+                'card_number' => $card->card_number
+            ];
+        }));
+
         return Inertia::render('dashboard', [
             'spendingLimit' => $spendingLimit,
             'amountSpent' => $spendingLimit->amountSpent(),
             'expenseBreakdown' => $expenseBreakdown,
             'expenseBreakdownStartingDate' => $expenseBreakdownStartingDate,
             'expenseBreakdownEndingDate' => $expenseBreakdownEndingDate,
-            'cashflow' => fillMissingMonths($cashflow)
+            'cashflow' => fillMissingMonths($cashflow),
+            'accounts' => $accounts
         ]);
     }
 }

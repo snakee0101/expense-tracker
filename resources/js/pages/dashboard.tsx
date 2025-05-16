@@ -6,6 +6,7 @@ import { createTheme } from 'flowbite-react';
 import SpendingLimit from '@/components/dashboard/spending-limit';
 import ExpenseBreakdown from '@/components/dashboard/expense-breakdown';
 import TotalCashflow from '@/components/dashboard/total-cashflow';
+import Balance from '@/components/dashboard/balance';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -27,7 +28,7 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function Dashboard({spendingLimit, amountSpent, expenseBreakdown, expenseBreakdownStartingDate, expenseBreakdownEndingDate, cashflow}) {
+export default function Dashboard({spendingLimit, amountSpent, expenseBreakdown, expenseBreakdownStartingDate, expenseBreakdownEndingDate, cashflow, accounts}) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -38,6 +39,7 @@ export default function Dashboard({spendingLimit, amountSpent, expenseBreakdown,
             </div>
             <div className='flex flex-row m-2 items-start'>
                 <TotalCashflow cashflow={cashflow}/>
+                <Balance accounts={accounts}/>
             </div>
         </AppLayout>
     );
