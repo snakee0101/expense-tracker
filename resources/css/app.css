@@ -210,3 +210,7 @@
 button, input {
     @apply rounded-none;
 }
+
+div[role='progressbar'] {
+    margin-right: 0;
+}

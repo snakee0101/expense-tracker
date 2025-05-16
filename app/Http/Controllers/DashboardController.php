@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\TransactionStatus;
 use App\Models\Card;
 use App\Models\Contact;
+use App\Models\SavingsPlan;
 use App\Models\Transaction;
 use App\Models\Wallet;
 use Carbon\Carbon;
@@ -133,6 +134,10 @@ class DashboardController extends Controller
             ];
         }));
 
+        $savingsPlans = SavingsPlan::where('user_id', auth()->id())
+                                    ->latest()
+                                    ->get();
+
         return Inertia::render('dashboard', [
             'spendingLimit' => $spendingLimit,
             'amountSpent' => $spendingLimit->amountSpent(),
@@ -140,7 +145,8 @@ class DashboardController extends Controller
             'expenseBreakdownStartingDate' => $expenseBreakdownStartingDate,
             'expenseBreakdownEndingDate' => $expenseBreakdownEndingDate,
             'cashflow' => fillMissingMonths($cashflow),
-            'accounts' => $accounts
+            'accounts' => $accounts,
+            'savingsPlans' => $savingsPlans
         ]);
     }
 }
