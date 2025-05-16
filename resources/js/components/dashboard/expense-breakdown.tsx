@@ -178,7 +178,7 @@ export default function ExpenseBreakdown({breakdown, expenseBreakdownStartingDat
     }
 
     return (
-        <Card href="#">
+        <Card>
             <Modal dismissible show={openModal} onClose={() => setOpenModal(false)}>
                 <ModalHeader>Filter expense breakdown by date</ModalHeader>
                 <ModalBody>

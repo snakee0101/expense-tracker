@@ -5,6 +5,7 @@ import { Head } from '@inertiajs/react';
 import { createTheme } from 'flowbite-react';
 import SpendingLimit from '@/components/dashboard/spending-limit';
 import ExpenseBreakdown from '@/components/dashboard/expense-breakdown';
+import TotalCashflow from '@/components/dashboard/total-cashflow';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -26,7 +27,7 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function Dashboard({spendingLimit, amountSpent, expenseBreakdown, expenseBreakdownStartingDate, expenseBreakdownEndingDate}) {
+export default function Dashboard({spendingLimit, amountSpent, expenseBreakdown, expenseBreakdownStartingDate, expenseBreakdownEndingDate, cashflow}) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -34,6 +35,9 @@ export default function Dashboard({spendingLimit, amountSpent, expenseBreakdown,
             <div className='flex flex-row m-2 items-start'>
                 <SpendingLimit spendingLimit={spendingLimit} amountSpent={amountSpent} />
                 <ExpenseBreakdown breakdown={expenseBreakdown} expenseBreakdownStartingDate={expenseBreakdownStartingDate} expenseBreakdownEndingDate={expenseBreakdownEndingDate} />
+            </div>
+            <div className='flex flex-row m-2 items-start'>
+                <TotalCashflow cashflow={cashflow}/>
             </div>
         </AppLayout>
     );
