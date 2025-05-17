@@ -153,38 +153,72 @@ class DashboardController extends Controller
             ->toArray();
 
         //income/expense statistics
-        $incomeExpenseStatistics = Transaction::selectRaw('SUM(
-                                            CASE
-                                                 WHEN source_type IS NULL AND destination_type IN (?, ?) AND amount < 0 THEN -amount
-                                                 WHEN destination_type = ? THEN amount
-                                            END
-                                      ) AS expense',
-            [
-                Wallet::class, Card::class,
-                Contact::class
-            ])
-            ->selectRaw('SUM(
-                                            CASE
-                                                 WHEN source_type IS NULL AND destination_type IN (?, ?) AND amount > 0 THEN amount
-                                            END
-                                      ) AS income',
-                [
-                    Wallet::class, Card::class
-                ])
-            ->selectRaw("SUM(CASE
+        //formula for diffs (in currency units): current month total - previous month total
+        $expenseQuery = "SUM(
+                              CASE
+                                  WHEN source_type IS NULL AND destination_type IN (?, ?) AND amount < 0 THEN -amount
+                                  WHEN destination_type = ? THEN amount
+                                  ELSE 0
+                              END
+                         )";
+
+        $incomeQuery = "SUM(
+                             CASE
+                                 WHEN source_type IS NULL AND destination_type IN (?, ?) AND amount > 0 THEN amount
+                                 ELSE 0
+                             END
+                        )";
+
+        $savingsQuery = "SUM(
+                             CASE
                                 WHEN destination_type = ? THEN amount
                                 WHEN source_type = ? THEN -amount
                                 ELSE 0
-                             END) AS savings",
-                [SavingsPlan::class, SavingsPlan::class]
+                             END
+                        )";
+
+        $incomeExpenseStatistics = Transaction::query()
+            ->selectRaw("$expenseQuery AS expense", [Wallet::class, Card::class, Contact::class])
+            ->selectRaw("$incomeQuery AS income", [Wallet::class, Card::class])
+            ->selectRaw("$savingsQuery AS savings", [SavingsPlan::class, SavingsPlan::class])
+            ->selectRaw(
+                "ROUND(
+                    $expenseQuery - LAG($expenseQuery) OVER (ORDER BY DATE_FORMAT(date, '%Y-%m'))
+                , 2) AS expense_diff",
+                [
+                    Wallet::class, Card::class, Contact::class,
+                    Wallet::class, Card::class, Contact::class
+                ]
             )
+            ->selectRaw(
+                "ROUND(
+                    $incomeQuery - LAG($incomeQuery) OVER (ORDER BY DATE_FORMAT(date, '%Y-%m'))
+                , 2) AS income_diff",
+                [
+                    Wallet::class, Card::class,
+                    Wallet::class, Card::class
+                ]
+            )
+            ->selectRaw(
+                "ROUND(
+                    $savingsQuery - LAG($savingsQuery) OVER (ORDER BY DATE_FORMAT(date, '%Y-%m'))
+                , 2) AS savings_diff",
+                [
+                    SavingsPlan::class, SavingsPlan::class,
+                    SavingsPlan::class, SavingsPlan::class
+                ]
+            )
+            ->selectRaw('MONTH(date) as month')
             ->where('user_id', auth()->id())
             ->where('status', TransactionStatus::Completed)
-            ->whereBetween('date', [now()->startOfMonth()->setTime(0,0,0), now()->endOfMonth()->setTime(23,59,59)])
+            ->whereRaw("DATE_FORMAT(date, '%Y-%m') IN (
+                    DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m'),
+                    DATE_FORMAT(CURDATE(), '%Y-%m')
+            )")
+            ->where('date', '<', now())
+            ->groupByRaw("DATE_FORMAT(date, '%Y-%m'), month")
             ->get()
             ->toArray();
-
-        //dd($incomeExpenseStatistics);
 
         return Inertia::render('dashboard', [
             'spendingLimit' => $spendingLimit,
@@ -197,7 +231,7 @@ class DashboardController extends Controller
             'savingsPlans' => $savingsPlans,
             'recentTransactions' => $recentTransactions,
             'transactionStatusList' => TransactionStatus::toSelectOptions(),
-            'incomeExpenseStatistics' => $incomeExpenseStatistics[0]
+            'incomeExpenseStatistics' => $incomeExpenseStatistics
         ]);
     }
 }

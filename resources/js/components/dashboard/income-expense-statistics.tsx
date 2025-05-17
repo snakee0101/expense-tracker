@@ -1,14 +1,7 @@
-import { Card, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from 'flowbite-react';
-import dayjs from 'dayjs';
+import { Card } from 'flowbite-react';
 import { formatMoney } from '@/lib/helpers';
-import { ImAttachment } from 'react-icons/im';
-import { CiRedo } from 'react-icons/ci';
-import { MdOutlineCancel } from 'react-icons/md';
-import { RiCoinsFill, RiDeleteBin6Line } from 'react-icons/ri';
-import TransactionStatus from '@/components/main/transaction-status';
+import { RiCoinsFill } from 'react-icons/ri';
 import { GoArrowDownRight, GoArrowUpRight } from 'react-icons/go';
-import { TfiTarget } from 'react-icons/tfi';
-import { GrPlan } from 'react-icons/gr';
 import { GiPayMoney } from "react-icons/gi";
 import { MdOutlineSavings } from "react-icons/md";
 
@@ -16,23 +9,23 @@ export default function IncomeExpenseStatistics({statistics}) {
     const stats = [
         {
             title: 'Income',
-            value: `$ ${formatMoney(statistics.income)}`,
-            change: 0 + ' %',
-            increase: 123 > 0,
+            value: `$ ${formatMoney(statistics[1].income)}`,
+            change: `$ ${formatMoney(statistics[1].income_diff)}`,
+            increase: statistics[1].income_diff > 0,
             icon: <RiCoinsFill size={36} />
         },
         {
             title: 'Expense',
-            value: `$ ${formatMoney(statistics.expense)}`,
-            change: 0 + ' %',
-            increase: 123 < 0,
+            value: `$ ${formatMoney(statistics[1].expense)}`,
+            change: `$ ${formatMoney(statistics[1].expense_diff)}`,
+            increase: statistics[1].expense_diff > 0,
             icon: <GiPayMoney size={36} />
         },
         {
             title: 'Savings',
-            value: `$ ${formatMoney(statistics.savings)}`,
-            change: 0 + ' %',
-            increase: 123 > 0,
+            value: `$ ${formatMoney(statistics[1].savings)}`,
+            change: `$ ${formatMoney(statistics[1].savings_diff)}`,
+            increase: statistics[1].savings_diff > 0,
             icon: <MdOutlineSavings size={36} />
         },
     ];
