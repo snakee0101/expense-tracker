@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use App\Models\TransactionCategory;
 use App\Models\Wallet;
 use App\Rules\CheckCardExpiration;
+use App\Rules\WithinSavingsBalance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -129,8 +130,11 @@ class SavingsPlanController extends Controller
 
         $account = ($request->related_account_type)::findOrFail($request->related_account_id);
 
+        $savingsPlan = SavingsPlan::find($request->savings_plan_id);
+
         $request->validate([
-            'card' => new CheckCardExpiration($account)
+            'card' => new CheckCardExpiration($account),
+            'amount' => new WithinSavingsBalance($savingsPlan, $request->amount * ($request->boolean('is_withdraw') ? -1 : 1))
         ]);
 
         //create a transaction
