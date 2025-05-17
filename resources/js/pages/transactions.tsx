@@ -27,6 +27,7 @@ import { CiRedo } from "react-icons/ci";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { HiCheck } from 'react-icons/hi';
 import { useState } from 'react';
+import TransactionStatus from '@/components/main/transaction-status';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -168,23 +169,4 @@ export default function Transactions({ transactions, transactionStatusList }) {
             )}
         </AppLayout>
     );
-}
-
-function TransactionStatus({status, statusList})
-{
-    let badgeColor = null;
-
-    switch (status) {
-        case 1: //Pending
-            badgeColor = 'warning';
-            break;
-        case 2: //Completed
-            badgeColor = 'success';
-            break;
-        case 3: //Cancelled
-            badgeColor = 'failure';
-            break;
-    }
-
-    return <Badge color={badgeColor} className='inline'>{statusList[status]}</Badge>;
 }

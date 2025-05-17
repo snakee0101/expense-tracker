@@ -8,6 +8,7 @@ import ExpenseBreakdown from '@/components/dashboard/expense-breakdown';
 import TotalCashflow from '@/components/dashboard/total-cashflow';
 import Balance from '@/components/dashboard/balance';
 import SavingsPlans from '@/components/dashboard/savings_plans';
+import RecentTransactions from '@/components/dashboard/recent-transactions';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -29,7 +30,7 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function Dashboard({spendingLimit, amountSpent, expenseBreakdown, expenseBreakdownStartingDate, expenseBreakdownEndingDate, cashflow, accounts, savingsPlans}) {
+export default function Dashboard({spendingLimit, amountSpent, expenseBreakdown, expenseBreakdownStartingDate, expenseBreakdownEndingDate, cashflow, accounts, savingsPlans, recentTransactions, transactionStatusList}) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -42,6 +43,9 @@ export default function Dashboard({spendingLimit, amountSpent, expenseBreakdown,
                 <TotalCashflow cashflow={cashflow}/>
                 <Balance accounts={accounts}/>
                 <SavingsPlans savingsPlans={savingsPlans}/>
+            </div>
+            <div className='flex flex-row m-2 items-start'>
+                <RecentTransactions transactions={recentTransactions} transactionStatusList={transactionStatusList} />
             </div>
         </AppLayout>
     );

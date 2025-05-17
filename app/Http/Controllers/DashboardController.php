@@ -134,9 +134,23 @@ class DashboardController extends Controller
             ];
         }));
 
+        //Savings plans
         $savingsPlans = SavingsPlan::where('user_id', auth()->id())
                                     ->latest()
                                     ->get();
+
+        //Recent transactions
+        $recentTransactions = Transaction::where('user_id', auth()->id())
+            ->with('category', 'source', 'destination', 'attachments')
+            ->where([
+                ['source_type', '!=', SavingsPlan::class],
+                ['destination_type', '!=', SavingsPlan::class]
+            ])
+            ->orWhereNull('source_type')
+            ->latest('date')
+            ->take(5)
+            ->get()
+            ->toArray();
 
         return Inertia::render('dashboard', [
             'spendingLimit' => $spendingLimit,
@@ -146,7 +160,9 @@ class DashboardController extends Controller
             'expenseBreakdownEndingDate' => $expenseBreakdownEndingDate,
             'cashflow' => fillMissingMonths($cashflow),
             'accounts' => $accounts,
-            'savingsPlans' => $savingsPlans
+            'savingsPlans' => $savingsPlans,
+            'recentTransactions' => $recentTransactions,
+            'transactionStatusList' => TransactionStatus::toSelectOptions()
         ]);
     }
 }
