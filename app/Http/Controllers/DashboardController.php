@@ -152,6 +152,40 @@ class DashboardController extends Controller
             ->get()
             ->toArray();
 
+        //income/expense statistics
+        $incomeExpenseStatistics = Transaction::selectRaw('SUM(
+                                            CASE
+                                                 WHEN source_type IS NULL AND destination_type IN (?, ?) AND amount < 0 THEN -amount
+                                                 WHEN destination_type = ? THEN amount
+                                            END
+                                      ) AS expense',
+            [
+                Wallet::class, Card::class,
+                Contact::class
+            ])
+            ->selectRaw('SUM(
+                                            CASE
+                                                 WHEN source_type IS NULL AND destination_type IN (?, ?) AND amount > 0 THEN amount
+                                            END
+                                      ) AS income',
+                [
+                    Wallet::class, Card::class
+                ])
+            ->selectRaw("SUM(CASE
+                                WHEN destination_type = ? THEN amount
+                                WHEN source_type = ? THEN -amount
+                                ELSE 0
+                             END) AS savings",
+                [SavingsPlan::class, SavingsPlan::class]
+            )
+            ->where('user_id', auth()->id())
+            ->where('status', TransactionStatus::Completed)
+            ->whereBetween('date', [now()->startOfMonth()->setTime(0,0,0), now()->endOfMonth()->setTime(23,59,59)])
+            ->get()
+            ->toArray();
+
+        //dd($incomeExpenseStatistics);
+
         return Inertia::render('dashboard', [
             'spendingLimit' => $spendingLimit,
             'amountSpent' => $spendingLimit->amountSpent(),
@@ -162,7 +196,8 @@ class DashboardController extends Controller
             'accounts' => $accounts,
             'savingsPlans' => $savingsPlans,
             'recentTransactions' => $recentTransactions,
-            'transactionStatusList' => TransactionStatus::toSelectOptions()
+            'transactionStatusList' => TransactionStatus::toSelectOptions(),
+            'incomeExpenseStatistics' => $incomeExpenseStatistics[0]
         ]);
     }
 }
