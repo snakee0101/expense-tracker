@@ -14,7 +14,7 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\SpendingLimit;
 
-function fillMissingMonths(array $data): array
+function fillMissingMonths(array $data, array $columns): array
 {
     $allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     $indexedData = [];
@@ -29,15 +29,16 @@ function fillMissingMonths(array $data): array
     foreach ($allMonths as $month) {
         if (isset($indexedData[$month])) {
             $entry = $indexedData[$month];
-            // Normalize nulls to 0.00 as strings
-            $entry['expense'] = $entry['expense'] ?? "0.00";
-            $entry['income'] = $entry['income'] ?? "0.00";
+
+            foreach ($columns as $column => $defaultValue) {
+                $entry[$column] = $entry[$column] ?? $defaultValue;
+            }
         } else {
-            $entry = [
-                'month' => $month,
-                'expense' => "0.00",
-                'income' => "0.00"
-            ];
+            $entry = ['month' => $month];
+
+            foreach ($columns as $column => $defaultValue) {
+                $entry[$column] = $entry[$column] ?? $defaultValue;
+            }
         }
         $result[] = $entry;
     }
@@ -226,7 +227,7 @@ class DashboardController extends Controller
             'expenseBreakdown' => $expenseBreakdown,
             'expenseBreakdownStartingDate' => $expenseBreakdownStartingDate,
             'expenseBreakdownEndingDate' => $expenseBreakdownEndingDate,
-            'cashflow' => fillMissingMonths($cashflow),
+            'cashflow' => fillMissingMonths($cashflow, ['expense' => 0, 'income' => 0]),
             'accounts' => $accounts,
             'savingsPlans' => $savingsPlans,
             'recentTransactions' => $recentTransactions,

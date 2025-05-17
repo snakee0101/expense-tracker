@@ -25,6 +25,7 @@ import CreateSavingsPlanModal from '@/components/savings_plans/create-savings-pl
 import AddOrWithdrawFromSavingsPlan from '@/components/savings_plans/add-or-withdraw-from-savings-plan';
 import EditCardModal from '@/components/cards/edit-card-modal';
 import EditSavingsPlanModal from '@/components/savings_plans/edit-savings-plan-modal';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -46,7 +47,7 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function SavingsPlans({ savings_plans, transactionCategories, relatedAccounts, total_savings_gain }) {
+export default function SavingsPlans({ savings_plans, transactionCategories, relatedAccounts, total_savings_gain, savingsChartData }) {
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
@@ -78,6 +79,26 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
     const totalSavings = savings_plans.reduce(function(total, plan) {
         return total + Number(plan.balance);
     }, 0);
+
+    let chartDataForCurrentSavingsPlan = Object.values(savingsChartData).find(savingsChart => savingsChart.find(column => column.savings_plan_id == selectedSavingsPlanId));
+    chartDataForCurrentSavingsPlan = chartDataForCurrentSavingsPlan.sort(function (a, b) {
+        if (a.month < b.month) {
+            return -1;
+        } else if (a.month > b.month) {
+            return 1;
+        }
+
+        return 0;
+    });
+
+    let processedChartData = [];
+
+    for (let chartItem of chartDataForCurrentSavingsPlan) {
+        processedChartData.push({
+            name: chartItem.month,
+            balance: chartItem.savings_plan_balance,
+        });
+    }
 
     const stats = [
         {
@@ -217,6 +238,29 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
                                                       transactionCategories={transactionCategories}
                                                       relatedAccounts={relatedAccounts}
                         />
+                    </div>
+                    <div className='mt-4 text-center'>
+                        <h2 className='font-bold text-2xl my-4'>Savings plan balance change over this year</h2>
+                        <ResponsiveContainer height={500} width={600} className='m-auto'>
+                            <LineChart
+                                width={500}
+                                height={300}
+                                data={processedChartData}
+                                margin={{
+                                    top: 5,
+                                    right: 30,
+                                    left: 20,
+                                    bottom: 5,
+                                }}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="name" label={{ value: 'Month number', position: 'insideBottomRight', offset: 0 }} />
+                                <YAxis label={{ value: 'Balance ($)', angle: -90, position: 'insideLeft' }}  />
+                                <Tooltip />
+                                <Legend />
+                                <Line type="monotone" dataKey="balance" stroke="#8884d8" activeDot={{ r: 8 }} />
+                            </LineChart>
+                        </ResponsiveContainer>
                     </div>
                 </main>
             </div>
