@@ -12,7 +12,9 @@ import {
     ResponsiveContainer,
 } from 'recharts';
 
-export default function TotalCashflow({cashflow}) {
+export default function TotalCashflow({cashflow, header}) {
+    console.log(cashflow);
+
     let data = [];
 
     for(let monthData of cashflow) {
@@ -26,7 +28,7 @@ export default function TotalCashflow({cashflow}) {
     return (
         <Card>
             <div className="flex justify-between">
-                <h5 className="mr-3 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Total Cashflow</h5>
+                <h5 className="mr-3 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{header}</h5>
                 This year
             </div>
 

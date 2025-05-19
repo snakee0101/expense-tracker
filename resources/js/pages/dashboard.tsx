@@ -5,7 +5,7 @@ import { Head } from '@inertiajs/react';
 import { createTheme } from 'flowbite-react';
 import SpendingLimit from '@/components/dashboard/spending-limit';
 import ExpenseBreakdown from '@/components/dashboard/expense-breakdown';
-import TotalCashflow from '@/components/dashboard/total-cashflow';
+import TotalCashflow from '@/components/main/total-cashflow';
 import Balance from '@/components/dashboard/balance';
 import SavingsPlans from '@/components/dashboard/savings_plans';
 import RecentTransactions from '@/components/dashboard/recent-transactions';
@@ -41,7 +41,7 @@ export default function Dashboard({spendingLimit, amountSpent, expenseBreakdown,
                 <ExpenseBreakdown breakdown={expenseBreakdown} expenseBreakdownStartingDate={expenseBreakdownStartingDate} expenseBreakdownEndingDate={expenseBreakdownEndingDate} />
             </div>
             <div className='flex flex-row m-2 items-start'>
-                <TotalCashflow cashflow={cashflow}/>
+                <TotalCashflow cashflow={cashflow} header='Total Cashflow' />
                 <Balance accounts={accounts}/>
                 <SavingsPlans savingsPlans={savingsPlans}/>
             </div>

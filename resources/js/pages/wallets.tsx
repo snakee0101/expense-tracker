@@ -13,6 +13,7 @@ import '../../css/app.css';
 import { CreateIncomeExpense } from '@/components/main/create-income-expense';
 import CreateWalletModal from '@/components/wallets/create-wallet-modal';
 import EditWalletModal from '@/components/wallets/edit-wallet-modal';
+import TotalCashflow from '@/components/main/total-cashflow';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -34,14 +35,21 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function Wallets({ wallets, transactionCategories }) {
+export default function Wallets({ wallets, transactionCategories, chartData }) {
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
     const [selectedWalletId, setSelectedWalletId] = useState(wallets[0].id);
 
+    let chartDataForCurrentWallet = Object.values(chartData)
+                                                    .filter(chart => chart.wallet_id == selectedWalletId);
+
     function selectWallet(walletId) {
         setSelectedWalletId(walletId);
+    }
+
+    function selectedWallet() {
+        return wallets.find(w => w.id = selectedWalletId);
     }
 
     return (
@@ -95,15 +103,20 @@ export default function Wallets({ wallets, transactionCategories }) {
                 <div className="w-4"></div>
 
                 <main className="flex-1 p-6 min-h-screen">
-                    <CreateIncomeExpense key={selectedWalletId}
-                                         transactionable={{
-                                             destination_type: 'App\\Models\\Wallet',
-                                             destination_id: selectedWalletId
-                                         }}
-                                         setIsNotificationShown={setIsNotificationShown}
-                                         setNotificationMessage={setNotificationMessage}
-                                         transactionCategories={transactionCategories}
-                    />
+                    <div>
+                        <CreateIncomeExpense key={selectedWalletId}
+                                             transactionable={{
+                                                 destination_type: 'App\\Models\\Wallet',
+                                                 destination_id: selectedWalletId
+                                             }}
+                                             setIsNotificationShown={setIsNotificationShown}
+                                             setNotificationMessage={setNotificationMessage}
+                                             transactionCategories={transactionCategories}
+                        />
+                    </div>
+                    <div className='mt-3'>
+                        <TotalCashflow key={selectedWalletId} cashflow={chartDataForCurrentWallet} header={`Cashflow for wallet "${selectedWallet().name}"`} />
+                    </div>
                 </main>
             </div>
         </AppLayout>
