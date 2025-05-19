@@ -6,7 +6,7 @@ import { useForm } from '@inertiajs/react';
 import {
     Toast,
     ToastToggle,
-    createTheme, Avatar
+    createTheme, Avatar, Label, TextInput, Select, FileInput, Datepicker, Textarea, Button
 } from 'flowbite-react';
 import { useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
@@ -16,6 +16,7 @@ import { ListGroup, ListGroupItem } from "flowbite-react";
 import CreateCategoryModal from '@/components/transaction_categories/create-category-modal';
 import EditCategoryModal from '@/components/transaction_categories/edit-category-modal';
 import { CreatePayment } from '@/components/payments/create-payment';
+import dayjs from 'dayjs';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -46,7 +47,23 @@ export default function Payments({ payments, paymentCategories, transactionCateg
 
     const { data, setData, post, errors, reset } = useForm({
         payment_id: payments[0].id,
+        date: dayjs().format('YYYY-MM-DD'),
+        time: dayjs().format('HH:mm:ss'),
+        name: null,
+        account_number: null,
+        amount: null,
+        category_id: null,
+        payment_category_id: null,
+        receipts: [],
+        source_id: null,
+        source_type: null,
+        note: null,
+        card: '' //fake attribute to place validation errors in if card is expired
     });
+
+    function getPaymentById(id) {
+        return payments.filter(p => p.id == id)[0];
+    }
 
     function selectPayment(paymentId) {
         setSelectedPaymentId(paymentId);
@@ -116,7 +133,130 @@ export default function Payments({ payments, paymentCategories, transactionCateg
                 <div className="w-4"></div>
 
                 <main className="min-h-screen flex-1 p-6">
-                    payment form
+                    <div className="max-w-xl mx-auto p-6 bg-green-50 rounded-none shadow-md" key={selectedPaymentId}>
+                        <h3 className='font-bold text-xl mb-4'>Make a payment</h3>
+
+                        {/* Transaction name */}
+                        <div className="mb-4">
+                            <Label htmlFor="name">Payment name</Label>
+                            <TextInput
+                                id="name"
+                                name="name"
+                                placeholder="Payment name"
+                                value={getPaymentById(selectedPaymentId).name}
+                                onChange={e => setData('name', e.target.value)}
+                            />
+                            {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
+                        </div>
+
+                        {/* Account number of payment receiver */}
+                        <div className="mb-4">
+                            <Label htmlFor="account-number">Account number of payment receiver</Label>
+                            <TextInput
+                                id="account-number"
+                                type="text"
+                                value={getPaymentById(selectedPaymentId).account_number}
+                                onChange={e => setData('account_number', e.target.value)}
+                            />
+                            {errors.account_number && <p className="text-red-600 text-sm">{errors.account_number}</p>}
+                        </div>
+
+                        {/* Select Account */}
+                        <div className="mb-4">
+                            <Label htmlFor="recipient">Select Account</Label>
+                            <Select id="account" onChange={e => {
+                                setData('source_id', JSON.parse(e.target.value).id);
+                                setData('source_type', JSON.parse(e.target.value).type);
+                            }}>
+                                <option></option>
+                                {accounts.map(account => (
+                                    <option key={account.id + account.type}
+                                            value={JSON.stringify({ id: account.id, type: account.type })}
+                                    >{account.type == 'App\\Models\\Wallet' ? 'Wallet' : 'Card'} "{account.name}":
+                                        ${account.balance}</option>
+                                ))}
+                            </Select>
+                            {errors.source_id && <p className="text-red-600 text-sm">{errors.source_id}</p>}
+                            {errors.card && <p className="text-red-600 text-sm">{errors.card}</p>}
+                        </div>
+
+                        {/* Amount */}
+                        <div className="mb-4">
+                            <Label htmlFor="amount">Amount</Label>
+                            <TextInput
+                                id="amount"
+                                type="text"
+                                placeholder="250.00"
+                                value={getPaymentById(selectedPaymentId).amount}
+                                onChange={e => setData('amount', e.target.value)}
+                            />
+                            {errors.amount && <p className="text-red-600 text-sm">{errors.amount}</p>}
+                        </div>
+
+                        {/* Receipts */}
+                        <div className="mb-4">
+                            <Label htmlFor="files">Upload receipts</Label>
+                            <FileInput id="files" multiple
+                                       onChange={e => setData('receipts', e.target.files)} />
+                        </div>
+
+                        {/* Transaction Date */}
+                        <div className="mb-4">
+                            <Label htmlFor="transaction-date">Transaction Date</Label>
+                            <Datepicker onChange={date => setData('date', dayjs(date).format('YYYY-MM-DD'))} />
+
+                            {errors.date && <p className="text-red-600 text-sm">{errors.date}</p>}
+                        </div>
+
+                        {/* Transaction Time */}
+                        <div className="mb-4">
+                            <Label htmlFor="transaction-time">Transaction Time</Label>
+                            <br />
+                            <input type="time" id="transaction-time" value={data.time}
+                                   onChange={e => setData('time', e.target.value)} />
+                            {errors.time && <p className="text-red-600 text-sm">{errors.time}</p>}
+                        </div>
+
+                        {/* Transaction Category */}
+                        <div className="mb-4">
+                            <Label htmlFor="category">Transaction category</Label>
+                            <Select id="category" onChange={e => setData('category_id', e.target.value)} value={getPaymentById(selectedPaymentId).category_id}>
+                                <option></option>
+                                {transactionCategories.map(category => (
+                                    <option key={category.id} value={category.id}>{category.name}</option>
+                                ))}
+                            </Select>
+                            {errors.category_id && <p className="text-red-600 text-sm">{errors.category_id}</p>}
+                        </div>
+
+                        {/* Payment Category */}
+                        <div className="mb-4">
+                            <Label htmlFor="payment-category">Payment category</Label>
+                            <Select id="payment-category" onChange={e => setData('payment_category_id', e.target.value)} value={getPaymentById(selectedPaymentId).payment_category_id}>
+                                <option></option>
+                                {paymentCategories.map(category => (
+                                    <option key={category.id} value={category.id}>{category.name}</option>
+                                ))}
+                            </Select>
+                            {errors.payment_category_id && <p className="text-red-600 text-sm">{errors.payment_category_id}</p>}
+                        </div>
+
+                        {/* Note */}
+                        <div className="mb-4">
+                            <Label htmlFor="note">Note</Label>
+                            <Textarea
+                                id="note"
+                                placeholder="Payment for shared vacation expenses"
+                                rows={3}
+                                onChange={e => setData('note', e.target.value)}
+                            />
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex justify-end gap-2 mt-4">
+                            <Button type="submit">Send Money</Button>
+                        </div>
+                    </div>
                 </main>
             </div>
         </AppLayout>
