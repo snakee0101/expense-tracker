@@ -115,7 +115,7 @@ export default function Wallets({ wallets, transactionCategories, chartData }) {
                         />
                     </div>
                     <div className='mt-3'>
-                        <TotalCashflow key={selectedWalletId} cashflow={chartDataForCurrentWallet} header={`Cashflow for wallet "${selectedWallet().name}"`} />
+                        <TotalCashflow key={selectedWalletId} cashflow={chartDataForCurrentWallet} header='Cashflow' />
                     </div>
                 </main>
             </div>

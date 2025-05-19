@@ -13,6 +13,7 @@ import { CreateIncomeExpense } from '@/components/main/create-income-expense';
 import CreateCardModal from '@/components/cards/create-card-modal';
 import EditWalletModal from '@/components/wallets/edit-wallet-modal';
 import EditCardModal from '@/components/cards/edit-card-modal';
+import TotalCashflow from '@/components/main/total-cashflow';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -34,14 +35,21 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function Cards({ cards, transactionCategories }) {
+export default function Cards({ cards, transactionCategories, chartData }) {
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
     const [selectedCardId, setSelectedCardId] = useState(cards.find(card => card.is_expired == false).id);
 
+    let chartDataForCurrentCard = Object.values(chartData)
+                                                   .filter(chart => chart.card_id == selectedCardId);
+
     function selectCard(cardId) {
         setSelectedCardId(cardId);
+    }
+
+    function selectedCard() {
+        return cards.find(c => c.id = selectedCardId);
     }
 
     return (
@@ -110,15 +118,20 @@ export default function Cards({ cards, transactionCategories }) {
                 <div className="w-4"></div>
 
                 <main className="min-h-screen flex-1 p-6">
-                    <CreateIncomeExpense key={selectedCardId}
-                                         transactionable={{
-                                             destination_type: 'App\\Models\\Card',
-                                             destination_id: selectedCardId
-                                         }}
-                                         setIsNotificationShown={setIsNotificationShown}
-                                         setNotificationMessage={setNotificationMessage}
-                                         transactionCategories={transactionCategories}
-                    />
+                    <div>
+                        <CreateIncomeExpense key={selectedCardId}
+                                             transactionable={{
+                                                 destination_type: 'App\\Models\\Card',
+                                                 destination_id: selectedCardId
+                                             }}
+                                             setIsNotificationShown={setIsNotificationShown}
+                                             setNotificationMessage={setNotificationMessage}
+                                             transactionCategories={transactionCategories}
+                        />
+                    </div>
+                    <div className='mt-3'>
+                        <TotalCashflow key={selectedCardId} cashflow={chartDataForCurrentCard} header='Cashflow' />
+                    </div>
                 </main>
             </div>
         </AppLayout>

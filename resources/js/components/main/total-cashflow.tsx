@@ -5,6 +5,7 @@ import {
     Cell,
     XAxis,
     YAxis,
+    Label,
     CartesianGrid,
     Tooltip,
     Legend,
@@ -13,8 +14,6 @@ import {
 } from 'recharts';
 
 export default function TotalCashflow({cashflow, header}) {
-    console.log(cashflow);
-
     let data = [];
 
     for(let monthData of cashflow) {
@@ -48,8 +47,12 @@ export default function TotalCashflow({cashflow, header}) {
                     }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
+                    <XAxis dataKey="name">
+                        <Label value="Month number" offset={0} position="insideBottom" />
+                    </XAxis>
+                    <YAxis>
+                        <Label value="Balance ($)" position="inside" angle={-90} />
+                    </YAxis>
                     <Tooltip />
                     <Legend />
                     <ReferenceLine y={0} stroke="#000" />

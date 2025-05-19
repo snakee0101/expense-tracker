@@ -85,10 +85,6 @@ class WalletController extends Controller
             Wallet::class, Card::class, //income
         ]);
 
-        /*echo "<pre>";
-        print_r($chartData);
-        echo "</pre>";
-*/
         return Inertia::render('wallets', [
             'wallets' => Wallet::where('user_id', auth()->id())->latest()->get(),
             'transactionCategories' => TransactionCategory::where('user_id', auth()->id())->latest()->get(),
