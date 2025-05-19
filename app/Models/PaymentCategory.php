@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PaymentCategory extends Model
 {
-    /** @use HasFactory<\Database\Factories\PaymentCategoryFactory> */
     use HasFactory;
+
+    protected $guarded = [];
 }

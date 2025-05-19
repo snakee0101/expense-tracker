@@ -13,6 +13,7 @@ import { HiCheck } from 'react-icons/hi';
 import '../../css/app.css';
 import { Accordion, AccordionContent, AccordionPanel, AccordionTitle } from "flowbite-react";
 import { ListGroup, ListGroupItem } from "flowbite-react";
+import CreateCategoryModal from '@/components/transaction_categories/create-category-modal';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -64,7 +65,7 @@ export default function Payments({ payments, paymentCategories, accounts }) {
                 </Toast>
             )}
 
-            <Head title="Transfers" />
+            <Head title="Payments" />
 
             <div className="flex min-h-screen">
                 <div className="w-4"></div>
@@ -72,6 +73,9 @@ export default function Payments({ payments, paymentCategories, accounts }) {
                 <aside className="floating-sidebar">
                     <div className="mb-4 flex items-center justify-between">
                         <h2 className="text-xl font-bold">Payments</h2>
+                    </div>
+                    <div className='flex flex-row justify-between my-3'>
+                        <CreateCategoryModal setIsNotificationShown={setIsNotificationShown} setNotificationMessage={setNotificationMessage} storeUrl={route('payment_category.store')} />
                         Create payment modal button
                     </div>
 

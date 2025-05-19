@@ -55,7 +55,7 @@ export default function TransactionCategories({ transactionCategoryPaginator }) 
             <Head title="Transaction Categories" />
 
             <div className='flex mb-4 mx-2'>
-                <CreateCategoryModal setIsNotificationShown={setIsNotificationShown} setNotificationMessage={setNotificationMessage}/>
+                <CreateCategoryModal setIsNotificationShown={setIsNotificationShown} setNotificationMessage={setNotificationMessage} storeUrl={route('transaction_category.store')} />
             </div>
 
             <Table>
