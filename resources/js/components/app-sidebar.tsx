@@ -8,6 +8,7 @@ import { GrTransaction } from "react-icons/gr";
 import { MdOutlineCategory } from "react-icons/md";
 import { SlWallet } from "react-icons/sl";
 import { RiBankCardFill } from "react-icons/ri";
+import { MdOutlinePayment } from "react-icons/md";
 import { MdOutlineSavings } from "react-icons/md";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
 import { IoCalendarNumberOutline } from "react-icons/io5";
@@ -29,6 +30,11 @@ export function AppSidebar() {
             title: 'Transactions',
             href: route('transaction.index'),
             icon: GrTransaction,
+        },
+        {
+            title: 'Payments',
+            href: route('payment.index'),
+            icon: MdOutlinePayment,
         },
         {
             title: 'Transaction Categories',

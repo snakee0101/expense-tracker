@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\InboxController;
+use App\Http\Controllers\PaymentController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CardController;
@@ -34,6 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('card', CardController::class);
     Route::resource('savings_plan', SavingsPlanController::class);
     Route::resource('transfer', TransferController::class);
+    Route::resource('payment', PaymentController::class);
 
     Route::resource('contact', ContactController::class)->except('update');
     Route::post('contact/{contact}/update', [ContactController::class, 'update'])->name('contact.update');
