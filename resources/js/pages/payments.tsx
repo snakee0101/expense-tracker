@@ -2,28 +2,18 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
-import { formatCardNumber, formatDate } from '../lib/helpers';
-
 import { useForm } from '@inertiajs/react';
 import {
     Toast,
     ToastToggle,
-    createTheme,
-    Card,
-    Button,
-    Modal,
-    ModalBody,
-    ModalHeader, Label, TextInput, FileInput, Select, Textarea, Datepicker
+    createTheme, Avatar
 } from 'flowbite-react';
 import { useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
 import '../../css/app.css';
-import { CreateSavingsPlanModal } from '@/pages/savings_plans';
-import { FaPlus } from 'react-icons/fa6';
-import dayjs from 'dayjs';
-import CreateContactModal from '@/components/transfers/create-contact-modal';
-import EditSavingsPlanModal from '@/components/savings_plans/edit-savings-plan-modal';
-import EditContactModal from '@/components/transfers/edit-contact-modal';
+import { Accordion, AccordionContent, AccordionPanel, AccordionTitle } from "flowbite-react";
+import { ListGroup, ListGroupItem } from "flowbite-react";
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -55,10 +45,6 @@ export default function Payments({ payments, paymentCategories, accounts }) {
         payment_id: payments[0].id,
     });
 
-    console.log(payments);
-    console.log(paymentCategories);
-    console.log(accounts);
-
     function selectPayment(paymentId) {
         setSelectedPaymentId(paymentId);
 
@@ -85,12 +71,33 @@ export default function Payments({ payments, paymentCategories, accounts }) {
 
                 <aside className="floating-sidebar">
                     <div className="mb-4 flex items-center justify-between">
-                        <h2 className="text-xl font-bold">My Contacts</h2>
-                        <CreateContactModal setIsNotificationShown={setIsNotificationShown}
-                                            setNotificationMessage={setNotificationMessage} />
+                        <h2 className="text-xl font-bold">Payments</h2>
+                        Create payment modal button
                     </div>
 
-                    <p>payment categories list</p>
+                    <Accordion className='bg-white'>
+                        {paymentCategories.map(paymentCategory => (
+                            <AccordionPanel>
+                                <AccordionTitle>
+                                    <div className='flex flex-row items-center'>
+                                        <Avatar img={paymentCategory.image_path} alt="avatar of Jese" rounded />
+                                        <p className='ml-4'>{paymentCategory.name}</p>
+                                    </div>
+                                </AccordionTitle>
+                                <AccordionContent>
+                                    <ListGroup className="">
+                                        {payments
+                                            .filter(payment => payment.payment_category_id == paymentCategory.id)
+                                            .map(payment =>
+                                                selectedPaymentId == payment.id
+                                                    ? <ListGroupItem active>{payment.name}</ListGroupItem>
+                                                    : <ListGroupItem onClick={() => setSelectedPaymentId(payment.id)}>{payment.name}</ListGroupItem>
+                                            )}
+                                    </ListGroup>
+                                </AccordionContent>
+                            </AccordionPanel>
+                        ))}
+                    </Accordion>
                 </aside>
 
                 <div className="w-4"></div>

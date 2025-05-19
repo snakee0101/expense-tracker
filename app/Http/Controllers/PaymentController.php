@@ -42,7 +42,11 @@ class PaymentController extends Controller
                 ->get(),
             'paymentCategories' => PaymentCategory::where('user_id', auth()->id())
                 ->latest()
-                ->get(),
+                ->get()
+                ->map(function($paymentCategory) {
+                    $paymentCategory->image_path = Storage::url($paymentCategory->image_path);
+                    return $paymentCategory;
+                }),
             'accounts' => $accounts
         ]);
     }
