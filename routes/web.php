@@ -24,7 +24,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('transaction_category', TransactionCategoryController::class)->except('update');
-    Route::post('transaction_category/{transactionCategory}/update', [TransactionCategoryController::class, 'update'])->name('transaction_category.update');
+    Route::post('transaction_category/{category}/update', [TransactionCategoryController::class, 'update'])->name('transaction_category.update');
 
     Route::resource('transaction', TransactionController::class);
     Route::get('transactions/export', [TransactionController::class, 'export'])->name('transaction.export');
@@ -37,7 +37,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('savings_plan', SavingsPlanController::class);
     Route::resource('transfer', TransferController::class);
     Route::resource('payment', PaymentController::class);
-    Route::resource('payment_category', PaymentCategoryController::class);
+
+    Route::resource('payment_category', PaymentCategoryController::class)->except('update');
+    Route::post('payment_category/{category}/update', [PaymentCategoryController::class, 'update'])->name('payment_category.update');
 
     Route::resource('contact', ContactController::class)->except('update');
     Route::post('contact/{contact}/update', [ContactController::class, 'update'])->name('contact.update');

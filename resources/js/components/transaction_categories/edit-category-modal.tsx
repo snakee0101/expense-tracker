@@ -4,7 +4,7 @@ import { Button, FileInput, Label, Modal, ModalBody, ModalHeader, TextInput } fr
 import { MdOutlineModeEditOutline } from 'react-icons/md';
 import { formatCardNumber } from '@/lib/helpers';
 
-export default function EditCategoryModal({ category, setIsNotificationShown, setNotificationMessage }) {
+export default function EditCategoryModal({ category, setIsNotificationShown, setNotificationMessage, updateUrl }) {
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, post, errors, clearErrors, reset } = useForm({
@@ -21,14 +21,14 @@ export default function EditCategoryModal({ category, setIsNotificationShown, se
     const handleEdit = (event) => {
         event.preventDefault();
 
-        post(route('transaction_category.update', {transactionCategory: category.id}), {
+        post(updateUrl, {category: category.id}, {
             forceFormData: true,
             onSuccess: () => {
                 onCloseModal();
-                setNotificationMessage('Contact updated');
+                setNotificationMessage('Category updated');
                 setIsNotificationShown(true);
                 setTimeout(() => setIsNotificationShown(false), 2000);
-            },
+            }
         });
     };
 

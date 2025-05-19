@@ -52,14 +52,14 @@ class TransactionCategoryController extends Controller
         //
     }
 
-    public function update(Request $request, TransactionCategory $transactionCategory)
+    public function update(Request $request, TransactionCategory $category)
     {
         $request->validate([
             'name' => [
                 'min: 3',
                 Rule::unique('transaction_categories', 'name')
                     ->where('user_id', auth()->id())
-                    ->ignoreModel($transactionCategory)
+                    ->ignoreModel($category)
             ],
             'image' => ['nullable', 'image', 'file', 'max:1024']
         ]);
@@ -70,7 +70,7 @@ class TransactionCategoryController extends Controller
             $data['image_path'] = $request->file('image')->store('images', 'public');
         }
 
-        $transactionCategory->update($data);
+        $category->update($data);
 
         return to_route('transaction_category.index');
     }

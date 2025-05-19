@@ -14,6 +14,7 @@ import '../../css/app.css';
 import { Accordion, AccordionContent, AccordionPanel, AccordionTitle } from "flowbite-react";
 import { ListGroup, ListGroupItem } from "flowbite-react";
 import CreateCategoryModal from '@/components/transaction_categories/create-category-modal';
+import EditCategoryModal from '@/components/transaction_categories/edit-category-modal';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -79,17 +80,22 @@ export default function Payments({ payments, paymentCategories, accounts }) {
                         Create payment modal button
                     </div>
 
-                    <Accordion className='bg-white'>
+                    {paymentCategories.length > 0 && <Accordion className='bg-white'>
                         {paymentCategories.map(paymentCategory => (
                             <AccordionPanel>
                                 <AccordionTitle>
                                     <div className='flex flex-row items-center'>
                                         <Avatar img={paymentCategory.image_path} alt="avatar of Jese" rounded />
                                         <p className='ml-4'>{paymentCategory.name}</p>
+                                        <EditCategoryModal key={paymentCategory.id + paymentCategory.name}
+                                                           category={paymentCategory}
+                                                           setIsNotificationShown={setIsNotificationShown}
+                                                           setNotificationMessage={setNotificationMessage}
+                                                           updateUrl={route('payment_category.update', {category: paymentCategory.id})} />
                                     </div>
                                 </AccordionTitle>
                                 <AccordionContent>
-                                    <ListGroup className="">
+                                    {payments.filter(payment => payment.payment_category_id == paymentCategory.id).length > 0 && <ListGroup className="">
                                         {payments
                                             .filter(payment => payment.payment_category_id == paymentCategory.id)
                                             .map(payment =>
@@ -97,11 +103,11 @@ export default function Payments({ payments, paymentCategories, accounts }) {
                                                     ? <ListGroupItem active>{payment.name}</ListGroupItem>
                                                     : <ListGroupItem onClick={() => setSelectedPaymentId(payment.id)}>{payment.name}</ListGroupItem>
                                             )}
-                                    </ListGroup>
+                                    </ListGroup>}
                                 </AccordionContent>
                             </AccordionPanel>
                         ))}
-                    </Accordion>
+                    </Accordion>}
                 </aside>
 
                 <div className="w-4"></div>

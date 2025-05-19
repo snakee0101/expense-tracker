@@ -81,7 +81,8 @@ export default function TransactionCategories({ transactionCategoryPaginator }) 
                                     <EditCategoryModal key={transactionCategory.id + transactionCategory.name}
                                                       category={transactionCategory}
                                                       setIsNotificationShown={setIsNotificationShown}
-                                                      setNotificationMessage={setNotificationMessage} />
+                                                      setNotificationMessage={setNotificationMessage}
+                                                      updateUrl={route('transaction_category.update', {category: transactionCategory.id})} />
                                 </div>
                             </TableCell>
                         </TableRow>
