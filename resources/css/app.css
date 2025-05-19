@@ -214,3 +214,8 @@ button, input {
 div[role='progressbar'] {
     margin-right: 0;
 }
+
+.payment-category-list-item button {
+    padding: 1em;
+    cursor: pointer;
+}

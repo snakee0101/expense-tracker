@@ -10,6 +10,7 @@ use App\Models\TransactionCategory;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class PaymentController extends Controller
@@ -47,6 +48,7 @@ class PaymentController extends Controller
                     $paymentCategory->image_path = Storage::url($paymentCategory->image_path);
                     return $paymentCategory;
                 }),
+            'transactionCategories' => TransactionCategory::where('user_id', auth()->id())->latest()->get(),
             'accounts' => $accounts
         ]);
     }
@@ -58,7 +60,20 @@ class PaymentController extends Controller
 
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => [
+                'min: 3',
+                Rule::unique('payments')->where('payment_category_id', $request->payment_category_id),
+            ],
+            'amount' => ['gt:0'],
+            'account_number' => ['required'],
+            'payment_category_id' => [Rule::exists('payment_categories', 'id')->where('user_id', auth()->id())],
+            'category_id' => [Rule::exists('transaction_categories', 'id')->where('user_id', auth()->id())]
+        ]);
+
+        Payment::create($validated);
+
+        return to_route('payment.index');
     }
 
     public function show(Payment $payment)

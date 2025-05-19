@@ -15,6 +15,7 @@ import { Accordion, AccordionContent, AccordionPanel, AccordionTitle } from "flo
 import { ListGroup, ListGroupItem } from "flowbite-react";
 import CreateCategoryModal from '@/components/transaction_categories/create-category-modal';
 import EditCategoryModal from '@/components/transaction_categories/edit-category-modal';
+import { CreatePayment } from '@/components/payments/create-payment';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -37,7 +38,7 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function Payments({ payments, paymentCategories, accounts }) {
+export default function Payments({ payments, paymentCategories, transactionCategories, accounts }) {
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
@@ -77,13 +78,13 @@ export default function Payments({ payments, paymentCategories, accounts }) {
                     </div>
                     <div className='flex flex-row justify-between my-3'>
                         <CreateCategoryModal setIsNotificationShown={setIsNotificationShown} setNotificationMessage={setNotificationMessage} storeUrl={route('payment_category.store')} />
-                        Create payment modal button
+                        <CreatePayment setIsNotificationShown={setIsNotificationShown} setNotificationMessage={setNotificationMessage} transactionCategories={transactionCategories} paymentCategories={paymentCategories} />
                     </div>
 
                     {paymentCategories.length > 0 && <Accordion className='bg-white'>
                         {paymentCategories.map(paymentCategory => (
                             <AccordionPanel>
-                                <AccordionTitle>
+                                <AccordionTitle className='cursor-pointer'>
                                     <div className='flex flex-row items-center'>
                                         <Avatar img={paymentCategory.image_path} alt="avatar of Jese" rounded />
                                         <p className='ml-4'>{paymentCategory.name}</p>
@@ -94,16 +95,18 @@ export default function Payments({ payments, paymentCategories, accounts }) {
                                                            updateUrl={route('payment_category.update', {category: paymentCategory.id})} />
                                     </div>
                                 </AccordionTitle>
-                                <AccordionContent>
-                                    {payments.filter(payment => payment.payment_category_id == paymentCategory.id).length > 0 && <ListGroup className="">
-                                        {payments
-                                            .filter(payment => payment.payment_category_id == paymentCategory.id)
-                                            .map(payment =>
-                                                selectedPaymentId == payment.id
-                                                    ? <ListGroupItem active>{payment.name}</ListGroupItem>
-                                                    : <ListGroupItem onClick={() => setSelectedPaymentId(payment.id)}>{payment.name}</ListGroupItem>
-                                            )}
-                                    </ListGroup>}
+                                <AccordionContent className='p-0'>
+                                    {payments.filter(payment => payment.payment_category_id == paymentCategory.id).length > 0 &&
+                                        <ListGroup className="rounded-none">
+                                            {payments
+                                                .filter(payment => payment.payment_category_id == paymentCategory.id)
+                                                .map(payment =>
+                                                    selectedPaymentId == payment.id
+                                                        ? <ListGroupItem className='payment-category-list-item' active>{payment.name}</ListGroupItem>
+                                                        : <ListGroupItem className='payment-category-list-item' onClick={() => setSelectedPaymentId(payment.id)}>{payment.name}</ListGroupItem>
+                                                )}
+                                        </ListGroup>
+                                    }
                                 </AccordionContent>
                             </AccordionPanel>
                         ))}
