@@ -89,7 +89,20 @@ class PaymentController extends Controller
 
     public function update(Request $request, Payment $payment)
     {
-        //
+        $validated = $request->validate([
+            'name' => [
+                'min: 3',
+                Rule::unique('payments')->where('payment_category_id', $request->payment_category_id)->ignoreModel($payment),
+            ],
+            'amount' => ['gt:0'],
+            'account_number' => ['required'],
+            'payment_category_id' => [Rule::exists('payment_categories', 'id')->where('user_id', auth()->id())],
+            'category_id' => [Rule::exists('transaction_categories', 'id')->where('user_id', auth()->id())]
+        ]);
+
+        $payment->update($validated);
+
+        return to_route('payment.index');
     }
 
     public function destroy(Payment $payment)

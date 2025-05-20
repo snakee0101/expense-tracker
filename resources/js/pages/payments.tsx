@@ -2,22 +2,33 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
+import { CreatePayment } from '@/components/payments/create-payment';
+import CreateCategoryModal from '@/components/transaction_categories/create-category-modal';
+import EditCategoryModal from '@/components/transaction_categories/edit-category-modal';
 import { useForm } from '@inertiajs/react';
+import dayjs from 'dayjs';
 import {
+    Accordion,
+    AccordionContent,
+    AccordionPanel,
+    AccordionTitle,
+    Avatar,
+    Button,
+    Datepicker,
+    FileInput,
+    Label,
+    ListGroup,
+    ListGroupItem,
+    Select,
+    TextInput,
+    Textarea,
     Toast,
     ToastToggle,
-    createTheme, Avatar, Label, TextInput, Select, FileInput, Datepicker, Textarea, Button
+    createTheme,
 } from 'flowbite-react';
 import { useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
 import '../../css/app.css';
-import { Accordion, AccordionContent, AccordionPanel, AccordionTitle } from "flowbite-react";
-import { ListGroup, ListGroupItem } from "flowbite-react";
-import CreateCategoryModal from '@/components/transaction_categories/create-category-modal';
-import EditCategoryModal from '@/components/transaction_categories/edit-category-modal';
-import { CreatePayment } from '@/components/payments/create-payment';
-import dayjs from 'dayjs';
-
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -45,7 +56,7 @@ export default function Payments({ payments, paymentCategories, transactionCateg
 
     const [selectedPaymentId, setSelectedPaymentId] = useState(payments[0].id);
 
-    const { data, setData, post, errors, reset } = useForm({
+    const { data, setData, post, put, errors, reset } = useForm({
         payment_id: payments[0].id,
         date: dayjs().format('YYYY-MM-DD'),
         time: dayjs().format('HH:mm:ss'),
@@ -58,25 +69,44 @@ export default function Payments({ payments, paymentCategories, transactionCateg
         source_id: null,
         source_type: null,
         note: null,
-        card: '' //fake attribute to place validation errors in if card is expired
+        card: '', //fake attribute to place validation errors in if card is expired
     });
 
     function getPaymentById(id) {
-        return payments.filter(p => p.id == id)[0];
+        return payments.filter((p) => p.id == id)[0];
     }
 
     function selectPayment(paymentId) {
         setSelectedPaymentId(paymentId);
+        const payment = getPaymentById(paymentId);
 
-        setData('payment_id', paymentId);
+        setData({
+            ...data,
+            payment_id: paymentId,
+            name: payment.name ?? '',
+            account_number: payment.account_number ?? '',
+            amount: payment.amount ?? '',
+            category_id: payment.category_id ?? '',
+            payment_category_id: payment.payment_category_id ?? '',
+            note: payment.note ?? '',
+        });
+    }
+
+    function handleEdit() {
+        put(route('payment.update', { payment: selectedPaymentId }), {
+            onSuccess: () => {
+                setNotificationMessage('Payment updated');
+                setIsNotificationShown(true);
+                setTimeout(() => setIsNotificationShown(false), 3000);
+            },
+        });
     }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             {isNotificationShown && (
                 <Toast theme={toastThemeWithAbsolutePositioning.toast}>
-                    <div
-                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
                         <HiCheck className="h-5 w-5" />
                     </div>
                     <div className="ml-3 text-sm font-normal">{notificationMessage}</div>
@@ -93,91 +123,113 @@ export default function Payments({ payments, paymentCategories, transactionCateg
                     <div className="mb-4 flex items-center justify-between">
                         <h2 className="text-xl font-bold">Payments</h2>
                     </div>
-                    <div className='flex flex-row justify-between my-3'>
-                        <CreateCategoryModal setIsNotificationShown={setIsNotificationShown} setNotificationMessage={setNotificationMessage} storeUrl={route('payment_category.store')} />
-                        <CreatePayment setIsNotificationShown={setIsNotificationShown} setNotificationMessage={setNotificationMessage} transactionCategories={transactionCategories} paymentCategories={paymentCategories} />
+                    <div className="my-3 flex flex-row justify-between">
+                        <CreateCategoryModal
+                            setIsNotificationShown={setIsNotificationShown}
+                            setNotificationMessage={setNotificationMessage}
+                            storeUrl={route('payment_category.store')}
+                        />
+                        <CreatePayment
+                            setIsNotificationShown={setIsNotificationShown}
+                            setNotificationMessage={setNotificationMessage}
+                            transactionCategories={transactionCategories}
+                            paymentCategories={paymentCategories}
+                        />
                     </div>
 
-                    {paymentCategories.length > 0 && <Accordion className='bg-white'>
-                        {paymentCategories.map(paymentCategory => (
-                            <AccordionPanel>
-                                <AccordionTitle className='cursor-pointer'>
-                                    <div className='flex flex-row items-center'>
-                                        <Avatar img={paymentCategory.image_path} alt="avatar of Jese" rounded />
-                                        <p className='ml-4'>{paymentCategory.name}</p>
-                                        <EditCategoryModal key={paymentCategory.id + paymentCategory.name}
-                                                           category={paymentCategory}
-                                                           setIsNotificationShown={setIsNotificationShown}
-                                                           setNotificationMessage={setNotificationMessage}
-                                                           updateUrl={route('payment_category.update', {category: paymentCategory.id})} />
-                                    </div>
-                                </AccordionTitle>
-                                <AccordionContent className='p-0'>
-                                    {payments.filter(payment => payment.payment_category_id == paymentCategory.id).length > 0 &&
-                                        <ListGroup className="rounded-none">
-                                            {payments
-                                                .filter(payment => payment.payment_category_id == paymentCategory.id)
-                                                .map(payment =>
-                                                    selectedPaymentId == payment.id
-                                                        ? <ListGroupItem className='payment-category-list-item' active>{payment.name}</ListGroupItem>
-                                                        : <ListGroupItem className='payment-category-list-item' onClick={() => setSelectedPaymentId(payment.id)}>{payment.name}</ListGroupItem>
-                                                )}
-                                        </ListGroup>
-                                    }
-                                </AccordionContent>
-                            </AccordionPanel>
-                        ))}
-                    </Accordion>}
+                    {paymentCategories.length > 0 && (
+                        <Accordion className="bg-white">
+                            {paymentCategories.map((paymentCategory) => (
+                                <AccordionPanel>
+                                    <AccordionTitle className="cursor-pointer">
+                                        <div className="flex flex-row items-center">
+                                            <Avatar img={paymentCategory.image_path} alt="avatar of Jese" rounded />
+                                            <p className="ml-4">{paymentCategory.name}</p>
+                                            <EditCategoryModal
+                                                key={paymentCategory.id + paymentCategory.name}
+                                                category={paymentCategory}
+                                                setIsNotificationShown={setIsNotificationShown}
+                                                setNotificationMessage={setNotificationMessage}
+                                                updateUrl={route('payment_category.update', { category: paymentCategory.id })}
+                                            />
+                                        </div>
+                                    </AccordionTitle>
+                                    <AccordionContent className="p-0">
+                                        {payments.filter((payment) => payment.payment_category_id == paymentCategory.id).length > 0 && (
+                                            <ListGroup className="rounded-none">
+                                                {payments
+                                                    .filter((payment) => payment.payment_category_id == paymentCategory.id)
+                                                    .map(payment => (
+                                                        <ListGroupItem
+                                                            key={payment.id}
+                                                            className="payment-category-list-item"
+                                                            active={selectedPaymentId === payment.id}
+                                                            onClick={() => selectPayment(payment.id)}
+                                                        >
+                                                            {payment.name}
+                                                        </ListGroupItem>
+                                                    ))
+                                                }
+                                            </ListGroup>
+                                        )}
+                                    </AccordionContent>
+                                </AccordionPanel>
+                            ))}
+                        </Accordion>
+                    )}
                 </aside>
 
                 <div className="w-4"></div>
 
                 <main className="min-h-screen flex-1 p-6">
-                    <div className="max-w-xl mx-auto p-6 bg-green-50 rounded-none shadow-md" key={selectedPaymentId}>
-                        <h3 className='font-bold text-xl mb-4'>Make a payment</h3>
+                    <div className="mx-auto max-w-xl rounded-none bg-green-50 p-6 shadow-md" key={selectedPaymentId}>
+                        <h3 className="mb-4 text-xl font-bold">Make a payment</h3>
 
-                        {/* Transaction name */}
+                        {/* Payment Name */}
                         <div className="mb-4">
                             <Label htmlFor="name">Payment name</Label>
                             <TextInput
                                 id="name"
                                 name="name"
                                 placeholder="Payment name"
-                                value={getPaymentById(selectedPaymentId).name}
-                                onChange={e => setData('name', e.target.value)}
+                                value={data.name ?? ''}
+                                onChange={(e) => setData('name', e.target.value)}
                             />
-                            {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
+                            {errors.name && <p className="text-sm text-red-600">{errors.name}</p>}
                         </div>
 
-                        {/* Account number of payment receiver */}
+                        {/* Account Number */}
                         <div className="mb-4">
                             <Label htmlFor="account-number">Account number of payment receiver</Label>
                             <TextInput
                                 id="account-number"
                                 type="text"
-                                value={getPaymentById(selectedPaymentId).account_number}
-                                onChange={e => setData('account_number', e.target.value)}
+                                value={data.account_number ?? ''}
+                                onChange={(e) => setData('account_number', e.target.value)}
                             />
-                            {errors.account_number && <p className="text-red-600 text-sm">{errors.account_number}</p>}
+                            {errors.account_number && <p className="text-sm text-red-600">{errors.account_number}</p>}
                         </div>
 
                         {/* Select Account */}
                         <div className="mb-4">
                             <Label htmlFor="recipient">Select Account</Label>
-                            <Select id="account" onChange={e => {
-                                setData('source_id', JSON.parse(e.target.value).id);
-                                setData('source_type', JSON.parse(e.target.value).type);
-                            }}>
+                            <Select
+                                id="account"
+                                onChange={(e) => {
+                                    const value = JSON.parse(e.target.value);
+                                    setData('source_id', value.id);
+                                    setData('source_type', value.type);
+                                }}
+                            >
                                 <option></option>
-                                {accounts.map(account => (
-                                    <option key={account.id + account.type}
-                                            value={JSON.stringify({ id: account.id, type: account.type })}
-                                    >{account.type == 'App\\Models\\Wallet' ? 'Wallet' : 'Card'} "{account.name}":
-                                        ${account.balance}</option>
+                                {accounts.map((account) => (
+                                    <option key={account.id + account.type} value={JSON.stringify({ id: account.id, type: account.type })}>
+                                        {account.type === 'App\\Models\\Wallet' ? 'Wallet' : 'Card'} "{account.name}": ${account.balance}
+                                    </option>
                                 ))}
                             </Select>
-                            {errors.source_id && <p className="text-red-600 text-sm">{errors.source_id}</p>}
-                            {errors.card && <p className="text-red-600 text-sm">{errors.card}</p>}
+                            {errors.source_id && <p className="text-sm text-red-600">{errors.source_id}</p>}
+                            {errors.card && <p className="text-sm text-red-600">{errors.card}</p>}
                         </div>
 
                         {/* Amount */}
@@ -187,74 +239,76 @@ export default function Payments({ payments, paymentCategories, transactionCateg
                                 id="amount"
                                 type="text"
                                 placeholder="250.00"
-                                value={getPaymentById(selectedPaymentId).amount}
-                                onChange={e => setData('amount', e.target.value)}
+                                value={data.amount ?? ''}
+                                onChange={(e) => setData('amount', e.target.value)}
                             />
-                            {errors.amount && <p className="text-red-600 text-sm">{errors.amount}</p>}
+                            {errors.amount && <p className="text-sm text-red-600">{errors.amount}</p>}
                         </div>
 
                         {/* Receipts */}
                         <div className="mb-4">
                             <Label htmlFor="files">Upload receipts</Label>
-                            <FileInput id="files" multiple
-                                       onChange={e => setData('receipts', e.target.files)} />
+                            <FileInput id="files" multiple onChange={(e) => setData('receipts', e.target.files)} />
                         </div>
 
                         {/* Transaction Date */}
                         <div className="mb-4">
                             <Label htmlFor="transaction-date">Transaction Date</Label>
-                            <Datepicker onChange={date => setData('date', dayjs(date).format('YYYY-MM-DD'))} />
-
-                            {errors.date && <p className="text-red-600 text-sm">{errors.date}</p>}
+                            <Datepicker onSelectedDateChanged={(date) => setData('date', dayjs(date).format('YYYY-MM-DD'))} />
+                            {errors.date && <p className="text-sm text-red-600">{errors.date}</p>}
                         </div>
 
                         {/* Transaction Time */}
                         <div className="mb-4">
                             <Label htmlFor="transaction-time">Transaction Time</Label>
-                            <br />
-                            <input type="time" id="transaction-time" value={data.time}
-                                   onChange={e => setData('time', e.target.value)} />
-                            {errors.time && <p className="text-red-600 text-sm">{errors.time}</p>}
+                            <input type="time" id="transaction-time" value={data.time ?? ''} onChange={(e) => setData('time', e.target.value)} />
+                            {errors.time && <p className="text-sm text-red-600">{errors.time}</p>}
                         </div>
 
                         {/* Transaction Category */}
                         <div className="mb-4">
                             <Label htmlFor="category">Transaction category</Label>
-                            <Select id="category" onChange={e => setData('category_id', e.target.value)} value={getPaymentById(selectedPaymentId).category_id}>
+                            <Select id="category" value={data.category_id ?? ''} onChange={(e) => setData('category_id', e.target.value)}>
                                 <option></option>
-                                {transactionCategories.map(category => (
-                                    <option key={category.id} value={category.id}>{category.name}</option>
+                                {transactionCategories.map((category) => (
+                                    <option key={category.id} value={category.id}>
+                                        {category.name}
+                                    </option>
                                 ))}
                             </Select>
-                            {errors.category_id && <p className="text-red-600 text-sm">{errors.category_id}</p>}
+                            {errors.category_id && <p className="text-sm text-red-600">{errors.category_id}</p>}
                         </div>
 
                         {/* Payment Category */}
                         <div className="mb-4">
                             <Label htmlFor="payment-category">Payment category</Label>
-                            <Select id="payment-category" onChange={e => setData('payment_category_id', e.target.value)} value={getPaymentById(selectedPaymentId).payment_category_id}>
+                            <Select
+                                id="payment-category"
+                                value={data.payment_category_id ?? ''}
+                                onChange={(e) => setData('payment_category_id', e.target.value)}
+                            >
                                 <option></option>
-                                {paymentCategories.map(category => (
-                                    <option key={category.id} value={category.id}>{category.name}</option>
+                                {paymentCategories.map((category) => (
+                                    <option key={category.id} value={category.id}>
+                                        {category.name}
+                                    </option>
                                 ))}
                             </Select>
-                            {errors.payment_category_id && <p className="text-red-600 text-sm">{errors.payment_category_id}</p>}
+                            {errors.payment_category_id && <p className="text-sm text-red-600">{errors.payment_category_id}</p>}
                         </div>
 
                         {/* Note */}
                         <div className="mb-4">
                             <Label htmlFor="note">Note</Label>
-                            <Textarea
-                                id="note"
-                                placeholder="Payment for shared vacation expenses"
-                                rows={3}
-                                onChange={e => setData('note', e.target.value)}
-                            />
+                            <Textarea id="note" rows={3} value={data.note ?? ''} onChange={(e) => setData('note', e.target.value)} />
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex justify-end gap-2 mt-4">
-                            <Button type="submit">Send Money</Button>
+                        {/* Buttons */}
+                        <div className="mt-4 flex justify-end gap-2">
+                            <Button color="yellow" onClick={handleEdit}>
+                                Edit template
+                            </Button>
+                            <Button>Make payment</Button>
                         </div>
                     </div>
                 </main>
