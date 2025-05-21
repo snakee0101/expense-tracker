@@ -90,7 +90,8 @@ class WalletController extends Controller
         return Inertia::render('wallets', [
             'wallets' => Wallet::where('user_id', auth()->id())->latest()->get(),
             'transactionCategories' => TransactionCategory::where('user_id', auth()->id())->latest()->get(),
-            'chartData' => $chartData
+            'chartData' => $chartData,
+            'transactionStatusList' => TransactionStatus::toSelectOptions()
         ]);
     }
 

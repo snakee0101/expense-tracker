@@ -1,19 +1,21 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, router, useForm } from '@inertiajs/react';
 
-import {formatMoney} from '../lib/helpers';
+import { formatMoney, getPageUrl } from '../lib/helpers';
 
 import { Toast, ToastToggle } from "flowbite-react";
 import { HiCheck } from "react-icons/hi";
 import { createTheme } from "flowbite-react";
-import { useState } from "react";
+import { useEffect, useState } from 'react';
 
 import '../../css/app.css';
 import { CreateIncomeExpense } from '@/components/main/create-income-expense';
 import CreateWalletModal from '@/components/wallets/create-wallet-modal';
 import EditWalletModal from '@/components/wallets/edit-wallet-modal';
 import TotalCashflow from '@/components/main/total-cashflow';
+import AccountTransactions from '@/components/main/account-transactions';
+import axios from 'axios';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -35,7 +37,7 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function Wallets({ wallets, transactionCategories, chartData }) {
+export default function Wallets({ wallets, transactionCategories, chartData, transactionStatusList }) {
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
@@ -51,6 +53,19 @@ export default function Wallets({ wallets, transactionCategories, chartData }) {
     function selectedWallet() {
         return wallets.find(w => w.id = selectedWalletId);
     }
+
+    const [transactionsPaginator, setTransactionsPaginator] = useState(null);
+
+    const filters = {
+        account_type: "App\\Models\\Wallet",
+        account_id: selectedWalletId
+    };
+
+    useEffect(() => {
+        axios.post(route('account_transactions.index'), filters).then(
+            response => setTransactionsPaginator(response.data)
+        );
+    }, [selectedWalletId]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -116,6 +131,13 @@ export default function Wallets({ wallets, transactionCategories, chartData }) {
                     </div>
                     <div className='mt-3'>
                         <TotalCashflow key={selectedWalletId} cashflow={chartDataForCurrentWallet} header='Cashflow' />
+                    </div>
+                    <div className='mt-5'>
+                        <AccountTransactions key={transactionsPaginator}
+                                             transactionsPaginator={transactionsPaginator}
+                                             setTransactionsPaginator={setTransactionsPaginator}
+                                             transactionStatusList={transactionStatusList}
+                                             filters={filters} />
                     </div>
                 </main>
             </div>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountTransactionsController;
 use App\Http\Controllers\InboxController;
 use App\Http\Controllers\PaymentCategoryController;
 use App\Http\Controllers\PaymentController;
@@ -57,6 +58,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('inbox', [InboxController::class, 'index'])->name('inbox.index');
     Route::post('inbox/read_notification/{notificationId}', [InboxController::class, 'read_notification'])->name('inbox.read_notification');
     Route::post('inbox/delete_notification/{notificationId}', [InboxController::class, 'delete_notification'])->name('inbox.delete_notification');
+
+    Route::post('account_transactions', AccountTransactionsController::class)->name('account_transactions.index');
 });
 
 require __DIR__.'/settings.php';
