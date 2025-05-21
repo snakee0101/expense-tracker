@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { Button, Datepicker, Label, Modal, ModalBody, ModalHeader, Radio, Select, TextInput } from 'flowbite-react';
 import { FaPlus } from 'react-icons/fa6';
 
-export default function AddOrWithdrawFromSavingsPlan({ savingsPlanId, setIsNotificationShown, setNotificationMessage, transactionCategories, relatedAccounts }) {
+export default function AddOrWithdrawFromSavingsPlan({ savingsPlanId, setIsNotificationShown, setNotificationMessage, transactionCategories, relatedAccounts, refreshTransactionList }) {
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, post, processing, errors, clearErrors } = useForm({
@@ -44,6 +44,7 @@ export default function AddOrWithdrawFromSavingsPlan({ savingsPlanId, setIsNotif
 
         post(route('savings_plan.transaction'), {
             onSuccess: () => {
+                refreshTransactionList();
                 onCloseModal();
                 setNotificationMessage('Transaction created');
                 setIsNotificationShown(true);

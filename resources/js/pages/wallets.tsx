@@ -61,10 +61,12 @@ export default function Wallets({ wallets, transactionCategories, chartData, tra
         account_id: selectedWalletId
     };
 
+    const refreshTransactionList = () => axios.post(route('account_transactions.index'), filters).then(
+        response => setTransactionsPaginator(response.data)
+    );
+
     useEffect(() => {
-        axios.post(route('account_transactions.index'), filters).then(
-            response => setTransactionsPaginator(response.data)
-        );
+        refreshTransactionList();
     }, [selectedWalletId]);
 
     return (
@@ -127,6 +129,7 @@ export default function Wallets({ wallets, transactionCategories, chartData, tra
                                              setIsNotificationShown={setIsNotificationShown}
                                              setNotificationMessage={setNotificationMessage}
                                              transactionCategories={transactionCategories}
+                                             refreshTransactionList={refreshTransactionList}
                         />
                     </div>
                     <div className='mt-3'>

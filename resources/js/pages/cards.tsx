@@ -61,10 +61,12 @@ export default function Cards({ cards, transactionCategories, chartData, transac
         account_id: selectedCardId
     };
 
+    const refreshTransactionList = () => axios.post(route('account_transactions.index'), filters).then(
+        response => setTransactionsPaginator(response.data)
+    );
+
     useEffect(() => {
-        axios.post(route('account_transactions.index'), filters).then(
-            response => setTransactionsPaginator(response.data)
-        );
+        refreshTransactionList();
     }, [selectedCardId]);
 
     return (
@@ -142,6 +144,7 @@ export default function Cards({ cards, transactionCategories, chartData, transac
                                              setIsNotificationShown={setIsNotificationShown}
                                              setNotificationMessage={setNotificationMessage}
                                              transactionCategories={transactionCategories}
+                                             refreshTransactionList={refreshTransactionList}
                         />
                     </div>
                     <div className='mt-3'>

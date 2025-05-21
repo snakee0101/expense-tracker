@@ -133,10 +133,12 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
         account_id: selectedSavingsPlanId
     };
 
+    const refreshTransactionList = () => axios.post(route('account_transactions.index'), filters).then(
+        response => setTransactionsPaginator(response.data)
+    );
+
     useEffect(() => {
-        axios.post(route('account_transactions.index'), filters).then(
-            response => setTransactionsPaginator(response.data)
-        );
+        refreshTransactionList();
     }, [selectedSavingsPlanId]);
 
     return (
@@ -252,6 +254,7 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
                                                       savingsPlanId={selectedSavingsPlanId}
                                                       transactionCategories={transactionCategories}
                                                       relatedAccounts={relatedAccounts}
+                                                      refreshTransactionList={refreshTransactionList}
                         />
                     </div>
                     <div className='mt-4 text-center'>

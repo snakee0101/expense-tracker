@@ -15,7 +15,7 @@ import {
 import { FaPlus } from 'react-icons/fa6';
 import dayjs from 'dayjs';
 
-export function CreateIncomeExpense({ transactionable, setIsNotificationShown, setNotificationMessage, transactionCategories }) {
+export function CreateIncomeExpense({ transactionable, setIsNotificationShown, setNotificationMessage, transactionCategories, refreshTransactionList }) {
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, post, processing, errors, clearErrors } = useForm({
@@ -55,6 +55,7 @@ export function CreateIncomeExpense({ transactionable, setIsNotificationShown, s
 
         post(route('income_expense.store'), {
             onSuccess: () => {
+                refreshTransactionList();
                 onCloseModal();
                 setNotificationMessage('Transaction created');
                 setIsNotificationShown(true);
