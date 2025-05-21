@@ -36,7 +36,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('card', CardController::class);
     Route::resource('savings_plan', SavingsPlanController::class);
     Route::resource('transfer', TransferController::class);
+
     Route::resource('payment', PaymentController::class);
+    Route::post('payment/{payment}/transaction', [PaymentController::class, 'transaction'])->name('payment.transaction');
 
     Route::resource('payment_category', PaymentCategoryController::class)->except('update');
     Route::post('payment_category/{category}/update', [PaymentCategoryController::class, 'update'])->name('payment_category.update');

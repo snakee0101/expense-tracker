@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TransactionStatus;
 use App\Models\Card;
 use App\Models\Contact;
 use App\Models\Payment;
 use App\Models\PaymentCategory;
+use App\Models\Transaction;
 use App\Models\TransactionCategory;
 use App\Models\Wallet;
+use App\Rules\CheckCardExpiration;
+use App\Rules\WithinSpendingLimit;
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -108,5 +114,45 @@ class PaymentController extends Controller
     public function destroy(Payment $payment)
     {
         //
+    }
+
+    public function transaction(Request $request, Payment $payment)
+    {
+        $transaction_date = Carbon::parse("{$request->date} {$request->time}");
+        $source = ($request->source_type)::findOrFail($request->source_id);
+
+        $request->validate([
+            'amount' => new WithinSpendingLimit(isSpending: true, transactionDate: new CarbonImmutable($transaction_date)),
+            'card' => new CheckCardExpiration($source)
+        ]);
+
+        $transaction = Transaction::create(array(
+            'name' => $request->name,
+            'date' => $transaction_date,
+            'amount' => $request->amount,
+            'note' => $request->note,
+            'user_id' => auth()->id(),
+            'source_type' => $request->source_type,
+            'source_id' => $request->source_id,
+            'destination_type' => Payment::class,
+            'destination_id' => $payment->id,
+            'category_id' => $request->category_id,
+            'status' => $transaction_date->isFuture() ? TransactionStatus::Pending : TransactionStatus::Completed
+        ));
+
+        if ($transaction_date->isNowOrPast()) {
+            $source->decrement('balance', $request->amount);
+        }
+
+        foreach ($request->file('receipts') ?? [] as $file) {
+            $filePath = $file->store('attachments', 'public');
+
+            $transaction->attachments()->create([
+                'original_filename' => $file->getClientOriginalName(),
+                'storage_location' => $filePath
+            ]);
+        }
+
+        return to_route('payment.index');
     }
 }

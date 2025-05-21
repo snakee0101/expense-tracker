@@ -102,6 +102,16 @@ export default function Payments({ payments, paymentCategories, transactionCateg
         });
     }
 
+    function handlePayment() {
+        post(route('payment.transaction', { payment: selectedPaymentId }), {
+            onSuccess: () => {
+                setNotificationMessage('Payment completed');
+                setIsNotificationShown(true);
+                setTimeout(() => setIsNotificationShown(false), 3000);
+            },
+        });
+    }
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             {isNotificationShown && (
@@ -212,7 +222,7 @@ export default function Payments({ payments, paymentCategories, transactionCateg
 
                         {/* Select Account */}
                         <div className="mb-4">
-                            <Label htmlFor="recipient">Select Account</Label>
+                            <Label htmlFor="account">Select Account</Label>
                             <Select
                                 id="account"
                                 onChange={(e) => {
@@ -254,7 +264,7 @@ export default function Payments({ payments, paymentCategories, transactionCateg
                         {/* Transaction Date */}
                         <div className="mb-4">
                             <Label htmlFor="transaction-date">Transaction Date</Label>
-                            <Datepicker onSelectedDateChanged={(date) => setData('date', dayjs(date).format('YYYY-MM-DD'))} />
+                            <Datepicker onChange={(date) => setData('date', dayjs(date).format('YYYY-MM-DD'))} />
                             {errors.date && <p className="text-sm text-red-600">{errors.date}</p>}
                         </div>
 
@@ -308,7 +318,7 @@ export default function Payments({ payments, paymentCategories, transactionCateg
                             <Button color="yellow" onClick={handleEdit}>
                                 Edit template
                             </Button>
-                            <Button>Make payment</Button>
+                            <Button onClick={handlePayment}>Make payment</Button>
                         </div>
                     </div>
                 </main>
