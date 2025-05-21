@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\TransactionStatus;
 use App\Models\Card;
 use App\Models\Contact;
+use App\Models\Payment;
 use App\Models\SavingsPlan;
 use App\Models\TransactionCategory;
 use App\Models\Wallet;
@@ -21,6 +22,7 @@ class CardController extends Controller
                               CASE
                                   WHEN source_type IS NULL AND destination_type IN (?, ?) AND amount < 0 THEN amount
                                   WHEN destination_type = ? THEN amount
+                                  WHEN destination_type = ? THEN -amount
                                   ELSE 0
                               END
                          )";
@@ -81,7 +83,7 @@ class CardController extends Controller
             Card::class, Card::class, SavingsPlan::class, SavingsPlan::class, //filter wallet transactions (destination type, source type)
 
             //income_expense_by_month
-            Card::class, Card::class, Contact::class,  //expense
+            Card::class, Card::class, Contact::class, Payment::class, //expense
             Card::class, Card::class, //income
         ]);
 
