@@ -219,3 +219,12 @@ div[role='progressbar'] {
     padding: 1em;
     cursor: pointer;
 }
+
+[data-slot="breadcrumb"] span {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+button[data-slot="sidebar-trigger"] {
+    display: none;
+}
