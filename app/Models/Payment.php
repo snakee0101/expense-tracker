@@ -9,10 +9,16 @@ class Payment extends Model
 {
     use HasFactory;
 
+    protected $appends = ['typeName'];
     protected $guarded = [];
 
     public function paymentCategory()
     {
         return $this->belongsTo(PaymentCategory::class);
+    }
+
+    public function getTypeNameAttribute()
+    {
+        return class_basename($this);
     }
 }
