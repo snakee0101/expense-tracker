@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\TransactionStatus;
 use App\Models\Card;
 use App\Models\Contact;
+use App\Models\Payment;
 use App\Models\SavingsPlan;
 use App\Models\Transaction;
 use App\Models\Wallet;
@@ -72,12 +73,13 @@ class DashboardController extends Controller
             ->selectRaw('category_id, SUM(
                                             CASE
                                                  WHEN source_type IS NULL AND destination_type IN (?, ?) AND amount < 0 THEN -amount
-                                                 WHEN destination_type = ? THEN amount
+                                                 WHEN destination_type IN (?, ?) THEN amount
                                             END
                                       ) AS amount_spent',
             [
                 Wallet::class, Card::class,
-                Contact::class
+                Contact::class, Payment::class
+
             ])
             ->where('user_id', auth()->id())
             ->where('status', TransactionStatus::Completed)
@@ -90,12 +92,12 @@ class DashboardController extends Controller
         $cashflow = Transaction::selectRaw('SUM(
                                             CASE
                                                  WHEN source_type IS NULL AND destination_type IN (?, ?) AND amount < 0 THEN amount
-                                                 WHEN destination_type = ? THEN -amount
+                                                 WHEN destination_type IN (?, ?) THEN -amount
                                             END
                                       ) AS expense',
                 [
                     Wallet::class, Card::class,
-                    Contact::class
+                    Contact::class, Payment::class
                 ])
             ->selectRaw('SUM(
                                             CASE
@@ -158,7 +160,7 @@ class DashboardController extends Controller
         $expenseQuery = "SUM(
                               CASE
                                   WHEN source_type IS NULL AND destination_type IN (?, ?) AND amount < 0 THEN -amount
-                                  WHEN destination_type = ? THEN amount
+                                  WHEN destination_type IN (?, ?) THEN amount
                                   ELSE 0
                               END
                          )";
@@ -179,7 +181,7 @@ class DashboardController extends Controller
                         )";
 
         $incomeExpenseStatistics = Transaction::query()
-            ->selectRaw("$expenseQuery AS expense", [Wallet::class, Card::class, Contact::class])
+            ->selectRaw("$expenseQuery AS expense", [Wallet::class, Card::class, Contact::class, Payment::class])
             ->selectRaw("$incomeQuery AS income", [Wallet::class, Card::class])
             ->selectRaw("$savingsQuery AS savings", [SavingsPlan::class, SavingsPlan::class])
             ->selectRaw(
@@ -187,8 +189,8 @@ class DashboardController extends Controller
                     $expenseQuery - LAG($expenseQuery) OVER (ORDER BY DATE_FORMAT(date, '%Y-%m'))
                 , 2) AS expense_diff",
                 [
-                    Wallet::class, Card::class, Contact::class,
-                    Wallet::class, Card::class, Contact::class
+                    Wallet::class, Card::class, Contact::class, Payment::class,
+                    Wallet::class, Card::class, Contact::class, Payment::class
                 ]
             )
             ->selectRaw(

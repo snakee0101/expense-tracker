@@ -6,26 +6,28 @@ import { GiPayMoney } from "react-icons/gi";
 import { MdOutlineSavings } from "react-icons/md";
 
 export default function IncomeExpenseStatistics({statistics}) {
+    console.log(statistics);
+
     const stats = [
         {
             title: 'Income',
-            value: `$ ${formatMoney(statistics[1].income)}`,
-            change: `$ ${formatMoney(statistics[1].income_diff)}`,
-            increase: statistics[1].income_diff > 0,
+            value: `$ ${formatMoney(statistics[0].income)}`,
+            change: `$ ${formatMoney(statistics[0].income_diff)}`,
+            increase: statistics[0].income_diff > 0,
             icon: <RiCoinsFill size={36} />
         },
         {
             title: 'Expense',
-            value: `$ ${formatMoney(statistics[1].expense)}`,
-            change: `$ ${formatMoney(statistics[1].expense_diff)}`,
-            increase: statistics[1].expense_diff > 0,
+            value: `$ ${formatMoney(statistics[0].expense)}`,
+            change: `$ ${formatMoney(statistics[0].expense_diff)}`,
+            increase: statistics[0].expense_diff > 0,
             icon: <GiPayMoney size={36} />
         },
         {
             title: 'Savings',
-            value: `$ ${formatMoney(statistics[1].savings)}`,
-            change: `$ ${formatMoney(statistics[1].savings_diff)}`,
-            increase: statistics[1].savings_diff > 0,
+            value: `$ ${formatMoney(statistics[0].savings)}`,
+            change: `$ ${formatMoney(statistics[0].savings_diff)}`,
+            increase: statistics[0].savings_diff > 0,
             icon: <MdOutlineSavings size={36} />
         },
     ];
