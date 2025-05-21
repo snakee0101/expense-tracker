@@ -154,7 +154,8 @@ class SavingsPlanController extends Controller
             'transactionCategories' => TransactionCategory::where('user_id', auth()->id())->latest()->get(),
             'relatedAccounts' => $relatedAccounts,
             'total_savings_gain' => $total_savings_gain,
-            'savingsChartData' => $savingsChartData
+            'savingsChartData' => $savingsChartData,
+            'transactionStatusList' => TransactionStatus::toSelectOptions()
         ]);
     }
 

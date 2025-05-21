@@ -11,7 +11,7 @@ import {
     Progress,
     Card
 } from 'flowbite-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
 import { GoArrowUpRight } from "react-icons/go";
 import { GoArrowDownRight } from "react-icons/go";
@@ -26,6 +26,8 @@ import AddOrWithdrawFromSavingsPlan from '@/components/savings_plans/add-or-with
 import EditCardModal from '@/components/cards/edit-card-modal';
 import EditSavingsPlanModal from '@/components/savings_plans/edit-savings-plan-modal';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import AccountTransactions from '@/components/main/account-transactions';
+import axios from 'axios';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -47,7 +49,7 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function SavingsPlans({ savings_plans, transactionCategories, relatedAccounts, total_savings_gain, savingsChartData }) {
+export default function SavingsPlans({ savings_plans, transactionCategories, relatedAccounts, total_savings_gain, savingsChartData, transactionStatusList }) {
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
@@ -123,6 +125,19 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
             icon: <GrPlan size={36} />
         },
     ];
+
+    const [transactionsPaginator, setTransactionsPaginator] = useState(null);
+
+    const filters = {
+        account_type: "App\\Models\\SavingsPlan",
+        account_id: selectedSavingsPlanId
+    };
+
+    useEffect(() => {
+        axios.post(route('account_transactions.index'), filters).then(
+            response => setTransactionsPaginator(response.data)
+        );
+    }, [selectedSavingsPlanId]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -263,6 +278,13 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
                                 <Line type="monotone" dataKey="balance" stroke="#8884d8" activeDot={{ r: 8 }} />
                             </LineChart>
                         </ResponsiveContainer> : <p>No savings yet</p>}
+                    </div>
+                    <div className='mt-5'>
+                        <AccountTransactions key={transactionsPaginator}
+                                             transactionsPaginator={transactionsPaginator}
+                                             setTransactionsPaginator={setTransactionsPaginator}
+                                             transactionStatusList={transactionStatusList}
+                                             filters={filters} />
                     </div>
                 </main>
             </div>
