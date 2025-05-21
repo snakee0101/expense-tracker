@@ -5,7 +5,7 @@ import { Head } from '@inertiajs/react';
 import { formatMoney, formatCardDate, formatCardNumber } from '../lib/helpers';
 
 import { Toast, ToastToggle, createTheme } from 'flowbite-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
 
 import '../../css/app.css';
@@ -14,6 +14,8 @@ import CreateCardModal from '@/components/cards/create-card-modal';
 import EditWalletModal from '@/components/wallets/edit-wallet-modal';
 import EditCardModal from '@/components/cards/edit-card-modal';
 import TotalCashflow from '@/components/main/total-cashflow';
+import axios from 'axios';
+import AccountTransactions from '@/components/main/account-transactions';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -35,7 +37,7 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function Cards({ cards, transactionCategories, chartData }) {
+export default function Cards({ cards, transactionCategories, chartData, transactionStatusList }) {
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
@@ -51,6 +53,19 @@ export default function Cards({ cards, transactionCategories, chartData }) {
     function selectedCard() {
         return cards.find(c => c.id = selectedCardId);
     }
+
+    const [transactionsPaginator, setTransactionsPaginator] = useState(null);
+
+    const filters = {
+        account_type: "App\\Models\\Card",
+        account_id: selectedCardId
+    };
+
+    useEffect(() => {
+        axios.post(route('account_transactions.index'), filters).then(
+            response => setTransactionsPaginator(response.data)
+        );
+    }, [selectedCardId]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -131,6 +146,13 @@ export default function Cards({ cards, transactionCategories, chartData }) {
                     </div>
                     <div className='mt-3'>
                         <TotalCashflow key={selectedCardId} cashflow={chartDataForCurrentCard} header='Cashflow' />
+                    </div>
+                    <div className='mt-5'>
+                        <AccountTransactions key={transactionsPaginator}
+                                             transactionsPaginator={transactionsPaginator}
+                                             setTransactionsPaginator={setTransactionsPaginator}
+                                             transactionStatusList={transactionStatusList}
+                                             filters={filters} />
                     </div>
                 </main>
             </div>
