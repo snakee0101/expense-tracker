@@ -81,7 +81,7 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
     }, 0);
 
     let chartDataForCurrentSavingsPlan = Object.values(savingsChartData).find(savingsChart => savingsChart.find(column => column.savings_plan_id == selectedSavingsPlanId));
-    chartDataForCurrentSavingsPlan = chartDataForCurrentSavingsPlan.sort(function (a, b) {
+    chartDataForCurrentSavingsPlan = chartDataForCurrentSavingsPlan?.sort(function (a, b) {
         if (a.month < b.month) {
             return -1;
         } else if (a.month > b.month) {
@@ -93,7 +93,7 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
 
     let processedChartData = [];
 
-    for (let chartItem of chartDataForCurrentSavingsPlan) {
+    for (let chartItem of chartDataForCurrentSavingsPlan ?? []) {
         processedChartData.push({
             name: chartItem.month,
             balance: chartItem.savings_plan_balance,
@@ -241,6 +241,8 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
                     </div>
                     <div className='mt-4 text-center'>
                         <h2 className='font-bold text-2xl my-4'>Savings plan balance change over this year</h2>
+
+                        {chartDataForCurrentSavingsPlan ?
                         <ResponsiveContainer height={500} width={600} className='m-auto'>
                             <LineChart
                                 width={500}
@@ -260,7 +262,7 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
                                 <Legend />
                                 <Line type="monotone" dataKey="balance" stroke="#8884d8" activeDot={{ r: 8 }} />
                             </LineChart>
-                        </ResponsiveContainer>
+                        </ResponsiveContainer> : <p>No savings yet</p>}
                     </div>
                 </main>
             </div>
