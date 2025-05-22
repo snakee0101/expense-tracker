@@ -1,10 +1,11 @@
-import { Checkbox, Dropdown, Label, TextInput } from 'flowbite-react';
+import { Checkbox, Dropdown, Label, TextInput, Button } from 'flowbite-react';
 import { RxMagnifyingGlass } from "react-icons/rx";
 import { useEffect, useState } from 'react';
 import { MdClose } from "react-icons/md";
 import { IoFunnelOutline } from "react-icons/io5";
 import { FiChevronDown } from "react-icons/fi";
 import { DateRange } from 'react-date-range';
+import { RiFileExcel2Fill } from "react-icons/ri";
 
 import axios from 'axios';
 
@@ -48,15 +49,17 @@ export default function Filters({setTransactionPaginator})
 
     const [includesAttachmentsFilter, setIncludesAttachmentsFilter] = useState(false);
 
+    let filters = {
+        name: searchText ?? '',
+        status: selectedStatuses,
+        date: dateFilter,
+        amount: amountRangeFilter,
+        hasAttachments: includesAttachmentsFilter,
+        transactionTypes: selectedTypes
+    };
+
     useEffect(() => {
-        axios.get(route('transaction.search', {
-            name: searchText ?? '',
-            status: selectedStatuses,
-            date: dateFilter,
-            amount: amountRangeFilter,
-            hasAttachments: includesAttachmentsFilter,
-            transactionTypes: selectedTypes
-        })).then(response => setTransactionPaginator(response.data));
+        axios.get(route('transaction.search', filters)).then(response => setTransactionPaginator(response.data));
     }, [searchText, selectedStatuses, dateFilter, amountRangeFilter, includesAttachmentsFilter, selectedTypes]);
 
     return (
@@ -203,6 +206,12 @@ export default function Filters({setTransactionPaginator})
                         </div>
                 </div>
             </Dropdown>
+
+            <a href={route('transaction.export', filters)} className='ml-auto'>
+                <Button className='rounded-none'>
+                    <RiFileExcel2Fill size={24} className='mr-2'/> Export
+                </Button>
+            </a>
         </div>
     );
 }

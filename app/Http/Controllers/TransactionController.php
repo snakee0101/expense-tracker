@@ -9,6 +9,7 @@ use App\Enums\TransactionStatus;
 use App\Exports\TransactionsExport;
 use App\Models\Transaction;
 use App\Services\Search;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
@@ -25,7 +26,7 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function search()
+    protected function getFilteredTransactions(): Builder 
     {
         $statuses = [];
 
@@ -43,16 +44,17 @@ class TransactionController extends Controller
             ->setAttachmentsFilter(request()->boolean('hasAttachments'))
             ->setTransactionTypesFilter(request('transactionTypes'))
             ->getQuery()
-            ->latest('date')
-            ->paginate(10);
+            ->latest('date');
     }
 
-    public function export(Request $request)
+    public function search()
     {
-        $transactions =  Transaction::where('user_id', auth()->id())
-                                    ->with('category', 'source', 'destination')
-                                    ->latest('date')
-                                    ->get();
+        return $this->getFilteredTransactions()->paginate(10);
+    }
+
+    public function export()
+    {
+        $transactions = $this->getFilteredTransactions()->get();
 
         return Excel::download(new TransactionsExport($transactions), 'transactions.xlsx');
     }

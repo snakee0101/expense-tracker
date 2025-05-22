@@ -90,14 +90,6 @@ export default function Transactions({ transactions, transactionStatusList }) {
                 </Toast>
             )}
 
-            <div className='flex flex-row-reverse p-2'>
-                <a href={route('transaction.export')}>
-                    <Button className='rounded-none'>
-                        <RiFileExcel2Fill size={24} className='mr-2'/> Export
-                    </Button>
-                </a>
-            </div>
-
             <Filters setTransactionPaginator={setTransactionPaginator} />
 
             <Table>
