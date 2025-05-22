@@ -18,4 +18,13 @@ enum TransactionStatus: int
             self::Cancelled => 'Cancelled',
         };
     }
+
+    public static function fromCaseName($caseName)
+    {
+        return match ($caseName) {
+            'Pending' => self::Pending,
+            'Completed' => self::Completed,
+            'Cancelled' => self::Cancelled,
+        };
+    }
 }

@@ -29,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('transaction', TransactionController::class);
     Route::get('transactions/export', [TransactionController::class, 'export'])->name('transaction.export');
+    Route::get('transactions/search', [TransactionController::class, 'search'])->name('transaction.search');
     Route::get('transactions/{transaction}/cancel', [TransactionController::class, 'cancel'])->name('transaction.cancel');
     Route::get('transactions/{transaction}/redo', [TransactionController::class, 'redo'])->name('transaction.redo');
 

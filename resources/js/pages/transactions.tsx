@@ -28,6 +28,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { HiCheck } from 'react-icons/hi';
 import { useState } from 'react';
 import TransactionStatus from '@/components/main/transaction-status';
+import Filters from '@/components/dashboard/filters';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -55,6 +56,8 @@ export default function Transactions({ transactions, transactionStatusList }) {
 
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
+
+    const [transactionPaginator, setTransactionPaginator] = useState(transactions);
 
     const { data, setData, delete: destroy, errors, reset } = useForm({});
 
@@ -95,6 +98,8 @@ export default function Transactions({ transactions, transactionStatusList }) {
                 </a>
             </div>
 
+            <Filters setTransactionPaginator={setTransactionPaginator} />
+
             <Table>
                 <TableHead>
                     <TableHeadCell>Transaction Name</TableHeadCell>
@@ -108,7 +113,7 @@ export default function Transactions({ transactions, transactionStatusList }) {
                     <TableHeadCell>Actions</TableHeadCell>
                 </TableHead>
                 <TableBody className="divide-y">
-                    {transactions.data.map((transaction) => (
+                    {transactionPaginator.data.map((transaction) => (
                         <TableRow key={transaction.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                             <TableCell className='py-1 px-3'>
                                 <div className="flex w-full flex-row items-center">
@@ -162,9 +167,9 @@ export default function Transactions({ transactions, transactionStatusList }) {
                 </TableBody>
             </Table>
 
-            {transactions.last_page > 1 && (
+            {transactionPaginator.last_page > 1 && (
                 <div className="flex overflow-x-auto sm:mr-3 sm:justify-end">
-                    <Pagination currentPage={transactions.current_page} totalPages={transactions.last_page} onPageChange={onPageChange} showIcons />
+                    <Pagination currentPage={transactionPaginator.current_page} totalPages={transactionPaginator.last_page} onPageChange={onPageChange} showIcons />
                 </div>
             )}
         </AppLayout>
