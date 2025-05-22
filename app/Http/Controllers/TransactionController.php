@@ -41,6 +41,7 @@ class TransactionController extends Controller
             ->setDateRangeFilter('date', request('date')[0]['startDate'], request('date')[0]['endDate'] ?? null) //input format: [0 => [startDate:2025-05-13T21:00:00.000Z, endDate:...]]
             ->setAbsoluteRangeFilter('amount', request('amount')['rangeStart'], request('amount')['rangeEnd'] ?? null)
             ->setAttachmentsFilter(request()->boolean('hasAttachments'))
+            ->setTransactionTypesFilter(request('transactionTypes'))
             ->getQuery()
             ->latest('date')
             ->paginate(10);

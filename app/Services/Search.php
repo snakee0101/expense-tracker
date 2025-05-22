@@ -2,6 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\Card;
+use App\Models\Contact;
+use App\Models\Wallet;
+use App\Models\Payment;
+use App\Models\SavingsPlan;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -81,6 +86,37 @@ class Search
         $this->query = $this->query->whereRaw("ABS($column) BETWEEN ? AND ?", [$start, $end]);
 
         $this->filtersCount++;
+
+        return $this;
+    }
+
+    public function setTransactionTypesFilter(array|null $types)
+    {
+        if($types) {
+            $this->query = $this->query->where(function ($query) use ($types) {
+                if (in_array('Income/Expense', $types)) {
+                    $query->orWhere(function ($q) {
+                        $q->whereNull('source_type')
+                        ->whereIn('destination_type', [Wallet::class, Card::class]);
+                    });
+                }
+
+                if (in_array('Payment', $types)) {
+                    $query->orWhere('destination_type', Payment::class);
+                }
+
+                if (in_array('Savings', $types)) {
+                    $query->orWhere(function ($q) {
+                        $q->where('source_type', SavingsPlan::class)
+                        ->orWhere('destination_type', SavingsPlan::class);
+                    });
+                }
+
+                if (in_array('Transfer', $types)) {
+                    $query->orWhere('destination_type', Contact::class);
+                }
+            });
+        }
 
         return $this;
     }

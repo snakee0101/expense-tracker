@@ -12,16 +12,26 @@ export default function Filters({setTransactionPaginator})
 {
     const [searchText, setSearchText] = useState("");
     const [selectedStatuses, setSelectedStatuses] = useState([]);
+    const [selectedTypes, setSelectedTypes] = useState([]);
 
     const clearSearchInput = () => setSearchText("");
 
     const statuses = ['Pending', 'Completed', 'Cancelled'];
+    const transactionTypes = ['Income/Expense', 'Payment', 'Savings', 'Transfer'];
 
     const toggleStatus = (status: string) => {
         setSelectedStatuses((prev) =>
             prev.includes(status)
                 ? prev.filter((s) => s !== status)
                 : [...prev, status]
+        );
+    };
+    
+    const toggleType = (transactionType: string) => {
+        setSelectedTypes((prev) =>
+            prev.includes(transactionType)
+                ? prev.filter((t) => t !== transactionType)
+                : [...prev, transactionType]
         );
     };
 
@@ -44,9 +54,10 @@ export default function Filters({setTransactionPaginator})
             status: selectedStatuses,
             date: dateFilter,
             amount: amountRangeFilter,
-            hasAttachments: includesAttachmentsFilter
+            hasAttachments: includesAttachmentsFilter,
+            transactionTypes: selectedTypes
         })).then(response => setTransactionPaginator(response.data));
-    }, [searchText, selectedStatuses, dateFilter, amountRangeFilter, includesAttachmentsFilter]);
+    }, [searchText, selectedStatuses, dateFilter, amountRangeFilter, includesAttachmentsFilter, selectedTypes]);
 
     return (
         <div className='m-2 flex flex-row gap-3'>
@@ -95,6 +106,29 @@ export default function Filters({setTransactionPaginator})
                 </div>
             </Dropdown>
 
+            <Dropdown label="Filter Type" inline dismissOnClick={false} renderTrigger={() => (
+                <button className="cursor-pointer inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-yellow-400 focus:outline-none">
+                    <IoFunnelOutline className="w-5 h-5 mr-2" />
+                    Types: {selectedTypes.length > 0 ? selectedTypes.join(', ') : 'All'}
+                    <FiChevronDown size={20} className='ml-1' />
+                </button>
+            )}>
+                <div className="px-3 py-1 w-48">
+                    {transactionTypes.map((transactionType) => (
+                        <div key={transactionType} className="flex items-center gap-2 py-1">
+                            <Checkbox
+                                color='warning'
+                                id={transactionType}
+                                checked={selectedTypes.includes(transactionType)}
+                                onChange={() => toggleType(transactionType)}
+                            />
+                            <Label htmlFor={transactionType} className="text-sm font-medium">
+                                {transactionType}
+                            </Label>
+                        </div>
+                    ))}
+                </div>
+            </Dropdown>
            
             <div className='flex flex-row'>
                 <Dropdown label="Filter Status" inline dismissOnClick={false} renderTrigger={() => (
