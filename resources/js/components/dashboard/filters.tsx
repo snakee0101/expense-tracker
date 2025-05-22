@@ -36,14 +36,17 @@ export default function Filters({setTransactionPaginator})
         rangeEnd: '',
     });
 
+    const [includesAttachmentsFilter, setIncludesAttachmentsFilter] = useState(false);
+
     useEffect(() => {
         axios.get(route('transaction.search', {
             name: searchText ?? '',
             status: selectedStatuses,
             date: dateFilter,
-            amount: amountRangeFilter
+            amount: amountRangeFilter,
+            hasAttachments: includesAttachmentsFilter
         })).then(response => setTransactionPaginator(response.data));
-    }, [searchText, selectedStatuses, dateFilter, amountRangeFilter]);
+    }, [searchText, selectedStatuses, dateFilter, amountRangeFilter, includesAttachmentsFilter]);
 
     return (
         <div className='m-2 flex flex-row gap-3'>
@@ -146,6 +149,26 @@ export default function Filters({setTransactionPaginator})
                 </button>
             </div>
 
+
+            <Dropdown label="Filter Status" inline dismissOnClick={false} renderTrigger={() => (
+                <button className="cursor-pointer inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-yellow-400 focus:outline-none">
+                    <IoFunnelOutline className="w-5 h-5 mr-2" />
+                    With Attachments: {includesAttachmentsFilter ? 'Yes' : 'No'}
+                    <FiChevronDown size={20} className='ml-1' />
+                </button>
+            )}>
+                <div className="px-3 py-1 w-48">
+                        <div className="flex items-center gap-2 py-1">
+                            <Checkbox
+                                color='warning'
+                                id='attachments'
+                                checked={includesAttachmentsFilter}
+                                onChange={() => setIncludesAttachmentsFilter(!includesAttachmentsFilter)}
+                            />
+                            <Label htmlFor='attachments' className="text-sm font-medium">Include with attachments only</Label>
+                        </div>
+                </div>
+            </Dropdown>
         </div>
     );
 }

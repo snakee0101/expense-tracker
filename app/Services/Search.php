@@ -63,6 +63,15 @@ class Search
         return $this;
     }
 
+    public function setAttachmentsFilter(bool $hasAttachments = false)
+    {
+        if($hasAttachments) {
+            $this->query = $this->query->whereHas('attachments');
+        }
+
+        return $this;
+    }
+
     public function setAbsoluteRangeFilter($column, $start, $end)
     {
         if($start == $end || is_null($start) || is_null($end)) {

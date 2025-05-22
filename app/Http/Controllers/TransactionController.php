@@ -40,6 +40,7 @@ class TransactionController extends Controller
             ->setMultipleOptionsFilter('status', $statuses)
             ->setDateRangeFilter('date', request('date')[0]['startDate'], request('date')[0]['endDate'] ?? null) //input format: [0 => [startDate:2025-05-13T21:00:00.000Z, endDate:...]]
             ->setAbsoluteRangeFilter('amount', request('amount')['rangeStart'], request('amount')['rangeEnd'] ?? null)
+            ->setAttachmentsFilter(request()->boolean('hasAttachments'))
             ->getQuery()
             ->latest('date')
             ->paginate(10);
