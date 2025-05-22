@@ -74,6 +74,8 @@ class Search
             $this->query = $this->query->whereHas('attachments');
         }
 
+        $this->filtersCount++;
+
         return $this;
     }
 
@@ -117,6 +119,8 @@ class Search
                 }
             });
         }
+
+        $this->filtersCount++;
 
         return $this;
     }
