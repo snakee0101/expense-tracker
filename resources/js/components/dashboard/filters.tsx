@@ -211,7 +211,7 @@ export default function Filters({setTransactionPaginator, setSearchFilters})
             </Dropdown>
 
             <a href={route('transaction.export', filters)} className='ml-auto'>
-                <Button className='rounded-none'>
+                <Button className='rounded-none cursor-pointer'>
                     <RiFileExcel2Fill size={24} className='mr-2'/> Export
                 </Button>
             </a>

@@ -228,3 +228,8 @@ div[role='progressbar'] {
 button[data-slot="sidebar-trigger"] {
     display: none;
 }
+
+[data-active=true] {
+    background: var(--color-green-500)!important;
+    color: #fff;
+}
