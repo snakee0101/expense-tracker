@@ -39,4 +39,12 @@ class MakePaymentRequest extends FormRequest
             'receipts' => $this->receipts == [] ? 'nullable' : 'file'
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'date' => 'Select correct payment date',
+            'time' => 'Select correct payment time',
+        ];
+    }
 }
