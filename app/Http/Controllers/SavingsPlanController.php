@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TransactionStatus;
+use App\Http\Requests\SavingsPlans\CreateSavingsPlanRequest;
+use App\Http\Requests\SavingsPlans\UpdateSavingsPlanRequest;
 use App\Models\Card;
 use App\Models\SavingsPlan;
 use App\Models\Transaction;
@@ -159,42 +161,27 @@ class SavingsPlanController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(CreateSavingsPlanRequest $request)
     {
-        $validated = $request->validate([
-            'name' => [
-                'min: 3',
-                Rule::unique('savings_plans')
-                    ->where('user_id', auth()->id())
-            ],
-            'target_balance' => ['required', 'numeric', 'gt:0'],
-            'due_date' => ['required', 'date-format:Y-m-d H:i:s'],
-            'savings_tips' => ['nullable']
-        ]);
-
         SavingsPlan::create([
             'user_id' => auth()->id(),
-            ...$validated
+            'name' => $request->name,
+            'target_balance' => $request->target_balance,
+            'due_date' => $request->due_date,
+            'savings_tips' => $request->savings_tips
         ]);
 
         return to_route('savings_plan.index');
     }
 
-    public function update(Request $request, SavingsPlan $savings_plan)
+    public function update(UpdateSavingsPlanRequest $request, SavingsPlan $savings_plan)
     {
-        $validated = $request->validate([
-            'name' => [
-                'min: 3',
-                Rule::unique('savings_plans')
-                    ->where('user_id', auth()->id())
-                    ->ignoreModel($savings_plan)
-            ],
-            'target_balance' => ['required', 'numeric', 'gt:0'],
-            'due_date' => ['required', 'date-format:Y-m-d H:i:s'],
-            'savings_tips' => ['nullable']
+        $savings_plan->update([
+            'name' => $request->name,
+            'target_balance' => $request->target_balance,
+            'due_date' => $request->due_date,
+            'savings_tips' => $request->savings_tips
         ]);
-
-        $savings_plan->update($validated);
 
         return to_route('savings_plan.index');
     }

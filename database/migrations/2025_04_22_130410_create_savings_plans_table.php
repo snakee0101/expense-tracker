@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('target_balance');
             $table->foreignId('user_id');
             $table->timestamp('due_date');
-            $table->text('savings_tips');
+            $table->text('savings_tips')->nullable();
             $table->timestamps();
         });
     }
