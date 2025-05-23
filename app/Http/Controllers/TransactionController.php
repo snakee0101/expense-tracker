@@ -19,14 +19,12 @@ class TransactionController extends Controller
     public function index()
     {
         return Inertia::render('transactions', [
-            'transactions' => Transaction::where('user_id', auth()->id())->with('category', 'source', 'destination', 'attachments')
-                                                                ->latest('date')
-                                                                ->paginate(10),
+            'transactions' => $this->getFilteredTransactions()->paginate(10),
             'transactionStatusList' => TransactionStatus::toSelectOptions()
         ]);
     }
 
-    protected function getFilteredTransactions(): Builder 
+    protected function getFilteredTransactions(): Builder
     {
         $statuses = [];
 
@@ -39,8 +37,8 @@ class TransactionController extends Controller
         return (new Search(Transaction::where('user_id', auth()->id())->with('category', 'source', 'destination', 'attachments')))
             ->setMultipleEqualityFilter(['name', 'note'], request('name'))
             ->setMultipleOptionsFilter('status', $statuses)
-            ->setDateRangeFilter('date', request('date')[0]['startDate'], request('date')[0]['endDate'] ?? null) //input format: [0 => [startDate:2025-05-13T21:00:00.000Z, endDate:...]]
-            ->setAbsoluteRangeFilter('amount', request('amount')['rangeStart'], request('amount')['rangeEnd'] ?? null)
+            ->setDateRangeFilter('date', request('date') ? request('date')[0]['startDate'] : null, request('date')[0]['endDate'] ?? null) //input format: [0 => [startDate:2025-05-13T21:00:00.000Z, endDate:...]]
+            ->setAbsoluteRangeFilter('amount', request('amount') ? request('amount')['rangeStart'] : null, request('amount')['rangeEnd'] ?? null)
             ->setAttachmentsFilter(request()->boolean('hasAttachments'))
             ->setTransactionTypesFilter(request('transactionTypes'))
             ->getQuery()

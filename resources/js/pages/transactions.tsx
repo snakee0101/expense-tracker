@@ -15,7 +15,7 @@ import {
     Button,
     Toast, ToastToggle
 } from 'flowbite-react';
-import { formatMoney, getPageUrl } from '../lib/helpers';
+import { formatMoney, getPageUrl, buildQueryUrl } from '../lib/helpers';
 
 import { createTheme } from 'flowbite-react';
 import dayjs from 'dayjs';
@@ -29,6 +29,7 @@ import { HiCheck } from 'react-icons/hi';
 import { useState } from 'react';
 import TransactionStatus from '@/components/main/transaction-status';
 import Filters from '@/components/dashboard/filters';
+import axios from 'axios';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -52,7 +53,13 @@ const toastThemeWithAbsolutePositioning = createTheme({
 });
 
 export default function Transactions({ transactions, transactionStatusList }) {
-    const onPageChange = (page: number) => router.visit(getPageUrl(transactions, page));
+    const [searchFilters, setSearchFilters] = useState({});
+
+    const onPageChange = (page: number) => {
+        const url = buildQueryUrl(route('transaction.search'), page, searchFilters);
+        axios.get(url)
+            .then(response => setTransactionPaginator(response.data));
+    };
 
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
@@ -61,7 +68,7 @@ export default function Transactions({ transactions, transactionStatusList }) {
 
     const { data, setData, delete: destroy, errors, reset } = useForm({});
 
-        function handleDelete(event, transaction) {
+    function handleDelete(event, transaction) {
         event.preventDefault();
 
         if(confirm('Are you sure to delete a transaction? The operation is irreversible')) {
@@ -90,7 +97,7 @@ export default function Transactions({ transactions, transactionStatusList }) {
                 </Toast>
             )}
 
-            <Filters setTransactionPaginator={setTransactionPaginator} />
+            <Filters setTransactionPaginator={setTransactionPaginator} setSearchFilters={setSearchFilters} />
 
             <Table>
                 <TableHead>

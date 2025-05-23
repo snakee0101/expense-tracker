@@ -67,3 +67,33 @@ export function getDateFromExpiryDate(unformattedDate :string) {
 export function percent(number) {
     return (number * 100).toFixed(1);
 }
+
+export function buildQueryUrl(baseUrl, page, filters) {
+    const params = new URLSearchParams();
+
+    params.set('page', page);
+
+    if (filters.name) params.set('name', filters.name);
+
+    if (filters.status?.length) {
+        filters.status.forEach(s => params.append('status[]', s));
+    }
+
+    if (filters.transactionTypes?.length) {
+        filters.transactionTypes.forEach(t => params.append('transactionTypes[]', t));
+    }
+
+    if (filters.date?.[0]?.startDate) {
+        params.set('date[0][startDate]', filters.date[0].startDate.toISOString());
+        if (filters.date[0].endDate) {
+            params.set('date[0][endDate]', filters.date[0].endDate.toISOString());
+        }
+    }
+
+    if (filters.amount?.rangeStart) params.set('amount[rangeStart]', filters.amount.rangeStart);
+    if (filters.amount?.rangeEnd) params.set('amount[rangeEnd]', filters.amount.rangeEnd);
+
+    if (filters.hasAttachments) params.set('hasAttachments', '1');
+
+    return `${baseUrl}?${params.toString()}`;
+}

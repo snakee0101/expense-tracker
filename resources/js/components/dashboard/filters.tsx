@@ -6,10 +6,11 @@ import { IoFunnelOutline } from "react-icons/io5";
 import { FiChevronDown } from "react-icons/fi";
 import { DateRange } from 'react-date-range';
 import { RiFileExcel2Fill } from "react-icons/ri";
+import { buildQueryUrl } from '../../lib/helpers';
 
 import axios from 'axios';
 
-export default function Filters({setTransactionPaginator})
+export default function Filters({setTransactionPaginator, setSearchFilters})
 {
     const [searchText, setSearchText] = useState("");
     const [selectedStatuses, setSelectedStatuses] = useState([]);
@@ -27,7 +28,7 @@ export default function Filters({setTransactionPaginator})
                 : [...prev, status]
         );
     };
-    
+
     const toggleType = (transactionType: string) => {
         setSelectedTypes((prev) =>
             prev.includes(transactionType)
@@ -59,7 +60,9 @@ export default function Filters({setTransactionPaginator})
     };
 
     useEffect(() => {
-        axios.get(route('transaction.search', filters)).then(response => setTransactionPaginator(response.data));
+        setSearchFilters(filters);
+        const url = buildQueryUrl(route('transaction.search'), 1, filters);
+        axios.get(url).then(response => setTransactionPaginator(response.data));
     }, [searchText, selectedStatuses, dateFilter, amountRangeFilter, includesAttachmentsFilter, selectedTypes]);
 
     return (
@@ -132,7 +135,7 @@ export default function Filters({setTransactionPaginator})
                     ))}
                 </div>
             </Dropdown>
-           
+
             <div className='flex flex-row'>
                 <Dropdown label="Filter Status" inline dismissOnClick={false} renderTrigger={() => (
                     <button className="cursor-pointer inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-yellow-400 focus:outline-none">
@@ -148,11 +151,11 @@ export default function Filters({setTransactionPaginator})
                             moveRangeOnFirstSelection={false}
                             ranges={dateFilter}
                         />
-                        
-                        
+
+
                     </div>
                 </Dropdown>
-                
+
                 <button
                     onClick={() => setDateFilter([{ startDate: new Date(), endDate: new Date(), key: 'selection' }])}
                     className="text-gray-400 hover:text-gray-600"
@@ -161,7 +164,7 @@ export default function Filters({setTransactionPaginator})
                     <MdClose className="h-5 w-5 cursor-pointer" />
                 </button>
             </div>
-            
+
             <div className='flex flex-row'>
                 <Dropdown label="Filter Status" inline dismissOnClick={false} renderTrigger={() => (
                     <button className="cursor-pointer inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-yellow-400 focus:outline-none">
@@ -176,7 +179,7 @@ export default function Filters({setTransactionPaginator})
                         <TextInput id="small" type="number" sizing="sm" placeholder='max' min={0} value={amountRangeFilter.rangeEnd} onChange={e => setAmountRangeFilter({...amountRangeFilter, rangeEnd: e.target.value})} />
                     </div>
                 </Dropdown>
-                
+
                 <button
                     onClick={() => setAmountRangeFilter({rangeStart: 0, rangeEnd: 0})}
                     className="text-gray-400 hover:text-gray-600"
