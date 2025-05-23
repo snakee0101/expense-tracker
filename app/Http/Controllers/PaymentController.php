@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TransactionStatus;
+use App\Http\Requests\Payments\CreatePaymentRequest;
+use App\Http\Requests\Payments\MakePaymentRequest;
+use App\Http\Requests\Payments\UpdatePaymentRequest;
 use App\Models\Card;
 use App\Models\Contact;
 use App\Models\Payment;
@@ -64,20 +67,9 @@ class PaymentController extends Controller
         //
     }
 
-    public function store(Request $request)
+    public function store(CreatePaymentRequest $request)
     {
-        $validated = $request->validate([
-            'name' => [
-                'min: 3',
-                Rule::unique('payments')->where('payment_category_id', $request->payment_category_id),
-            ],
-            'amount' => ['gt:0'],
-            'account_number' => ['required'],
-            'payment_category_id' => [Rule::exists('payment_categories', 'id')->where('user_id', auth()->id())],
-            'category_id' => [Rule::exists('transaction_categories', 'id')->where('user_id', auth()->id())]
-        ]);
-
-        Payment::create($validated);
+        Payment::create($request->validated());
 
         return to_route('payment.index');
     }
@@ -93,20 +85,9 @@ class PaymentController extends Controller
         //
     }
 
-    public function update(Request $request, Payment $payment)
+    public function update(UpdatePaymentRequest $request, Payment $payment)
     {
-        $validated = $request->validate([
-            'name' => [
-                'min: 3',
-                Rule::unique('payments')->where('payment_category_id', $request->payment_category_id)->ignoreModel($payment),
-            ],
-            'amount' => ['gt:0'],
-            'account_number' => ['required'],
-            'payment_category_id' => [Rule::exists('payment_categories', 'id')->where('user_id', auth()->id())],
-            'category_id' => [Rule::exists('transaction_categories', 'id')->where('user_id', auth()->id())]
-        ]);
-
-        $payment->update($validated);
+        $payment->update($request->validated());
 
         return to_route('payment.index');
     }
@@ -116,18 +97,13 @@ class PaymentController extends Controller
         //
     }
 
-    public function transaction(Request $request, Payment $payment)
+    public function transaction(MakePaymentRequest $request, Payment $payment)
     {
         $transaction_date = Carbon::parse("{$request->date} {$request->time}");
         $source = ($request->source_type)::findOrFail($request->source_id);
 
-        $request->validate([
-            'amount' => new WithinSpendingLimit(isSpending: true, transactionDate: new CarbonImmutable($transaction_date)),
-            'card' => new CheckCardExpiration($source)
-        ]);
-
         $transaction = Transaction::create(array(
-            'name' => $request->name,
+            'name' => $payment->name,
             'date' => $transaction_date,
             'amount' => $request->amount,
             'note' => $request->note,
@@ -136,15 +112,15 @@ class PaymentController extends Controller
             'source_id' => $request->source_id,
             'destination_type' => Payment::class,
             'destination_id' => $payment->id,
-            'category_id' => $request->category_id,
+            'category_id' => $payment->category_id,
             'status' => $transaction_date->isFuture() ? TransactionStatus::Pending : TransactionStatus::Completed
         ));
 
         if ($transaction_date->isNowOrPast()) {
-            $source->decrement('balance', $request->amount);
+            $source->decrement('balance', $payment->amount);
         }
 
-        foreach ($request->file('receipts') ?? [] as $file) {
+        foreach ($request->receipts ? $request->file('receipts') : [] as $file) {
             $filePath = $file->store('attachments', 'public');
 
             $transaction->attachments()->create([
