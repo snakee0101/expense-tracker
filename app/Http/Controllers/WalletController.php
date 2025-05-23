@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TransactionStatus;
+use App\Http\Requests\Wallets\CreateWalletRequest;
+use App\Http\Requests\Wallets\UpdateWalletRequest;
 use App\Models\Card;
 use App\Models\Contact;
 use App\Models\Payment;
@@ -95,15 +97,8 @@ class WalletController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(CreateWalletRequest $request)
     {
-        $request->validate([
-            'name' => [
-                'min: 3',
-                Rule::unique('wallets')->where('user_id', auth()->id())
-            ]
-        ]);
-
         Wallet::create([
             'user_id' => auth()->id(),
             'name' => $request->name
@@ -112,15 +107,8 @@ class WalletController extends Controller
         return to_route('wallet.index');
     }
 
-    public function update(Request $request, Wallet $wallet)
+    public function update(UpdateWalletRequest $request, Wallet $wallet)
     {
-        $request->validate([
-            'name' => [
-                'min: 3',
-                Rule::unique('wallets')->where('user_id', auth()->id())->ignore($wallet->id)
-            ]
-        ]);
-
         $wallet->update([
             'name' => $request->name
         ]);
