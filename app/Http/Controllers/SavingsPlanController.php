@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\TransactionStatus;
 use App\Http\Requests\SavingsPlans\CreateSavingsPlanRequest;
+use App\Http\Requests\SavingsPlans\CreateTransactionRequest;
 use App\Http\Requests\SavingsPlans\UpdateSavingsPlanRequest;
 use App\Models\Card;
 use App\Models\SavingsPlan;
@@ -186,8 +187,7 @@ class SavingsPlanController extends Controller
         return to_route('savings_plan.index');
     }
 
-
-    public function transaction(Request $request)
+    public function transaction(CreateTransactionRequest $request)
     {
         //if we want to withdraw from savings plan to a card or wallet
         if ($request->boolean('is_withdraw')) {
@@ -203,13 +203,6 @@ class SavingsPlanController extends Controller
         }
 
         $account = ($request->related_account_type)::findOrFail($request->related_account_id);
-
-        $savingsPlan = SavingsPlan::find($request->savings_plan_id);
-
-        $request->validate([
-            'card' => new CheckCardExpiration($account),
-            'amount' => new WithinSavingsBalance($savingsPlan, $request->amount * ($request->boolean('is_withdraw') ? -1 : 1))
-        ]);
 
         //create a transaction
         $transactionDate = Carbon::parse("{$request->date} {$request->time}");

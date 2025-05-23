@@ -84,6 +84,7 @@ export default function AddOrWithdrawFromSavingsPlan({ savingsPlanId, setIsNotif
                             <Label htmlFor="transaction-time">Transaction Time</Label>
                             <br />
                             <input type="time" id="transaction-time" value={data.time} onChange={e => setData('time', e.target.value)} />
+                            {errors.time && <p className="text-red-600 text-sm">{errors.time}</p>}
                         </div>
 
                         <div className="mb-4">
