@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TransactionCategories\CreateCategoryRequest;
+use App\Http\Requests\TransactionCategories\UpdateCategoryRequest;
 use App\Models\TransactionCategory;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class TransactionCategoryController extends Controller
@@ -23,16 +23,8 @@ class TransactionCategoryController extends Controller
         //
     }
 
-    public function store(Request $request)
+    public function store(CreateCategoryRequest $request)
     {
-        $request->validate([
-            'name' => [
-                'min: 3',
-                Rule::unique('transaction_categories')->where('user_id', auth()->id())
-            ],
-            'image' => ['required', 'image', 'file', 'max:1024']
-        ]);
-
         TransactionCategory::create([
             'user_id' => auth()->id(),
             'image_path' => $request->file('image')->store('images', 'public'),
@@ -52,18 +44,8 @@ class TransactionCategoryController extends Controller
         //
     }
 
-    public function update(Request $request, TransactionCategory $category)
+    public function update(UpdateCategoryRequest $request, TransactionCategory $category)
     {
-        $request->validate([
-            'name' => [
-                'min: 3',
-                Rule::unique('transaction_categories', 'name')
-                    ->where('user_id', auth()->id())
-                    ->ignoreModel($category)
-            ],
-            'image' => ['nullable', 'image', 'file', 'max:1024']
-        ]);
-
         $data = $request->only('name');
 
         if($request->hasFile('image')) {
