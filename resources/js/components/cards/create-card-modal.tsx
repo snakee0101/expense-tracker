@@ -77,7 +77,7 @@ export default function CreateCardModal({ setIsNotificationShown, setNotificatio
                                 id="expiry-date"
                                 type="text"
                                 placeholder="09/29"
-                                onChange={e => setData('expiry_date', getDateFromExpiryDate(e.target.value))}
+                                onChange={e => setData('expiry_date', e.target.value)}
                             />
 
                             {errors.expiry_date && <p className="text-red-600 text-sm">{errors.expiry_date}</p>}

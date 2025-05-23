@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TransactionStatus;
+use App\Http\Requests\Cards\CreateCardRequest;
 use App\Models\Card;
 use App\Models\Contact;
 use App\Models\Payment;
@@ -95,20 +96,13 @@ class CardController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(CreateCardRequest $request)
     {
-        $validated = $request->validate([
-            'name' => [
-                'min: 3',
-                Rule::unique('cards')->where('user_id', auth()->id())
-            ],
-            'card_number' => ['required', 'regex:/^\d{13,19}$/'],
-            'expiry_date' => ['required', 'date-format:Y-m-d H:i:s']
-        ]);
-
         Card::create([
             'user_id' => auth()->id(),
-            ...$validated
+            'name' => $request->name,
+            'card_number' => $request->card_number,
+            'expiry_date' => $request->expiryDateToCarbon()
         ]);
 
         return to_route('card.index');
