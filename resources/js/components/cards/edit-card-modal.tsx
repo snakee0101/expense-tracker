@@ -22,7 +22,7 @@ export default function EditCardModal({ card, setIsNotificationShown, setNotific
     const handleEdit = (event) => {
         event.preventDefault();
 
-        data.expiry_date = getDateFromExpiryDate(data.expiry_date_formatted);
+        data.expiry_date = data.expiry_date_formatted;
 
         put(route('card.update', {card: card.id}), {
             onSuccess: () => {

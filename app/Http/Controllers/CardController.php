@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\TransactionStatus;
 use App\Http\Requests\Cards\CreateCardRequest;
+use App\Http\Requests\Cards\UpdateCardRequest;
 use App\Models\Card;
 use App\Models\Contact;
 use App\Models\Payment;
@@ -108,20 +109,13 @@ class CardController extends Controller
         return to_route('card.index');
     }
 
-    public function update(Request $request, Card $card)
+    public function update(UpdateCardRequest $request, Card $card)
     {
-        $validated = $request->validate([
-            'name' => [
-                'min: 3',
-                Rule::unique('cards')
-                    ->where('user_id', auth()->id())
-                    ->ignoreModel($card)
-            ],
-            'card_number' => ['required', 'regex:/^\d{13,19}$/'],
-            'expiry_date' => ['required', 'date-format:Y-m-d H:i:s']
+        $card->update([
+            'name' => $request->name,
+            'card_number' => $request->card_number,
+            'expiry_date' => $request->expiryDateToCarbon()
         ]);
-
-        $card->update($validated);
 
         return to_route('card.index');
     }
