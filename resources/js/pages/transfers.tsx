@@ -15,7 +15,7 @@ import {
     ModalBody,
     ModalHeader, Label, TextInput, FileInput, Select, Textarea, Datepicker
 } from 'flowbite-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
 import '../../css/app.css';
 import { CreateSavingsPlanModal } from '@/pages/savings_plans';
@@ -24,6 +24,8 @@ import dayjs from 'dayjs';
 import CreateContactModal from '@/components/transfers/create-contact-modal';
 import EditSavingsPlanModal from '@/components/savings_plans/edit-savings-plan-modal';
 import EditContactModal from '@/components/transfers/edit-contact-modal';
+import AccountTransactions from '@/components/main/account-transactions';
+import axios from 'axios';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -45,7 +47,7 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function Transfers({ contacts, transactionCategories, accounts }) {
+export default function Transfers({ contacts, transactionCategories, accounts, transactionStatusList }) {
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
@@ -83,6 +85,21 @@ export default function Transfers({ contacts, transactionCategories, accounts })
             forceFormData: true,
         });
     };
+
+    const [transactionsPaginator, setTransactionsPaginator] = useState(null);
+
+    const filters = {
+        account_type: "App\\Models\\Contact",
+        account_id: selectedContactId
+    };
+
+    const refreshTransactionList = () => axios.post(route('account_transactions.index'), filters).then(
+        response => setTransactionsPaginator(response.data)
+    );
+
+    useEffect(() => {
+        refreshTransactionList();
+    }, [selectedContactId]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -239,6 +256,14 @@ export default function Transfers({ contacts, transactionCategories, accounts })
                             <Button type="submit">Send Money</Button>
                         </div>
                     </form>
+
+                    <div className='mt-5'>
+                        <AccountTransactions key={transactionsPaginator}
+                                             transactionsPaginator={transactionsPaginator}
+                                             setTransactionsPaginator={setTransactionsPaginator}
+                                             transactionStatusList={transactionStatusList}
+                                             filters={filters} />
+                    </div>
                 </main>
             </div>
         </AppLayout>

@@ -50,7 +50,8 @@ class TransferController extends Controller
             'transactionCategories' => TransactionCategory::where('user_id', auth()->id())
                                 ->latest()
                                 ->get(),
-            'accounts' => $accounts
+            'accounts' => $accounts,
+            'transactionStatusList' => TransactionStatus::toSelectOptions()
         ]);
     }
 
