@@ -24,6 +24,8 @@ import { useState } from 'react';
 import { FaPlus } from 'react-icons/fa6';
 import { HiCheck } from 'react-icons/hi';
 import CreateRecurringPaymentModal from '@/components/recurring_payments/create-recurring-payment-modal';
+import EditSavingsPlanModal from '@/components/savings_plans/edit-savings-plan-modal';
+import EditRecurringPaymentModal from '@/components/recurring_payments/edit-recurring-payment-modal';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -106,7 +108,14 @@ export default function RecurringPayments({ payments, transactionCategories, acc
                             <TableCell>{payment.repeat_period}</TableCell>
                             <TableCell>${formatMoney(payment.amount)}</TableCell>
                             <TableCell className={'break-all'}>{payment.note ?? '-'}</TableCell>
-                            <TableCell></TableCell>
+                            <TableCell>
+                                <EditRecurringPaymentModal key={payment.id}
+                                                      recurringPayment={payment}
+                                                      setIsNotificationShown={setIsNotificationShown}
+                                                      setNotificationMessage={setNotificationMessage}
+                                                      transactionCategories={transactionCategories}
+                                                      accounts={accounts} />
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
