@@ -51,7 +51,7 @@ export default function Transfers({ contacts, transactionCategories, accounts, t
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
-    const [selectedContactId, setSelectedContactId] = useState(contacts[0].id);
+    const [selectedContactId, setSelectedContactId] = useState(contacts[0]?.id);
 
     const { data, setData, post, errors, reset } = useForm({
         name: '',
@@ -61,7 +61,7 @@ export default function Transfers({ contacts, transactionCategories, accounts, t
         date: dayjs().format('YYYY-MM-DD'),
         time: dayjs().format('HH:mm:ss'),
         note: null,
-        contact_id: contacts[0].id,
+        contact_id: contacts[0]?.id,
         category_id: null,
         receipts: [],
         card: ''
@@ -156,7 +156,7 @@ export default function Transfers({ contacts, transactionCategories, accounts, t
                 <div className="w-4"></div>
 
                 <main className="min-h-screen flex-1 p-6">
-                    <form className="max-w-xl mx-auto p-6 bg-green-50 rounded-none shadow-md"
+                    {selectedContactId && <form className="max-w-xl mx-auto p-6 bg-green-50 rounded-none shadow-md"
                           onSubmit={handleCreateTransfer}>
                         <h3 className='font-bold text-xl mb-4'>Create Transfer</h3>
 
@@ -255,7 +255,7 @@ export default function Transfers({ contacts, transactionCategories, accounts, t
                         <div className="flex justify-end gap-2 mt-4">
                             <Button type="submit">Send Money</Button>
                         </div>
-                    </form>
+                    </form>}
 
                     <div className='mt-5'>
                         <AccountTransactions key={transactionsPaginator}

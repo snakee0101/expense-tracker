@@ -41,7 +41,7 @@ export default function Wallets({ wallets, transactionCategories, chartData, tra
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
-    const [selectedWalletId, setSelectedWalletId] = useState(wallets[0].id);
+    const [selectedWalletId, setSelectedWalletId] = useState(wallets[0]?.id);
 
     let chartDataForCurrentWallet = Object.values(chartData)
                                                     .filter(chart => chart.wallet_id == selectedWalletId);
@@ -121,7 +121,7 @@ export default function Wallets({ wallets, transactionCategories, chartData, tra
 
                 <main className="flex-1 p-6 min-h-screen">
                     <div>
-                        <CreateIncomeExpense key={selectedWalletId}
+                        {selectedWalletId && <CreateIncomeExpense key={selectedWalletId}
                                              transactionable={{
                                                  destination_type: 'App\\Models\\Wallet',
                                                  destination_id: selectedWalletId
@@ -130,7 +130,7 @@ export default function Wallets({ wallets, transactionCategories, chartData, tra
                                              setNotificationMessage={setNotificationMessage}
                                              transactionCategories={transactionCategories}
                                              refreshTransactionList={refreshTransactionList}
-                        />
+                        />}
                     </div>
                     <div className='mt-3'>
                         <TotalCashflow key={selectedWalletId} cashflow={chartDataForCurrentWallet} header='Cashflow' />

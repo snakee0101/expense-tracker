@@ -53,7 +53,7 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
-    const [selectedSavingsPlanId, setSelectedSavingsPlanId] = useState(savings_plans[0].id);
+    const [selectedSavingsPlanId, setSelectedSavingsPlanId] = useState(savings_plans[0]?.id);
 
     function selectSavingsPlan(savingsPlanId) {
         setSelectedSavingsPlanId(savingsPlanId);
@@ -71,7 +71,7 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
     }
 
     function selectedSavingsPlan() {
-        return savings_plans.filter(plan => plan.id == selectedSavingsPlanId)[0];
+        return savings_plans.filter(plan => plan.id == selectedSavingsPlanId)[0] ?? null;
     }
 
     const totalTarget = savings_plans.reduce(function(total, plan) {
@@ -245,17 +245,17 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
                             Saving tips
                         </h5>
                         <p className="font-normal text-gray-700 dark:text-gray-400"
-                           dangerouslySetInnerHTML={{ __html: selectedSavingsPlan().savings_tips }}></p>
+                           dangerouslySetInnerHTML={{ __html: selectedSavingsPlan()?.savings_tips }}></p>
                     </Card>
                     <div className='mt-4'>
-                        <AddOrWithdrawFromSavingsPlan key={selectedSavingsPlanId}
+                        {selectedSavingsPlanId && <AddOrWithdrawFromSavingsPlan key={selectedSavingsPlanId}
                                                       setIsNotificationShown={setIsNotificationShown}
                                                       setNotificationMessage={setNotificationMessage}
                                                       savingsPlanId={selectedSavingsPlanId}
                                                       transactionCategories={transactionCategories}
                                                       relatedAccounts={relatedAccounts}
                                                       refreshTransactionList={refreshTransactionList}
-                        />
+                        />}
                     </div>
                     <div className='mt-4 text-center'>
                         <h2 className='font-bold text-2xl my-4'>Savings plan balance change over this year</h2>

@@ -41,7 +41,7 @@ export default function Cards({ cards, transactionCategories, chartData, transac
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
-    const [selectedCardId, setSelectedCardId] = useState(cards.find(card => card.is_expired == false).id);
+    const [selectedCardId, setSelectedCardId] = useState(cards.find(card => card.is_expired == false)?.id);
 
     let chartDataForCurrentCard = Object.values(chartData)
                                                    .filter(chart => chart.card_id == selectedCardId);
@@ -136,7 +136,7 @@ export default function Cards({ cards, transactionCategories, chartData, transac
 
                 <main className="min-h-screen flex-1 p-6">
                     <div>
-                        <CreateIncomeExpense key={selectedCardId}
+                        {selectedCardId && <CreateIncomeExpense key={selectedCardId}
                                              transactionable={{
                                                  destination_type: 'App\\Models\\Card',
                                                  destination_id: selectedCardId
@@ -145,7 +145,7 @@ export default function Cards({ cards, transactionCategories, chartData, transac
                                              setNotificationMessage={setNotificationMessage}
                                              transactionCategories={transactionCategories}
                                              refreshTransactionList={refreshTransactionList}
-                        />
+                        />}
                     </div>
                     <div className='mt-3'>
                         <TotalCashflow key={selectedCardId} cashflow={chartDataForCurrentCard} header='Cashflow' />

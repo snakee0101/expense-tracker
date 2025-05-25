@@ -54,17 +54,17 @@ export default function Payments({ payments, paymentCategories, transactionCateg
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
-    const [selectedPaymentId, setSelectedPaymentId] = useState(payments[0].id);
+    const [selectedPaymentId, setSelectedPaymentId] = useState(payments[0]?.id);
 
     const { data, setData, post, put, errors, reset } = useForm({
-        payment_id: payments[0].id,
+        payment_id: payments[0]?.id,
         date: dayjs().format('YYYY-MM-DD'),
         time: dayjs().format('HH:mm:ss'),
-        name: payments[0].name,
-        account_number: payments[0].account_number,
-        amount: payments[0].amount,
-        category_id: payments[0].category_id,
-        payment_category_id: payments[0].payment_category_id,
+        name: payments[0]?.name,
+        account_number: payments[0]?.account_number,
+        amount: payments[0]?.amount,
+        category_id: payments[0]?.category_id,
+        payment_category_id: payments[0]?.payment_category_id,
         receipts: [],
         source_id: null,
         source_type: null,
