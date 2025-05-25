@@ -58,7 +58,8 @@ class PaymentController extends Controller
                     return $paymentCategory;
                 }),
             'transactionCategories' => TransactionCategory::where('user_id', auth()->id())->latest()->get(),
-            'accounts' => $accounts
+            'accounts' => $accounts,
+            'transactionStatusList' => TransactionStatus::toSelectOptions()
         ]);
     }
 

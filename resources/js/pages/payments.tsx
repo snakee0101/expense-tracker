@@ -26,9 +26,11 @@ import {
     ToastToggle,
     createTheme,
 } from 'flowbite-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
 import '../../css/app.css';
+import AccountTransactions from '@/components/main/account-transactions';
+import axios from 'axios';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -50,7 +52,7 @@ const toastThemeWithAbsolutePositioning = createTheme({
     },
 });
 
-export default function Payments({ payments, paymentCategories, transactionCategories, accounts }) {
+export default function Payments({ payments, paymentCategories, transactionCategories, accounts, transactionStatusList }) {
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
 
@@ -111,6 +113,21 @@ export default function Payments({ payments, paymentCategories, transactionCateg
             },
         });
     }
+
+    const [transactionsPaginator, setTransactionsPaginator] = useState(null);
+
+    const filters = {
+        account_type: "App\\Models\\Payment",
+        account_id: selectedPaymentId
+    };
+
+    const refreshTransactionList = () => axios.post(route('account_transactions.index'), filters).then(
+        response => setTransactionsPaginator(response.data)
+    );
+
+    useEffect(() => {
+        refreshTransactionList();
+    }, [selectedPaymentId]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -320,6 +337,13 @@ export default function Payments({ payments, paymentCategories, transactionCateg
                             </Button>
                             <Button onClick={handlePayment}>Make payment</Button>
                         </div>
+                    </div>
+                    <div className='mt-5'>
+                        <AccountTransactions key={selectedPaymentId}
+                                             transactionsPaginator={transactionsPaginator}
+                                             setTransactionsPaginator={setTransactionsPaginator}
+                                             transactionStatusList={transactionStatusList}
+                                             filters={filters} />
                     </div>
                 </main>
             </div>
