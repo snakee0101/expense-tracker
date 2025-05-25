@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Transfers\CreateContactRequest;
+use App\Http\Requests\Transfers\UpdateContactRequest;
 use App\Models\Contact;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class ContactController extends Controller
 {
@@ -21,17 +20,8 @@ class ContactController extends Controller
         return to_route('transfer.index');
     }
 
-    public function update(Request $request, Contact $contact)
+    public function update(UpdateContactRequest $request, Contact $contact)
     {
-        $request->validate([
-            'name' => [
-                'min: 3',
-                Rule::unique('contacts', 'name')->where('user_id', auth()->id())->ignoreModel($contact)
-            ],
-            'card_number' => ['regex:/^\d{13,19}$/'],
-            'avatar' => ['nullable', 'image', 'file', 'max:1024']
-        ]);
-
         $data = $request->only('name', 'card_number');
 
         if($request->hasFile('avatar')) {
