@@ -6,7 +6,16 @@ import { GiPayMoney } from "react-icons/gi";
 import { MdOutlineSavings } from "react-icons/md";
 
 export default function IncomeExpenseStatistics({statistics}) {
-    console.log(statistics);
+    if(statistics.length == 0) {
+        statistics = [{
+            income: 0,
+            income_diff: 0,
+            expense: 0,
+            expense_diff: 0,
+            savings: 0,
+            savings_diff: 0,
+        }];
+    }
 
     const stats = [
         {
