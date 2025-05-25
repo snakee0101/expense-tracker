@@ -58,14 +58,13 @@ export default function CreateRecurringPaymentModal({ setIsNotificationShown, se
                                 id="transaction-name"
                                 placeholder="Enter Transaction Name"
                                 onChange={(e) => setData('name', e.target.value)}
-                                required
                             />
                             {errors && <p className='text-red-600'>{errors.name}</p>}
                         </div>
 
                         <div className="mb-4">
                             <Label htmlFor="category">Transaction category</Label>
-                            <Select id="category" required onChange={e => setData('category_id', e.target.value)}>
+                            <Select id="category" onChange={e => setData('category_id', e.target.value)}>
                                 <option selected></option>
                                 {transactionCategories.map(category => (
                                     <option value={category.id}>{category.name}</option>
@@ -108,6 +107,7 @@ export default function CreateRecurringPaymentModal({ setIsNotificationShown, se
                         <div className="mb-4">
                             <Label htmlFor="date">Period Starting Date</Label>
                             <Datepicker onChange={date => setData('period_starting_date', formatDate(date))} />
+                            {errors.period_starting_date && <p className="text-red-600 text-sm">{errors.period_starting_date}</p>}
                         </div>
 
                         <div className="mb-4">
@@ -117,10 +117,11 @@ export default function CreateRecurringPaymentModal({ setIsNotificationShown, se
                                 name="repeat_period"
                                 type="number"
                                 min={1}
+                                max={31}
                                 onChange={e => setData('repeat_period', e.target.value)}
                                 placeholder="1"
                             />
-                            {errors && <p className='text-red-600'>{errors.repeat_period}</p>}
+                            {errors.repeat_period && <p className='text-red-600'>{errors.repeat_period}</p>}
                         </div>
 
                         <div className="mb-4">
@@ -132,7 +133,6 @@ export default function CreateRecurringPaymentModal({ setIsNotificationShown, se
                                 placeholder="Additional details..."
                                 rows={3}
                             />
-                            {errors && <p className='text-red-600'>{errors.note}</p>}
                         </div>
 
                         <div className="w-full flex justify-end">

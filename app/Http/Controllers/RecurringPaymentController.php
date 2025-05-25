@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RecurringPayments\CreateRecurringPayment;
 use App\Models\Card;
 use App\Models\RecurringPayment;
 use App\Models\TransactionCategory;
@@ -44,14 +45,8 @@ class RecurringPaymentController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(CreateRecurringPayment $request)
     {
-        $account = ($request->destination_type)::findOrFail($request->destination_id);
-
-        $request->validate([
-            'card' => new CheckCardExpiration($account)
-        ]);
-
         RecurringPayment::create([
             'name' => $request->name,
             'user_id' => auth()->id(),
