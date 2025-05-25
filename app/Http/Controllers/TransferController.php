@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TransactionStatus;
+use App\Http\Requests\Transfers\CreateTransferRequest;
 use App\Models\Card;
 use App\Models\Contact;
 use App\Models\Transaction;
@@ -53,15 +54,10 @@ class TransferController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(CreateTransferRequest $request)
     {
         $transactionDate = Carbon::parse("{$request->date} {$request->time}");
         $account = ($request->source_type)::findOrFail($request->source_id);
-
-        $request->validate([
-            'amount' => new WithinSpendingLimit(isSpending: true, transactionDate: new CarbonImmutable($transactionDate)),
-            'card' => new CheckCardExpiration($account)
-        ]);
 
         $transaction = Transaction::create([
             'name' => $request->name,
