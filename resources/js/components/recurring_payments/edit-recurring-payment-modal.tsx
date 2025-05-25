@@ -9,7 +9,7 @@ import { MdOutlineModeEditOutline } from 'react-icons/md';
 export default function EditRecurringPaymentModal({ recurringPayment, setIsNotificationShown, setNotificationMessage, transactionCategories, accounts }) {
     const [openModal, setOpenModal] = useState(false);
 
-    const { data, setData, post, processing, errors, clearErrors } = useForm({
+    const { data, setData, put, processing, errors, clearErrors } = useForm({
         name: recurringPayment.name,
         note: recurringPayment.note,
         amount: recurringPayment.amount,
@@ -29,11 +29,11 @@ export default function EditRecurringPaymentModal({ recurringPayment, setIsNotif
     const handleCreate = (event) => {
         event.preventDefault();
 
-        post(route('recurring_payment.store'), {
+        put(route('recurring_payment.update', {'recurring_payment': recurringPayment.id}), {
             onSuccess: () => {
                 onCloseModal()
 
-                setNotificationMessage('Recurring payment created')
+                setNotificationMessage('Recurring payment updated')
                 setIsNotificationShown(true)
 
                 setTimeout(() => setIsNotificationShown(false), 2000)
@@ -64,7 +64,7 @@ export default function EditRecurringPaymentModal({ recurringPayment, setIsNotif
                                 value={data.name}
                                 onChange={(e) => setData('name', e.target.value)}
                             />
-                            {errors && <p className='text-red-600'>{errors.name}</p>}
+                            {errors.name && <p className='text-red-600'>{errors.name}</p>}
                         </div>
 
                         <div className="mb-4">
@@ -74,7 +74,7 @@ export default function EditRecurringPaymentModal({ recurringPayment, setIsNotif
                                     <option value={category.id} selected={category.id == data.category_id}>{category.name}</option>
                                 ))}
                             </Select>
-                            {errors && <p className='text-red-600'>{errors.category_id}</p>}
+                            {errors.category_id && <p className='text-red-600'>{errors.category_id}</p>}
                         </div>
 
                         <div className="mb-4">
@@ -89,7 +89,7 @@ export default function EditRecurringPaymentModal({ recurringPayment, setIsNotif
                                 onChange={e => setData('amount', e.target.value)}
                                 placeholder="0.00"
                             />
-                            {errors && <p className='text-red-600'>{errors.amount}</p>}
+                            {errors.amount && <p className='text-red-600'>{errors.amount}</p>}
                         </div>
 
                         <div className="mb-4">
@@ -144,7 +144,7 @@ export default function EditRecurringPaymentModal({ recurringPayment, setIsNotif
                         </div>
 
                         <div className="w-full flex justify-end">
-                            <Button type="submit">Create</Button>
+                            <Button type="submit">Save</Button>
                         </div>
                     </form>
                 </ModalBody>
