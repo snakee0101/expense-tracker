@@ -18,4 +18,9 @@ class Contact extends Model
     {
         return class_basename($this);
     }
+
+    public static function defaultAvatarPath()
+    {
+        return 'public/images/avatar.png';
+    }
 }

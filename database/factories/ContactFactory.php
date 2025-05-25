@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Contact;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -15,7 +16,7 @@ class ContactFactory extends Factory
         return [
             'name' => fake()->name(),
             'card_number' => fake()->creditCardNumber(),
-            'avatar_path' => 'public/images/avatar.png'
+            'avatar_path' => Contact::defaultAvatarPath()
         ];
     }
 
