@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\SavingsPlans\DeductFromBalanceAction;
 use App\Enums\TransactionStatus;
 use App\Http\Requests\SavingsPlans\CreateSavingsPlanRequest;
 use App\Http\Requests\SavingsPlans\CreateTransactionRequest;
@@ -202,11 +203,9 @@ class SavingsPlanController extends Controller
             $savingsPlanTypeField = 'destination_type';
         }
 
-        $account = ($request->related_account_type)::findOrFail($request->related_account_id);
-
         //create a transaction
         $transactionDate = Carbon::parse("{$request->date} {$request->time}");
-        Transaction::create([
+        $transaction = Transaction::create([
             'name' => $request->name,
             'date' => $transactionDate,
             'amount' => $request->amount,
@@ -220,14 +219,7 @@ class SavingsPlanController extends Controller
             'status' => $transactionDate->isFuture() ? TransactionStatus::Pending : TransactionStatus::Completed
         ]);
 
-        if ($transactionDate->isNowOrPast()) {
-            //change balance of savings plan
-            $savingsPlan = SavingsPlan::findOrFail($request->savings_plan_id);
-            $savingsPlan->increment('balance', $request->amount * ($request->boolean('is_withdraw') ? -1 : 1));
-
-            //change balance of wallet/card
-            $account->increment('balance', $request->amount * ($request->boolean('is_withdraw') ? 1 : -1));
-        }
+        app()->call(DeductFromBalanceAction::class, ['transaction' => $transaction, 'request' => $request]);
 
         return to_route('savings_plan.index');
     }
