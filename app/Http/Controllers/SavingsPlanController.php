@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\SavingsPlans\CreateSavingsTransactionAction;
 use App\Actions\SavingsPlans\DeductFromBalanceAction;
 use App\Enums\TransactionStatus;
 use App\Http\Requests\SavingsPlans\CreateSavingsPlanRequest;
@@ -190,34 +191,7 @@ class SavingsPlanController extends Controller
 
     public function transaction(CreateTransactionRequest $request)
     {
-        //if we want to withdraw from savings plan to a card or wallet
-        if ($request->boolean('is_withdraw')) {
-            $relatedModelIdField = 'destination_id';
-            $relatedModelTypeField = 'destination_type';
-            $savingsPlanIdField = 'source_id';
-            $savingsPlanTypeField = 'source_type';
-        } else {
-            $relatedModelIdField = 'source_id';
-            $relatedModelTypeField = 'source_type';
-            $savingsPlanIdField = 'destination_id';
-            $savingsPlanTypeField = 'destination_type';
-        }
-
-        //create a transaction
-        $transactionDate = Carbon::parse("{$request->date} {$request->time}");
-        $transaction = Transaction::create([
-            'name' => $request->name,
-            'date' => $transactionDate,
-            'amount' => $request->amount,
-            'note' => $request->note,
-            'user_id' => auth()->id(),
-            'category_id' => $request->category_id,
-            $relatedModelIdField => $request->related_account_id,
-            $relatedModelTypeField => $request->related_account_type,
-            $savingsPlanIdField => $request->savings_plan_id,
-            $savingsPlanTypeField => SavingsPlan::class,
-            'status' => $transactionDate->isFuture() ? TransactionStatus::Pending : TransactionStatus::Completed
-        ]);
+        $transaction = app()->call(CreateSavingsTransactionAction::class, ['request' => $request]);
 
         app()->call(DeductFromBalanceAction::class, ['transaction' => $transaction, 'request' => $request]);
 
