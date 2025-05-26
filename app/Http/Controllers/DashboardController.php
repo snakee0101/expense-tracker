@@ -19,38 +19,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
-function fillMissingMonths(array $data, array $columns): array
-{
-    $allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    $indexedData = [];
-
-    // Re-index existing data by month name
-    foreach ($data as $item) {
-        $indexedData[$item['month']] = $item;
-    }
-
-    // Fill in missing months
-    $result = [];
-    foreach ($allMonths as $month) {
-        if (isset($indexedData[$month])) {
-            $entry = $indexedData[$month];
-
-            foreach ($columns as $column => $defaultValue) {
-                $entry[$column] = $entry[$column] ?? $defaultValue;
-            }
-        } else {
-            $entry = ['month' => $month];
-
-            foreach ($columns as $column => $defaultValue) {
-                $entry[$column] = $entry[$column] ?? $defaultValue;
-            }
-        }
-        $result[] = $entry;
-    }
-
-    return $result;
-}
-
 class DashboardController extends Controller
 {
     public function index(Request $request)
@@ -102,7 +70,7 @@ class DashboardController extends Controller
             'expenseBreakdown' => $expenseBreakdown,
             'expenseBreakdownStartingDate' => $expenseBreakdownStartingDate,
             'expenseBreakdownEndingDate' => $expenseBreakdownEndingDate,
-            'cashflow' => fillMissingMonths(app()->call(CashflowQuery::class)->get()->toArray(), ['expense' => 0, 'income' => 0]),
+            'cashflow' => app()->call(CashflowQuery::class),
             'accounts' => app()->call(AccountsList::class, ['checkForExpiryDate' => true]),
             'savingsPlans' => $savingsPlans,
             'recentTransactions' => app()->call(RecentTransactionsQuery::class)->get()->toArray(),
