@@ -11,6 +11,7 @@ use App\Models\SavingsPlan;
 use App\Models\Transaction;
 use App\Models\Wallet;
 use App\Queries\IncomeExpenseStatisticsQuery;
+use App\Queries\RecentTransactionsQuery;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
@@ -123,19 +124,6 @@ class DashboardController extends Controller
                                     ->latest()
                                     ->get();
 
-        //Recent transactions
-        $recentTransactions = Transaction::where('user_id', auth()->id())
-            ->with('category', 'source', 'destination', 'attachments')
-            ->where([
-                ['source_type', '!=', SavingsPlan::class],
-                ['destination_type', '!=', SavingsPlan::class]
-            ])
-            ->orWhereNull('source_type')
-            ->latest('date')
-            ->take(5)
-            ->get()
-            ->toArray();
-
         return Inertia::render('dashboard', [
             'spendingLimit' => $spendingLimit,
             'amountSpent' => $spendingLimit->amountSpent(),
@@ -145,7 +133,7 @@ class DashboardController extends Controller
             'cashflow' => fillMissingMonths($cashflow, ['expense' => 0, 'income' => 0]),
             'accounts' => app()->call(AccountsList::class, ['checkForExpiryDate' => true]),
             'savingsPlans' => $savingsPlans,
-            'recentTransactions' => $recentTransactions,
+            'recentTransactions' => app()->call(RecentTransactionsQuery::class)->get()->toArray(),
             'transactionStatusList' => TransactionStatus::toSelectOptions(),
             'incomeExpenseStatistics' => app()->call(IncomeExpenseStatisticsQuery::class)->get()->toArray()
         ]);
