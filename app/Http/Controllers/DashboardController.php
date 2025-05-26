@@ -12,6 +12,7 @@ use App\Models\SpendingLimit;
 use App\Models\Transaction;
 use App\Models\Wallet;
 use App\Queries\Dashboard\CashflowQuery;
+use App\Queries\Dashboard\ExpenseBreakdownQuery;
 use App\Queries\Dashboard\IncomeExpenseStatisticsQuery;
 use App\Queries\Dashboard\RecentTransactionsQuery;
 use Carbon\Carbon;
@@ -23,10 +24,7 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $spendingLimit = SpendingLimit::firstWhere('user_id', auth()->id());
-
         //Expense breakdown
-        //TODO: Error expense breakdown is not recognized on the frontend
         if (Cache::has('expenseBreakdownDateRangeStart')) {
             $expenseBreakdownStartingDate = $request->has('expenseBreakdownDateRangeStart') ? Carbon::parse($request->expenseBreakdownDateRangeStart) : Carbon::parse(Cache::get('expenseBreakdownDateRangeStart'));
             $expenseBreakdownEndingDate = $request->has('expenseBreakdownDateRangeEnd') ? Carbon::parse($request->expenseBreakdownDateRangeEnd) : Carbon::parse(Cache::get('expenseBreakdownDateRangeEnd'));
@@ -41,31 +39,17 @@ class DashboardController extends Controller
         Cache::rememberForever('expenseBreakdownDateRangeStart', fn () => $expenseBreakdownStartingDate->format('Y-m-d H:i:s'));
         Cache::rememberForever('expenseBreakdownDateRangeEnd', fn () => $expenseBreakdownEndingDate->format('Y-m-d H:i:s'));
 
-        $expenseBreakdown = Transaction::with('category')
-            ->selectRaw('category_id, SUM(
-                                            CASE
-                                                 WHEN source_type IS NULL AND destination_type IN (?, ?) AND amount < 0 THEN -amount
-                                                 WHEN destination_type IN (?, ?) THEN amount
-                                            END
-                                      ) AS amount_spent',
-            [
-                Wallet::class, Card::class,
-                Contact::class, Payment::class
-
-            ])
-            ->where('user_id', auth()->id())
-            ->where('status', TransactionStatus::Completed)
-            ->whereBetween('date', [$expenseBreakdownStartingDate, $expenseBreakdownEndingDate])
-            ->groupBy('category_id')
-            ->get();
-
-        //Savings plans
         $savingsPlans = SavingsPlan::where('user_id', auth()->id())
                                     ->latest()
                                     ->get();
 
+        $expenseBreakdown = app()->call(ExpenseBreakdownQuery::class, [
+            'expenseBreakdownStartingDate' => $expenseBreakdownStartingDate,
+            'expenseBreakdownEndingDate' => $expenseBreakdownEndingDate
+        ])->get();
+
         return Inertia::render('dashboard', [
-            'spendingLimit' => $spendingLimit,
+            'spendingLimit' => $spendingLimit = SpendingLimit::firstWhere('user_id', auth()->id()),
             'amountSpent' => $spendingLimit->amountSpent(),
             'expenseBreakdown' => $expenseBreakdown,
             'expenseBreakdownStartingDate' => $expenseBreakdownStartingDate,
