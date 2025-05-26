@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\AccountsList;
 use App\Actions\Payments\CreatePaymentTransactionAction;
 use App\Actions\Payments\DeductFromBalanceAction;
 use App\Actions\SaveTransactionReceiptsAction;
@@ -21,26 +22,6 @@ class PaymentController extends Controller
 {
     public function index()
     {
-        $accounts = Wallet::where('user_id', auth()->id())->get()->map(function (Wallet $wallet) {
-            return [
-                'id' => $wallet->id,
-                'type' => Wallet::class,
-                'name' => $wallet->name,
-                'balance' => $wallet->balance,
-                'card_number' => null
-            ];
-        });
-
-        $accounts->push(...Card::where('user_id', auth()->id())->whereDate('expiry_date', '>=', now())->get()->map(function (Card $card) {
-            return [
-                'id' => $card->id,
-                'type' => Card::class,
-                'name' => $card->name,
-                'balance' => $card->balance,
-                'card_number' => $card->card_number
-            ];
-        }));
-
         return Inertia::render('payments', [
             'payments' => Payment::whereHas('paymentCategory', function ($q) {
                     $q->where('user_id', auth()->id());
@@ -55,7 +36,7 @@ class PaymentController extends Controller
                     return $paymentCategory;
                 }),
             'transactionCategories' => TransactionCategory::where('user_id', auth()->id())->latest()->get(),
-            'accounts' => $accounts,
+            'accounts' => app()->call(AccountsList::class, ['checkForExpiryDate' => true]),
             'transactionStatusList' => TransactionStatus::toSelectOptions()
         ]);
     }

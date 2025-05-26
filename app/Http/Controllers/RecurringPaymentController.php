@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\AccountsList;
 use App\Http\Requests\RecurringPayments\CreateRecurringPayment;
 use App\Http\Requests\RecurringPayments\UpdateRecurringPayment;
 use App\Models\Card;
@@ -17,26 +18,6 @@ class RecurringPaymentController extends Controller
 {
     public function index()
     {
-        $accounts = Wallet::where('user_id', auth()->id())->get()->map(function (Wallet $wallet) {
-            return [
-                'id' => $wallet->id,
-                'type' => Wallet::class,
-                'name' => $wallet->name,
-                'balance' => $wallet->balance,
-                'card_number' => null
-            ];
-        });
-
-        $accounts->push(...Card::where('user_id', auth()->id())->get()->map(function (Card $card) {
-            return [
-                'id' => $card->id,
-                'type' => Card::class,
-                'name' => $card->name,
-                'balance' => $card->balance,
-                'card_number' => $card->card_number
-            ];
-        }));
-
         return Inertia::render('recurring_payments', [
             'payments' => RecurringPayment::where('user_id', auth()->id())
                                         ->latest('period_starting_date')
@@ -45,7 +26,7 @@ class RecurringPaymentController extends Controller
             'transactionCategories' => TransactionCategory::where('user_id', auth()->id())
                 ->latest()
                 ->get(),
-            'accounts' => $accounts
+            'accounts' => app()->call(AccountsList::class)
         ]);
     }
 

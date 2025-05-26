@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\AccountsList;
 use App\Enums\TransactionStatus;
 use App\Models\Card;
 use App\Models\Contact;
@@ -116,27 +117,6 @@ class DashboardController extends Controller
             ->get()
             ->toArray();
 
-        //Accounts
-        $accounts = Wallet::where('user_id', auth()->id())->get()->map(function (Wallet $wallet) {
-            return [
-                'id' => $wallet->id,
-                'type' => Wallet::class,
-                'name' => $wallet->name,
-                'balance' => $wallet->balance,
-                'card_number' => null
-            ];
-        });
-
-        $accounts->push(...Card::where('user_id', auth()->id())->whereDate('expiry_date', '>=', now())->get()->map(function (Card $card) {
-            return [
-                'id' => $card->id,
-                'type' => Card::class,
-                'name' => $card->name,
-                'balance' => $card->balance,
-                'card_number' => $card->card_number
-            ];
-        }));
-
         //Savings plans
         $savingsPlans = SavingsPlan::where('user_id', auth()->id())
                                     ->latest()
@@ -230,7 +210,7 @@ class DashboardController extends Controller
             'expenseBreakdownStartingDate' => $expenseBreakdownStartingDate,
             'expenseBreakdownEndingDate' => $expenseBreakdownEndingDate,
             'cashflow' => fillMissingMonths($cashflow, ['expense' => 0, 'income' => 0]),
-            'accounts' => $accounts,
+            'accounts' => app()->call(AccountsList::class, ['checkForExpiryDate' => true]),
             'savingsPlans' => $savingsPlans,
             'recentTransactions' => $recentTransactions,
             'transactionStatusList' => TransactionStatus::toSelectOptions(),

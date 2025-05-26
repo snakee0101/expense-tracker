@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\AccountsList;
 use App\Actions\SavingsPlans\CreateSavingsTransactionAction;
 use App\Actions\SavingsPlans\DeductFromBalanceAction;
 use App\Enums\TransactionStatus;
@@ -68,26 +69,6 @@ class SavingsPlanController extends Controller
 {
     public function index()
     {
-        $relatedAccounts = Wallet::where('user_id', auth()->id())->get()->map(function (Wallet $wallet) {
-            return [
-                'id' => $wallet->id,
-                'type' => Wallet::class,
-                'name' => $wallet->name,
-                'balance' => $wallet->balance,
-                'card_number' => null
-            ];
-        });
-
-        $relatedAccounts->push(...Card::where('user_id', auth()->id())->whereDate('expiry_date', '>=', now())->get()->map(function (Card $card) {
-            return [
-                'id' => $card->id,
-                'type' => Card::class,
-                'name' => $card->name,
-                'balance' => $card->balance,
-                'card_number' => $card->card_number
-            ];
-        }));
-
         $total_savings_gain = Transaction::selectRaw( //formula:  100% * (current month total - previous month total) / (previous month total)
                 "ROUND( 100 * (
                     SUM(CASE WHEN destination_type = ? THEN amount ELSE -amount END )
@@ -159,7 +140,7 @@ class SavingsPlanController extends Controller
                 ->latest()
                 ->get(),
             'transactionCategories' => TransactionCategory::where('user_id', auth()->id())->latest()->get(),
-            'relatedAccounts' => $relatedAccounts,
+            'relatedAccounts' => app()->call(AccountsList::class, ['checkForExpiryDate' => true]),
             'total_savings_gain' => $total_savings_gain,
             'savingsChartData' => $savingsChartData,
             'transactionStatusList' => TransactionStatus::toSelectOptions()
