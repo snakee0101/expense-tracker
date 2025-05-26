@@ -36,7 +36,8 @@ class MakePaymentRequest extends FormRequest
                     $fail("Selected card or wallet doesn't exist");
                 }
             },
-            'receipts' => $this->receipts == [] ? 'nullable' : 'file'
+            'receipts' => $this->receipts == [] ? 'nullable' : 'array',
+            'receipts.*' => 'file',
         ];
     }
 

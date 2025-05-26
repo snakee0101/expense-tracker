@@ -36,7 +36,8 @@ class CreateTransferRequest extends FormRequest
                 }
             },
             'card' => $this->source_type ? new CheckCardExpiration($account = ($this->source_type)::findOrFail($this->source_id)) : 'nullable',
-            'receipts' => $this->receipts == [] ? 'nullable' : 'file',
+            'receipts' => $this->receipts == [] ? 'nullable' : 'array',
+            'receipts.*' => 'file',
             'category_id' => Rule::exists('transaction_categories', 'id')->where('user_id', auth()->id()),
         ];
     }
