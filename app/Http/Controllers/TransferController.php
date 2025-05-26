@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Actions\SaveTransactionReceiptsAction;
+use App\Actions\Transfers\CreateTransferTransactionAction;
+use App\Actions\Transfers\DeductFromBalanceAction;
 use App\Enums\TransactionStatus;
 use App\Http\Requests\Transfers\CreateTransferRequest;
 use App\Models\Card;
@@ -58,27 +60,9 @@ class TransferController extends Controller
 
     public function store(CreateTransferRequest $request)
     {
-        $transactionDate = Carbon::parse("{$request->date} {$request->time}");
-        $account = ($request->source_type)::findOrFail($request->source_id);
+        $transaction = app()->call(CreateTransferTransactionAction::class, ['request' => $request]);
 
-        $transaction = Transaction::create([
-            'name' => $request->name,
-            'date' => $transactionDate,
-            'amount' => $request->amount,
-            'note' => $request->note,
-            'user_id' => auth()->id(),
-            'category_id' => $request->category_id,
-            'source_id' => $request->source_id,
-            'source_type' => $request->source_type,
-            'destination_id' => $request->contact_id,
-            'destination_type' => Contact::class,
-            'status' => $transactionDate->isFuture() ? TransactionStatus::Pending : TransactionStatus::Completed
-        ]);
-
-        if ($transactionDate->isNowOrPast()) {
-            //change balance of wallet/card where you transfer money from
-            $account->decrement('balance', $request->amount);
-        }
+        app()->call(DeductFromBalanceAction::class, ['transaction' => $transaction]);
 
         app()->call(SaveTransactionReceiptsAction::class, ['request' => $request, 'transaction' => $transaction]);
 
