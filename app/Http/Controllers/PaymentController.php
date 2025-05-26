@@ -4,25 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Actions\Payments\CreatePaymentTransactionAction;
 use App\Actions\Payments\DeductFromBalanceAction;
-use App\Actions\Payments\SavePaymentTransactionReceiptsAction;
+use App\Actions\SaveTransactionReceiptsAction;
 use App\Enums\TransactionStatus;
 use App\Http\Requests\Payments\CreatePaymentRequest;
 use App\Http\Requests\Payments\MakePaymentRequest;
 use App\Http\Requests\Payments\UpdatePaymentRequest;
 use App\Models\Card;
-use App\Models\Contact;
 use App\Models\Payment;
 use App\Models\PaymentCategory;
-use App\Models\Transaction;
 use App\Models\TransactionCategory;
 use App\Models\Wallet;
-use App\Rules\CheckCardExpiration;
-use App\Rules\WithinSpendingLimit;
-use Carbon\Carbon;
-use Carbon\CarbonImmutable;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class PaymentController extends Controller
@@ -107,7 +99,7 @@ class PaymentController extends Controller
 
         app()->call(DeductFromBalanceAction::class, ['transaction' => $transaction, 'payment' => $payment]);
 
-        app()->call(SavePaymentTransactionReceiptsAction::class, ['request' => $request, 'transaction' => $transaction]);
+        app()->call(SaveTransactionReceiptsAction::class, ['request' => $request, 'transaction' => $transaction]);
 
         return to_route('payment.index');
     }

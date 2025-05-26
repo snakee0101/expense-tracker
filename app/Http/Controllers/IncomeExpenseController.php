@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\SaveTransactionReceiptsAction;
 use App\Enums\TransactionStatus;
 use App\Http\Requests\IncomeExpenseRequest;
 use App\Models\Card;
@@ -38,14 +39,7 @@ class IncomeExpenseController extends Controller
             $destination->increment('balance', $income);
         }
 
-        foreach ($request->file('receipts') ?? [] as $file) {
-            $filePath = $file->store('attachments', 'public');
-
-            $transaction->attachments()->create([
-                'original_filename' => $file->getClientOriginalName(),
-                'storage_location' => $filePath
-            ]);
-        }
+        app()->call(SaveTransactionReceiptsAction::class, ['request' => $request, 'transaction' => $transaction]);
 
         return back();
     }

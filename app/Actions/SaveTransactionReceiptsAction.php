@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Actions\Payments;
+namespace App\Actions;
 
-use App\Http\Requests\Payments\MakePaymentRequest;
 use App\Models\Transaction;
 
-class SavePaymentTransactionReceiptsAction
+class SaveTransactionReceiptsAction
 {
-    public function __invoke(MakePaymentRequest $request, Transaction $transaction)
+    public function __invoke($request, Transaction $transaction)
     {
         $receipts = [];
 
