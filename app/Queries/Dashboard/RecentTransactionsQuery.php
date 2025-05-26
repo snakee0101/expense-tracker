@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Queries;
+namespace App\Queries\Dashboard;
 
 use App\Models\SavingsPlan;
 use App\Models\Transaction;

@@ -8,15 +8,16 @@ use App\Models\Card;
 use App\Models\Contact;
 use App\Models\Payment;
 use App\Models\SavingsPlan;
+use App\Models\SpendingLimit;
 use App\Models\Transaction;
 use App\Models\Wallet;
-use App\Queries\IncomeExpenseStatisticsQuery;
-use App\Queries\RecentTransactionsQuery;
+use App\Queries\Dashboard\CashflowQuery;
+use App\Queries\Dashboard\IncomeExpenseStatisticsQuery;
+use App\Queries\Dashboard\RecentTransactionsQuery;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
-use Illuminate\Http\Request;
-use App\Models\SpendingLimit;
 
 function fillMissingMonths(array $data, array $columns): array
 {
@@ -90,35 +91,6 @@ class DashboardController extends Controller
             ->groupBy('category_id')
             ->get();
 
-
-        //Cashflow
-        $cashflow = Transaction::selectRaw('SUM(
-                                            CASE
-                                                 WHEN source_type IS NULL AND destination_type IN (?, ?) AND amount < 0 THEN amount
-                                                 WHEN destination_type IN (?, ?) THEN -amount
-                                            END
-                                      ) AS expense',
-                [
-                    Wallet::class, Card::class,
-                    Contact::class, Payment::class
-                ])
-            ->selectRaw('SUM(
-                                            CASE
-                                                 WHEN source_type IS NULL AND destination_type IN (?, ?) AND amount > 0 THEN amount
-                                            END
-                                      ) AS income',
-                [
-                    Wallet::class, Card::class
-                ])
-            ->selectRaw("DATE_FORMAT(date, '%b') AS month")
-            ->where('user_id', auth()->id())
-            ->where('status', TransactionStatus::Completed)
-            ->whereBetween('date', [now()->startOfYear()->setTime(0,0,0), now()->endOfYear()->setTime(23,59,59)])
-            ->groupByRaw("DATE_FORMAT(date, '%b'), MONTH(date)")
-            ->orderByRaw("MONTH(date)")
-            ->get()
-            ->toArray();
-
         //Savings plans
         $savingsPlans = SavingsPlan::where('user_id', auth()->id())
                                     ->latest()
@@ -130,7 +102,7 @@ class DashboardController extends Controller
             'expenseBreakdown' => $expenseBreakdown,
             'expenseBreakdownStartingDate' => $expenseBreakdownStartingDate,
             'expenseBreakdownEndingDate' => $expenseBreakdownEndingDate,
-            'cashflow' => fillMissingMonths($cashflow, ['expense' => 0, 'income' => 0]),
+            'cashflow' => fillMissingMonths(app()->call(CashflowQuery::class)->get()->toArray(), ['expense' => 0, 'income' => 0]),
             'accounts' => app()->call(AccountsList::class, ['checkForExpiryDate' => true]),
             'savingsPlans' => $savingsPlans,
             'recentTransactions' => app()->call(RecentTransactionsQuery::class)->get()->toArray(),
