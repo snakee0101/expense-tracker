@@ -120,7 +120,7 @@ class DashboardController extends Controller
         $accounts = Wallet::where('user_id', auth()->id())->get()->map(function (Wallet $wallet) {
             return [
                 'id' => $wallet->id,
-                'type' => 'wallet',
+                'type' => Wallet::class,
                 'name' => $wallet->name,
                 'balance' => $wallet->balance,
                 'card_number' => null
@@ -130,7 +130,7 @@ class DashboardController extends Controller
         $accounts->push(...Card::where('user_id', auth()->id())->whereDate('expiry_date', '>=', now())->get()->map(function (Card $card) {
             return [
                 'id' => $card->id,
-                'type' => 'card',
+                'type' => Card::class,
                 'name' => $card->name,
                 'balance' => $card->balance,
                 'card_number' => $card->card_number
