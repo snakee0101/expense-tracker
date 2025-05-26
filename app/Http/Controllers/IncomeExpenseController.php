@@ -5,14 +5,8 @@ namespace App\Http\Controllers;
 use App\Actions\SaveTransactionReceiptsAction;
 use App\Enums\TransactionStatus;
 use App\Http\Requests\IncomeExpenseRequest;
-use App\Models\Card;
 use App\Models\Transaction;
-use App\Rules\CheckCardExpiration;
-use App\Rules\WithinSpendingLimit;
 use Carbon\Carbon;
-use Carbon\CarbonImmutable;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class IncomeExpenseController extends Controller
 {

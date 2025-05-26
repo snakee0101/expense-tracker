@@ -5,21 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Payments\CreatePaymentCategoryRequest;
 use App\Http\Requests\Payments\UpdatePaymentCategoryRequest;
 use App\Models\PaymentCategory;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class PaymentCategoryController extends Controller
 {
-    public function index()
-    {
-        //
-    }
-
-    public function create()
-    {
-        //
-    }
-
     public function store(CreatePaymentCategoryRequest $request)
     {
         PaymentCategory::create([
@@ -29,16 +17,6 @@ class PaymentCategoryController extends Controller
         ]);
 
         return to_route('payment_category.index');
-    }
-
-    public function show(PaymentCategory $paymentCategory)
-    {
-        //
-    }
-
-    public function edit(PaymentCategory $paymentCategory)
-    {
-        //
     }
 
     public function update(UpdatePaymentCategoryRequest $request, PaymentCategory $category)
@@ -52,10 +30,5 @@ class PaymentCategoryController extends Controller
         $category->update($data);
 
         return to_route('payment_category.index');
-    }
-
-    public function destroy(PaymentCategory $paymentCategory)
-    {
-        //
     }
 }

@@ -18,11 +18,6 @@ class TransactionCategoryController extends Controller
         ]);
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(CreateCategoryRequest $request)
     {
         TransactionCategory::create([
@@ -32,16 +27,6 @@ class TransactionCategoryController extends Controller
         ]);
 
         return to_route('transaction_category.index');
-    }
-
-    public function show(TransactionCategory $transactionCategory)
-    {
-        //
-    }
-
-    public function edit(TransactionCategory $transactionCategory)
-    {
-        //
     }
 
     public function update(UpdateCategoryRequest $request, TransactionCategory $category)
@@ -55,10 +40,5 @@ class TransactionCategoryController extends Controller
         $category->update($data);
 
         return to_route('transaction_category.index');
-    }
-
-    public function destroy(TransactionCategory $transactionCategory)
-    {
-        //
     }
 }

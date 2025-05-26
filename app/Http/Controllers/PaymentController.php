@@ -10,11 +10,9 @@ use App\Enums\TransactionStatus;
 use App\Http\Requests\Payments\CreatePaymentRequest;
 use App\Http\Requests\Payments\MakePaymentRequest;
 use App\Http\Requests\Payments\UpdatePaymentRequest;
-use App\Models\Card;
 use App\Models\Payment;
 use App\Models\PaymentCategory;
 use App\Models\TransactionCategory;
-use App\Models\Wallet;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -41,11 +39,6 @@ class PaymentController extends Controller
         ]);
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(CreatePaymentRequest $request)
     {
         Payment::create($request->validated());
@@ -53,27 +46,11 @@ class PaymentController extends Controller
         return to_route('payment.index');
     }
 
-    public function show(Payment $payment)
-    {
-        //
-    }
-
-
-    public function edit(Payment $payment)
-    {
-        //
-    }
-
     public function update(UpdatePaymentRequest $request, Payment $payment)
     {
         $payment->update($request->validated());
 
         return to_route('payment.index');
-    }
-
-    public function destroy(Payment $payment)
-    {
-        //
     }
 
     public function transaction(MakePaymentRequest $request, Payment $payment)

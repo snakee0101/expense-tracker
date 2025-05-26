@@ -6,15 +6,8 @@ use App\Enums\TransactionStatus;
 use App\Http\Requests\Cards\CreateCardRequest;
 use App\Http\Requests\Cards\UpdateCardRequest;
 use App\Models\Card;
-use App\Models\Contact;
-use App\Models\Payment;
-use App\Models\SavingsPlan;
 use App\Models\TransactionCategory;
-use App\Models\Wallet;
 use App\Queries\CardIncomeExpenseChartQuery;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class CardController extends Controller
