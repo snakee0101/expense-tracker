@@ -26,7 +26,8 @@ class PaymentController extends Controller
                 'id' => $wallet->id,
                 'type' => Wallet::class,
                 'name' => $wallet->name,
-                'balance' => $wallet->balance
+                'balance' => $wallet->balance,
+                'card_number' => null
             ];
         });
 
@@ -35,7 +36,8 @@ class PaymentController extends Controller
                 'id' => $card->id,
                 'type' => Card::class,
                 'name' => $card->name,
-                'balance' => $card->balance
+                'balance' => $card->balance,
+                'card_number' => $card->card_number
             ];
         }));
 
