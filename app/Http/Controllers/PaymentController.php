@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Payments\CreatePaymentTransactionAction;
+use App\Actions\Payments\DeductFromBalanceAction;
+use App\Actions\Payments\SavePaymentTransactionReceiptsAction;
 use App\Enums\TransactionStatus;
 use App\Http\Requests\Payments\CreatePaymentRequest;
 use App\Http\Requests\Payments\MakePaymentRequest;
@@ -100,35 +103,11 @@ class PaymentController extends Controller
 
     public function transaction(MakePaymentRequest $request, Payment $payment)
     {
-        $transaction_date = Carbon::parse("{$request->date} {$request->time}");
-        $source = ($request->source_type)::findOrFail($request->source_id);
+        $transaction = app()->call(CreatePaymentTransactionAction::class, ['request' => $request, 'payment' => $payment]);
 
-        $transaction = Transaction::create(array(
-            'name' => $payment->name,
-            'date' => $transaction_date,
-            'amount' => $request->amount,
-            'note' => $request->note,
-            'user_id' => auth()->id(),
-            'source_type' => $request->source_type,
-            'source_id' => $request->source_id,
-            'destination_type' => Payment::class,
-            'destination_id' => $payment->id,
-            'category_id' => $payment->category_id,
-            'status' => $transaction_date->isFuture() ? TransactionStatus::Pending : TransactionStatus::Completed
-        ));
+        app()->call(DeductFromBalanceAction::class, ['transaction' => $transaction, 'payment' => $payment]);
 
-        if ($transaction_date->isNowOrPast()) {
-            $source->decrement('balance', $payment->amount);
-        }
-
-        foreach ($request->receipts ? $request->file('receipts') : [] as $file) {
-            $filePath = $file->store('attachments', 'public');
-
-            $transaction->attachments()->create([
-                'original_filename' => $file->getClientOriginalName(),
-                'storage_location' => $filePath
-            ]);
-        }
+        app()->call(SavePaymentTransactionReceiptsAction::class, ['request' => $request, 'transaction' => $transaction]);
 
         return to_route('payment.index');
     }
