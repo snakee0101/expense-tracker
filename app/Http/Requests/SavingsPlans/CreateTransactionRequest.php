@@ -4,18 +4,24 @@ namespace App\Http\Requests\SavingsPlans;
 
 use App\Models\Card;
 use App\Models\SavingsPlan;
+use App\Models\TransactionCategory;
 use App\Models\Wallet;
 use App\Rules\CheckCardExpiration;
 use App\Rules\WithinSavingsBalance;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class CreateTransactionRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        $account = ($this->related_account_type)::findOrFail($this->related_account_id);
+
+        return Gate::allows('owns-model', TransactionCategory::find($this->category_id))
+            && Gate::allows('owns-model', $account)
+            && Gate::allows('owns-model', SavingsPlan::find($this->savings_plan_id));
     }
 
     public function rules(): array

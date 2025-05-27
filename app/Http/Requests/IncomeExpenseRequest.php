@@ -10,13 +10,16 @@ use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class IncomeExpenseRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        $destination = ($this->destination_type)::findOrFail($this->destination_id);
+
+        return Gate::allows('owns-model', $destination);
     }
 
     public function rules(): array

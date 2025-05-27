@@ -3,13 +3,14 @@
 namespace App\Http\Requests\Transfers;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class UpdateContactRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return Gate::allows('owns-model', $this->route('contact'));
     }
 
     public function rules(): array

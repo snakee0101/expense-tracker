@@ -3,17 +3,23 @@
 namespace App\Http\Requests\RecurringPayments;
 
 use App\Models\Card;
+use App\Models\TransactionCategory;
 use App\Models\Wallet;
 use App\Rules\CheckCardExpiration;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class UpdateRecurringPayment extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        $destination = ($this->destination_type)::find($this->destination_id);
+
+        return Gate::allows('owns-model', TransactionCategory::find($this->category_id))
+            && Gate::allows('owns-model', $destination)
+            && Gate::allows('owns-model', $this->route('recurring_payment'));
     }
 
     public function rules(): array
