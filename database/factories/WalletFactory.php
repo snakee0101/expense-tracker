@@ -15,7 +15,7 @@ class WalletFactory extends Factory
     {
         return [
             'name' => fake()->unique()->sentence(2),
-            'balance' => fake()->numberBetween(500, 1500) / 2
+            'balance' => 5000
         ];
     }
 

@@ -17,6 +17,11 @@ class Payment extends Model
         return $this->belongsTo(PaymentCategory::class);
     }
 
+    public function category()
+    {
+        return $this->belongsTo(TransactionCategory::class);
+    }
+
     public function getTypeNameAttribute()
     {
         return class_basename($this);

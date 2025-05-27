@@ -17,7 +17,7 @@ class PaymentFactory extends Factory
         return [
             'name' => $this->faker->words(asText: true),
             'account_number' => $this->faker->bankAccountNumber(),
-            'amount' => $this->faker->randomFloat(2, 10, 10000),
+            'amount' => $this->faker->randomFloat(2, 10, 100),
         ];
     }
 
