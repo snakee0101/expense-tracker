@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('category_id');
             $table->decimal('amount');
             $table->string('note')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

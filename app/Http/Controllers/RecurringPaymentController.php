@@ -8,6 +8,7 @@ use App\Http\Requests\RecurringPayments\UpdateRecurringPayment;
 use App\Models\RecurringPayment;
 use App\Models\TransactionCategory;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class RecurringPaymentController extends Controller
@@ -54,6 +55,15 @@ class RecurringPaymentController extends Controller
             'destination_type' => $request->destination_type,
             'period_starting_date' => Carbon::parse($request->period_starting_date),
             'repeat_period' => $request->repeat_period,
+        ]);
+
+        return to_route('recurring_payment.index');
+    }
+
+    public function setActiveState(Request $request, RecurringPayment $recurring_payment)
+    {
+        $recurring_payment->update([
+            'is_active' => $request->is_active
         ]);
 
         return to_route('recurring_payment.index');

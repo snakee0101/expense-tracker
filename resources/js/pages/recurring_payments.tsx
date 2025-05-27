@@ -4,28 +4,24 @@ import { Head, useForm } from '@inertiajs/react';
 
 import { router } from '@inertiajs/react';
 import {
-    Badge,
-    Button, Datepicker, Label, Modal, ModalBody, ModalHeader,
-    Pagination, Select,
+    Pagination,
     Table,
     TableBody,
     TableCell,
     TableHead,
     TableHeadCell,
-    TableRow, Textarea, TextInput, Toast, ToastToggle
+    TableRow, Toast, ToastToggle
 } from 'flowbite-react';
-import { formatMoney, formatDate, getPageUrl } from '../lib/helpers';
+import { formatCardDate, formatMoney, getPageUrl } from '../lib/helpers';
 
 import { createTheme } from 'flowbite-react';
 import dayjs from 'dayjs';
-import { ImAttachment } from "react-icons/im";
-import { CreateWalletModal } from '@/pages/wallets';
 import { useState } from 'react';
-import { FaPlus } from 'react-icons/fa6';
 import { HiCheck } from 'react-icons/hi';
 import CreateRecurringPaymentModal from '@/components/recurring_payments/create-recurring-payment-modal';
-import EditSavingsPlanModal from '@/components/savings_plans/edit-savings-plan-modal';
 import EditRecurringPaymentModal from '@/components/recurring_payments/edit-recurring-payment-modal';
+import { MdOutlineHourglassDisabled } from "react-icons/md";
+import { CiRedo } from "react-icons/ci";
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -53,6 +49,22 @@ export default function RecurringPayments({ payments, transactionCategories, acc
 
     const [isNotificationShown, setIsNotificationShown] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
+
+    const { data, setData, put, processing, errors, clearErrors } = useForm({
+        is_active: null,
+    });
+
+    function setPaymentActiveState(paymentId, isActive) {
+        data.is_active = isActive;
+
+        put(route('recurring_payment.set_active_state', {recurring_payment: paymentId}), {
+            onSuccess: () => {
+                isActive ? setNotificationMessage('Payment Activated') : setNotificationMessage('Payment Inactivated');
+                setIsNotificationShown(true);
+                setTimeout(() => setIsNotificationShown(false), 2000);
+            },
+        });
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -87,7 +99,7 @@ export default function RecurringPayments({ payments, transactionCategories, acc
                 </TableHead>
                 <TableBody className="divide-y">
                     {payments.data.map((payment) => (
-                        <TableRow key={payment.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                        <TableRow key={payment.id} className={`${payment.is_active == true ? 'bg-white' : 'bg-gray-100'} dark:border-gray-700 dark:bg-gray-800`}>
                             <TableCell className='py-1 px-3'>
                                 <div className="flex w-full flex-row items-center">
                                     <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-white">
@@ -108,13 +120,28 @@ export default function RecurringPayments({ payments, transactionCategories, acc
                             <TableCell>{payment.repeat_period}</TableCell>
                             <TableCell>${formatMoney(payment.amount)}</TableCell>
                             <TableCell className={'break-all'}>{payment.note ?? '-'}</TableCell>
-                            <TableCell>
+                            <TableCell className='flex flex-row'>
                                 <EditRecurringPaymentModal key={payment.id}
                                                       recurringPayment={payment}
                                                       setIsNotificationShown={setIsNotificationShown}
                                                       setNotificationMessage={setNotificationMessage}
                                                       transactionCategories={transactionCategories}
                                                       accounts={accounts} />
+                                {payment.is_active ? (
+                                    <a href='#' onClick={(e) => {
+                                        e.preventDefault();
+                                        setPaymentActiveState(payment.id, false);
+                                    }} className='flex text-red-500 ml-4'>
+                                        <MdOutlineHourglassDisabled className='mr-2' size={20}/> <span>Inactivate</span>
+                                    </a>
+                                ) : (
+                                    <a href='#' onClick={(e) => {
+                                        e.preventDefault();
+                                        setPaymentActiveState(payment.id, true);
+                                    }} className='flex text-green-500 ml-4'>
+                                        <CiRedo className='mr-2' size={20}/> <span>Activate</span>
+                                    </a>
+                                )}
                             </TableCell>
                         </TableRow>
                     ))}

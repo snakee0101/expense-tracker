@@ -52,7 +52,9 @@ class ProcessRecurringPayments
 
     protected function pendingPayments(): Collection
     {
-        return RecurringPayment::whereRaw('CURRENT_DATE() >= DATE_ADD(period_starting_date, INTERVAL repeat_period DAY)')->get();
+        return RecurringPayment::whereRaw('CURRENT_DATE() >= DATE_ADD(period_starting_date, INTERVAL repeat_period DAY)')
+                               ->where('is_active', true)
+                               ->get();
     }
 
     protected function updatePaymentPeriod(RecurringPayment $payment): bool

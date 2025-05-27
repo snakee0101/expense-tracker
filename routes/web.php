@@ -34,6 +34,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('transactions/{transaction}/redo', [TransactionController::class, 'redo'])->name('transaction.redo');
 
     Route::resource('recurring_payment', RecurringPaymentController::class);
+    Route::put('recurring_payment/{recurring_payment}/setActiveState', [RecurringPaymentController::class, 'setActiveState'])->name('recurring_payment.set_active_state');
+
     Route::resource('wallet', WalletController::class);
     Route::resource('card', CardController::class);
     Route::resource('savings_plan', SavingsPlanController::class);
