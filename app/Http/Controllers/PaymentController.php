@@ -21,9 +21,7 @@ class PaymentController extends Controller
     public function index()
     {
         return Inertia::render('payments', [
-            'payments' => Payment::whereHas('paymentCategory', function ($q) {
-                    $q->where('user_id', auth()->id());
-                })
+            'payments' => Payment::where('user_id', auth()->id())
                 ->latest()
                 ->get(),
             'paymentCategories' => PaymentCategory::where('user_id', auth()->id())
@@ -41,7 +39,10 @@ class PaymentController extends Controller
 
     public function store(CreatePaymentRequest $request)
     {
-        Payment::create($request->validated());
+        Payment::create([
+            ...$request->validated(),
+            'user_id' => auth()->id()
+        ]);
 
         return to_route('payment.index');
     }

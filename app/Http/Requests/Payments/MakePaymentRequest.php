@@ -10,13 +10,17 @@ use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class MakePaymentRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        $source = ($this->source_type)::find($this->source_id);
+
+        return Gate::allows('owns-model', $source)
+            && Gate::allows('owns-model', $this->route('payment'));
     }
 
     public function rules(): array

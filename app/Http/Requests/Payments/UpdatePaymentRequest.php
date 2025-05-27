@@ -2,14 +2,19 @@
 
 namespace App\Http\Requests\Payments;
 
+use App\Models\PaymentCategory;
+use App\Models\TransactionCategory;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class UpdatePaymentRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return Gate::allows('owns-model', TransactionCategory::find($this->category_id))
+            && Gate::allows('owns-model', PaymentCategory::find($this->payment_category_id))
+            && Gate::allows('owns-model', $this->route('payment'));
     }
 
     public function rules(): array

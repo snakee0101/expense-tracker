@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Payment;
 use App\Models\PaymentCategory;
 use App\Models\TransactionCategory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PaymentFactory extends Factory
@@ -24,6 +25,13 @@ class PaymentFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'category_id' => $category->id,
+        ]);
+    }
+
+    public function withUser(User $user): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'user_id' => $user->id,
         ]);
     }
 

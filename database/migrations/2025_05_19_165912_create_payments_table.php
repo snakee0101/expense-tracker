@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->foreignId('payment_category_id');
+            $table->foreignId('user_id');
             $table->foreignId('category_id'); //transaction category
             $table->string('account_number');
             $table->decimal('amount');

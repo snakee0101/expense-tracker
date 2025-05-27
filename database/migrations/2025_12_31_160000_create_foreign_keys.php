@@ -84,6 +84,10 @@ return new class extends Migration
             $table->foreign('payment_category_id', 'fk_payment_category_id')
                 ->references('id')
                 ->on('payment_categories');
+
+            $table->foreign('user_id', 'payment_owner_id')
+                ->references('id')
+                ->on('users');
         });
     }
 
@@ -92,6 +96,7 @@ return new class extends Migration
         Schema::table('payments', function (Blueprint $table) {
             $table->dropForeign( 'payment_transaction_category_id');
             $table->dropForeign( 'fk_payment_category_id');
+            $table->dropForeign( 'payment_owner_id');
         });
 
         Schema::table('payment_categories', function (Blueprint $table) {
