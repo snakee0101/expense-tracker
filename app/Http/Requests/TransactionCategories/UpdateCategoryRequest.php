@@ -3,13 +3,14 @@
 namespace App\Http\Requests\TransactionCategories;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class UpdateCategoryRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return Gate::allows('owns-model', $this->route('category'));
     }
 
     public function rules(): array
