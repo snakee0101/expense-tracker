@@ -23,7 +23,6 @@ import '../../css/app.css';
 import dayjs from 'dayjs';
 import CreateSavingsPlanModal from '@/components/savings_plans/create-savings-plan-modal';
 import AddOrWithdrawFromSavingsPlan from '@/components/savings_plans/add-or-withdraw-from-savings-plan';
-import EditCardModal from '@/components/cards/edit-card-modal';
 import EditSavingsPlanModal from '@/components/savings_plans/edit-savings-plan-modal';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import AccountTransactions from '@/components/main/account-transactions';
@@ -82,16 +81,7 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
         return total + Number(plan.balance);
     }, 0);
 
-    let chartDataForCurrentSavingsPlan = Object.values(savingsChartData).find(savingsChart => savingsChart.find(column => column.savings_plan_id == selectedSavingsPlanId));
-    chartDataForCurrentSavingsPlan = chartDataForCurrentSavingsPlan?.sort(function (a, b) {
-        if (a.month < b.month) {
-            return -1;
-        } else if (a.month > b.month) {
-            return 1;
-        }
-
-        return 0;
-    });
+    let chartDataForCurrentSavingsPlan = Object.values(savingsChartData).filter(savingsChart => savingsChart.savings_plan_id == selectedSavingsPlanId);
 
     let processedChartData = [];
 
@@ -260,7 +250,7 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
                     <div className='mt-4 text-center'>
                         <h2 className='font-bold text-2xl my-4'>Savings plan balance change over this year</h2>
 
-                        {chartDataForCurrentSavingsPlan ?
+                        {processedChartData.length > 0 ?
                         <ResponsiveContainer height={500} width={600} className='m-auto'>
                             <LineChart
                                 width={500}
