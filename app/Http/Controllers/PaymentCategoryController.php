@@ -29,6 +29,6 @@ class PaymentCategoryController extends Controller
 
         $category->update($data);
 
-        return to_route('payment_category.index');
+        return to_route('payment.index');
     }
 }
