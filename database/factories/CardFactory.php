@@ -17,7 +17,7 @@ class CardFactory extends Factory
             'name' => fake()->unique()->sentence(2),
             'card_number' => fake()->unique()->creditCardNumber(),
             'expiry_date' => fake()->dateTimeBetween('now', '+5 years'),
-            'balance' => fake()->numberBetween(500, 1500) / 2
+            'balance' => fake()->numberBetween(2000, 5000)
         ];
     }
 

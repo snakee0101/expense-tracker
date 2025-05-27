@@ -15,12 +15,11 @@ class SavingsPlanFactory extends Factory
 
     public function definition(): array
     {
-        $targetBalance = fake()->randomFloat(2, 500, 5000);
-        $currentBalance = fake()->randomFloat(2, 0, $targetBalance);
+        $targetBalance = \random_int(2000, 5000);
 
         return [
             'name' => fake()->sentence(3),
-            'balance' => $currentBalance,
+            'balance' => 0,
             'target_balance' => $targetBalance,
             'due_date' => now()->addMonths(rand(5, 12)),
             'savings_tips' => "<ul>
