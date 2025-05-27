@@ -38,7 +38,10 @@ class PaymentSeeder extends Seeder
                 ->create();
 
             $transactions->each(function (Transaction $transaction) use ($payment) {
-                app()->call(DeductFromBalanceAction::class, ['transaction' => $transaction, 'payment' => $payment]);
+                app()->call(DeductFromBalanceAction::class, [
+                    'transaction' => $transaction,
+                    'payment' => $payment
+                ]);
             });
         });
     }

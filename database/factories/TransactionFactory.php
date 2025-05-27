@@ -23,6 +23,13 @@ class TransactionFactory extends Factory
         ];
     }
 
+    public function withNegativeAmount(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'amount' => fake()->randomFloat(2, -20, 100),
+        ]);
+    }
+
     public function withSource($model): static
     {
         return $this->state(fn () => [
