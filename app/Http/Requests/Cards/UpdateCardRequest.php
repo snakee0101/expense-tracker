@@ -5,13 +5,14 @@ namespace App\Http\Requests\Cards;
 use App\Rules\ExpiryDate;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class UpdateCardRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return Gate::allows('owns-model', $this->route('card'));
     }
 
     public function rules(): array
