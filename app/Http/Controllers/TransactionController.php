@@ -8,8 +8,8 @@ use App\Actions\RedoTransaction;
 use App\Actions\Transactions\GetFilteredTransactionAction;
 use App\Enums\TransactionStatus;
 use App\Exports\TransactionsExport;
+use App\Http\Requests\TransactionRequest;
 use App\Models\Transaction;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -35,7 +35,7 @@ class TransactionController extends Controller
         return Excel::download(new TransactionsExport($transactions), 'transactions.xlsx');
     }
 
-    public function cancel(Request $request, Transaction $transaction)
+    public function cancel(TransactionRequest $request, Transaction $transaction)
     {
         app()->call(
             CancelTransaction::class,
@@ -45,7 +45,7 @@ class TransactionController extends Controller
         return to_route('transaction.index');
     }
 
-    public function redo(Request $request, Transaction $transaction)
+    public function redo(TransactionRequest $request, Transaction $transaction)
     {
         app()->call(
             RedoTransaction::class,
@@ -55,7 +55,7 @@ class TransactionController extends Controller
         return to_route('transaction.index');
     }
 
-    public function destroy(Request $request, Transaction $transaction)
+    public function destroy(TransactionRequest $request, Transaction $transaction)
     {
         app()->call(
             DeleteTransaction::class,
