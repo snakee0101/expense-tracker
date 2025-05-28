@@ -6,7 +6,7 @@ import { formatDate } from '@/lib/helpers';
 import dayjs from 'dayjs';
 import { MdOutlineModeEditOutline } from 'react-icons/md';
 
-export default function EditRecurringPaymentModal({ recurringPayment, setIsNotificationShown, setNotificationMessage, transactionCategories, accounts }) {
+export default function EditRecurringPaymentModal({ recurringPayment, transactionCategories, accounts }) {
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, put, processing, errors, clearErrors } = useForm({

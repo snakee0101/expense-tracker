@@ -10,18 +10,16 @@ import {
     TableCell,
     TableHead,
     TableHeadCell,
-    TableRow, Toast, ToastToggle
+    TableRow,
 } from 'flowbite-react';
 import { formatMoney, getPageUrl } from '../lib/helpers';
 
-import { createTheme } from 'flowbite-react';
 import dayjs from 'dayjs';
-import { useState } from 'react';
-import { HiCheck } from 'react-icons/hi';
 import CreateRecurringPaymentModal from '@/components/recurring_payments/create-recurring-payment-modal';
 import EditRecurringPaymentModal from '@/components/recurring_payments/edit-recurring-payment-modal';
 import { MdOutlineHourglassDisabled } from "react-icons/md";
 import { CiRedo } from "react-icons/ci";
+import { useNotification } from '@/contexts/NotificationContext';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -31,24 +29,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const toastThemeWithAbsolutePositioning = createTheme({
-    toast: {
-        root: {
-            base: 'absolute top-2 right-2 flex w-full max-w-xs items-center rounded-lg bg-white p-4 text-gray-500 shadow dark:bg-gray-800 dark:text-gray-400',
-            closed: 'opacity-0 ease-out',
-        },
-        toggle: {
-            base: '-m-1.5 ml-auto inline-flex h-8 w-8 rounded-lg bg-white p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-900 focus:ring-2 focus:ring-gray-300 dark:bg-gray-800 dark:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-white',
-            icon: 'h-5 w-5 shrink-0',
-        },
-    },
-});
-
 export default function RecurringPayments({ payments, transactionCategories, accounts }) {
+    const { showNotification } = useNotification();
     const onPageChange = (page: number) => router.visit(getPageUrl(payments, page));
-
-    const [isNotificationShown, setIsNotificationShown] = useState(false);
-    const [notificationMessage, setNotificationMessage] = useState('');
 
     const { data, setData, put, processing, errors, clearErrors } = useForm({
         is_active: null,
@@ -58,11 +41,7 @@ export default function RecurringPayments({ payments, transactionCategories, acc
         data.is_active = isActive;
 
         put(route('recurring_payment.set_active_state', {recurring_payment: paymentId}), {
-            onSuccess: () => {
-                isActive ? setNotificationMessage('Payment Activated') : setNotificationMessage('Payment Inactivated');
-                setIsNotificationShown(true);
-                setTimeout(() => setIsNotificationShown(false), 2000);
-            },
+            onSuccess: () => showNotification(isActive ? 'Payment Activated' : 'Payment Inactivated')
         });
     }
 
@@ -70,20 +49,8 @@ export default function RecurringPayments({ payments, transactionCategories, acc
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Recurring Payments" />
 
-            {isNotificationShown && (
-                <Toast theme={toastThemeWithAbsolutePositioning.toast}>
-                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-                        <HiCheck className="h-5 w-5" />
-                    </div>
-                    <div className="ml-3 text-sm font-normal">{notificationMessage}</div>
-                    <ToastToggle />
-                </Toast>
-            )}
-
             <div className='m-3'>
-                <CreateRecurringPaymentModal setIsNotificationShown={setIsNotificationShown}
-                                             setNotificationMessage={setNotificationMessage}
-                                             transactionCategories={transactionCategories}
+                <CreateRecurringPaymentModal transactionCategories={transactionCategories}
                                              accounts={accounts}/>
             </div>
 
@@ -123,8 +90,6 @@ export default function RecurringPayments({ payments, transactionCategories, acc
                             <TableCell className='flex flex-row'>
                                 <EditRecurringPaymentModal key={payment.id}
                                                       recurringPayment={payment}
-                                                      setIsNotificationShown={setIsNotificationShown}
-                                                      setNotificationMessage={setNotificationMessage}
                                                       transactionCategories={transactionCategories}
                                                       accounts={accounts} />
                                 {payment.is_active ? (

@@ -5,7 +5,7 @@ import { FaPlus } from 'react-icons/fa6';
 import { formatDate } from '@/lib/helpers';
 import dayjs from 'dayjs';
 
-export default function CreateRecurringPaymentModal({ setIsNotificationShown, setNotificationMessage, transactionCategories, accounts }) {
+export default function CreateRecurringPaymentModal({ transactionCategories, accounts }) {
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, post, processing, errors, clearErrors } = useForm({
