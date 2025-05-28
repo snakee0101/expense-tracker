@@ -20,7 +20,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Cards({ cards, transactionCategories, chartData }) {
+export default function Cards({ cards, chartData }) {
     const [selectedCardId, setSelectedCardId] = useState(cards.find(card => card.is_expired == false)?.id);
 
     let chartDataForCurrentCard = Object.values(chartData)
@@ -45,7 +45,9 @@ export default function Cards({ cards, transactionCategories, chartData }) {
         response => setTransactionsPaginator(response.data)
     );
 
-    useEffect(() => refreshTransactionList(), [selectedCardId]);
+    useEffect(() => {
+        refreshTransactionList();
+    }, [selectedCardId]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -105,7 +107,6 @@ export default function Cards({ cards, transactionCategories, chartData }) {
                                                  destination_type: 'App\\Models\\Card',
                                                  destination_id: selectedCardId
                                              }}
-                                             transactionCategories={transactionCategories}
                                              refreshTransactionList={refreshTransactionList}
                         />}
                     </div>

@@ -5,8 +5,8 @@ import { FaPlus } from 'react-icons/fa6';
 import dayjs from 'dayjs';
 import { useNotification } from '@/contexts/NotificationContext';
 
-export function CreateIncomeExpense({ transactionable, transactionCategories, refreshTransactionList }) {
-    const { transactionStatusList } = usePage().props;
+export function CreateIncomeExpense({ transactionable, refreshTransactionList }) {
+    const { transactionStatusList, transactionCategories } = usePage().props;
 
     const { showNotification } = useNotification();
 

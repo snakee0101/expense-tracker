@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\TransactionStatus;
+use App\Models\TransactionCategory;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -50,7 +51,8 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'notificationCount' => $request->user()?->unreadNotifications->count() ?? 0,
-            'transactionStatusList' => TransactionStatus::toSelectOptions()
+            'transactionStatusList' => TransactionStatus::toSelectOptions(),
+            'transactionCategories' => $request->user() ? TransactionCategory::where('user_id', auth()->id())->latest()->get() : null,
         ];
     }
 }
