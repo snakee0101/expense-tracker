@@ -16,8 +16,7 @@ class CardIncomeExpenseChartQuery
         $expenseQuery = "SUM(
                               CASE
                                   WHEN source_type IS NULL AND destination_type IN (?, ?) AND amount < 0 THEN amount
-                                  WHEN destination_type = ? THEN amount
-                                  WHEN destination_type = ? THEN -amount
+                                  WHEN destination_type IN (?, ?) THEN -amount
                                   ELSE 0
                               END
                          )";
