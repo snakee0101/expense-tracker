@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 
 import { formatCardNumber } from '../lib/helpers';
 
@@ -22,7 +22,8 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Transfers({ contacts, transactionCategories, accounts }) {
+export default function Transfers({ contacts, accounts }) {
+    const { transactionCategories } = usePage().props;
     const { showNotification } = useNotification();
 
     const [selectedContactId, setSelectedContactId] = useState(contacts[0]?.id);

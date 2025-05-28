@@ -8,7 +8,6 @@ use App\Actions\Transfers\CreateTransferTransactionAction;
 use App\Actions\Transfers\DeductFromBalanceAction;
 use App\Http\Requests\Transfers\CreateTransferRequest;
 use App\Models\Contact;
-use App\Models\TransactionCategory;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -24,9 +23,6 @@ class TransferController extends Controller
                                     $contact->avatar_path = Storage::url($contact->avatar_path);
                                     return $contact;
                                 }),
-            'transactionCategories' => TransactionCategory::where('user_id', auth()->id())
-                                ->latest()
-                                ->get(),
             'accounts' => app()->call(AccountsList::class, ['checkForExpiryDate' => true]),
         ]);
     }
