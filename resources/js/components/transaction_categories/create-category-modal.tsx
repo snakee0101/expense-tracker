@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Button, Modal, ModalHeader, ModalBody, Label, TextInput, FileInput } from 'flowbite-react';
+import { useNotification } from '@/contexts/NotificationContext';
 
-export default function CreateCategoryModal({ setIsNotificationShown, setNotificationMessage, storeUrl }) {
+export default function CreateCategoryModal({ storeUrl }) {
+    const { showNotification } = useNotification();
+
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -21,12 +24,8 @@ export default function CreateCategoryModal({ setIsNotificationShown, setNotific
         post(storeUrl, {
             forceFormData: true,
             onSuccess: () => {
-                onCloseModal()
-
-                setNotificationMessage('Category created')
-                setIsNotificationShown(true)
-
-                setTimeout(() => setIsNotificationShown(false), 2000)
+                onCloseModal();
+                showNotification('Category created');
             }
         });
     };

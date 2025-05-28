@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Button, FileInput, Label, Modal, ModalBody, ModalHeader, TextInput } from 'flowbite-react';
 import { MdOutlineModeEditOutline } from 'react-icons/md';
-import { formatCardNumber } from '@/lib/helpers';
+import { useNotification } from '@/contexts/NotificationContext';
 
-export default function EditCategoryModal({ category, setIsNotificationShown, setNotificationMessage, updateUrl }) {
+export default function EditCategoryModal({ category, updateUrl }) {
+    const { showNotification } = useNotification();
+
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, post, errors, clearErrors, reset } = useForm({
@@ -25,9 +27,7 @@ export default function EditCategoryModal({ category, setIsNotificationShown, se
             forceFormData: true,
             onSuccess: () => {
                 onCloseModal();
-                setNotificationMessage('Category updated');
-                setIsNotificationShown(true);
-                setTimeout(() => setIsNotificationShown(false), 2000);
+                showNotification('Category updated');
             }
         });
     };
