@@ -5,12 +5,10 @@ namespace App\Http\Controllers;
 use App\Actions\AccountsList;
 use App\Actions\SavingsPlans\CreateSavingsTransactionAction;
 use App\Actions\SavingsPlans\DeductFromBalanceAction;
-use App\Enums\TransactionStatus;
 use App\Http\Requests\SavingsPlans\CreateSavingsPlanRequest;
 use App\Http\Requests\SavingsPlans\CreateTransactionRequest;
 use App\Http\Requests\SavingsPlans\UpdateSavingsPlanRequest;
 use App\Models\SavingsPlan;
-use App\Models\TransactionCategory;
 use App\Queries\SavingsPlans\SavingsChartDataQuery;
 use App\Queries\SavingsPlans\TotalSavingsGainQuery;
 use Inertia\Inertia;
@@ -23,7 +21,6 @@ class SavingsPlanController extends Controller
             'savings_plans' => SavingsPlan::where('user_id', auth()->id())
                 ->latest()
                 ->get(),
-            'transactionCategories' => TransactionCategory::where('user_id', auth()->id())->latest()->get(),
             'relatedAccounts' => app()->call(AccountsList::class, ['checkForExpiryDate' => true]),
             'total_savings_gain' => app()->call(TotalSavingsGainQuery::class),
             'savingsChartData' => app()->call(SavingsChartDataQuery::class),

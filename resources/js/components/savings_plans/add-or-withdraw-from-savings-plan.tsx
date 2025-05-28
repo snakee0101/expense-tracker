@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import dayjs from 'dayjs';
 import { Button, Datepicker, Label, Modal, ModalBody, ModalHeader, Radio, Select, TextInput } from 'flowbite-react';
 import { FaPlus } from 'react-icons/fa6';
 import { useNotification } from '@/contexts/NotificationContext';
 
-export default function AddOrWithdrawFromSavingsPlan({ savingsPlanId, transactionCategories, relatedAccounts, refreshTransactionList }) {
+export default function AddOrWithdrawFromSavingsPlan({ savingsPlanId, relatedAccounts, refreshTransactionList }) {
+    const { transactionCategories } = usePage().props;
     const { showNotification } = useNotification();
 
     const [openModal, setOpenModal] = useState(false);
