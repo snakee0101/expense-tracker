@@ -6,7 +6,6 @@ use App\Actions\CancelTransaction;
 use App\Actions\DeleteTransaction;
 use App\Actions\RedoTransaction;
 use App\Actions\Transactions\GetFilteredTransactionAction;
-use App\Enums\TransactionStatus;
 use App\Exports\TransactionsExport;
 use App\Http\Requests\TransactionRequest;
 use App\Models\Transaction;
@@ -18,8 +17,7 @@ class TransactionController extends Controller
     public function index()
     {
         return Inertia::render('transactions', [
-            'transactions' => app()->call(GetFilteredTransactionAction::class)->paginate(10),
-            'transactionStatusList' => TransactionStatus::toSelectOptions()
+            'transactions' => app()->call(GetFilteredTransactionAction::class)->paginate(10)
         ]);
     }
 

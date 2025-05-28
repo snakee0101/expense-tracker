@@ -36,7 +36,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Payments({ payments, paymentCategories, transactionCategories, accounts, transactionStatusList }) {
+export default function Payments({ payments, paymentCategories, transactionCategories, accounts }) {
     const { showNotification } = useNotification();
 
     const [selectedPaymentId, setSelectedPaymentId] = useState(payments[0]?.id);
@@ -300,7 +300,6 @@ export default function Payments({ payments, paymentCategories, transactionCateg
                         <AccountTransactions key={selectedPaymentId}
                                              transactionsPaginator={transactionsPaginator}
                                              setTransactionsPaginator={setTransactionsPaginator}
-                                             transactionStatusList={transactionStatusList}
                                              filters={filters} />
                     </div>
                 </main>

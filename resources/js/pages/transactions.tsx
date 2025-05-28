@@ -1,8 +1,8 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { Pagination, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from 'flowbite-react';
-import { formatMoney, buildQueryUrl } from '../lib/helpers';
+import { formatMoney, buildQueryUrl, findKeyByValue } from '../lib/helpers';
 
 import dayjs from 'dayjs';
 import { ImAttachment } from "react-icons/im";
@@ -23,7 +23,8 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Transactions({ transactions, transactionStatusList }) {
+export default function Transactions({ transactions }) {
+    const { transactionStatusList } = usePage().props;
     const { showNotification } = useNotification();
 
     const [searchFilters, setSearchFilters] = useState({});
@@ -50,6 +51,8 @@ export default function Transactions({ transactions, transactionStatusList }) {
             });
         }
     }
+
+    const cancelled = findKeyByValue(transactionStatusList, 'Cancelled');
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -92,9 +95,7 @@ export default function Transactions({ transactions, transactionStatusList }) {
                             <TableCell>${formatMoney(transaction.amount)}</TableCell>
                             <TableCell className={'break-all'}>{transaction.note ?? '-'}</TableCell>
                             <TableCell>
-                                <TransactionStatus status={transaction.status}
-                                                   statusList={transactionStatusList}
-                                />
+                                <TransactionStatus status={transaction.status} />
                             </TableCell>
                             <TableCell>
                                 <dl>
@@ -107,7 +108,7 @@ export default function Transactions({ transactions, transactionStatusList }) {
                                 </dl>
                             </TableCell>
                             <TableCell>
-                                {transaction.status == 3
+                                {transaction.status == cancelled
                                     ? (<a href={route('transaction.redo', {transaction: transaction.id})} className='text-green-600 hover:underline flex items-center mb-1'>
                                             <CiRedo className='mr-1' size={18}/> Redo
                                         </a>)

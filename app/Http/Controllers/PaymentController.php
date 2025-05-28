@@ -6,7 +6,6 @@ use App\Actions\AccountsList;
 use App\Actions\Payments\CreatePaymentTransactionAction;
 use App\Actions\Payments\DeductFromBalanceAction;
 use App\Actions\SaveTransactionReceiptsAction;
-use App\Enums\TransactionStatus;
 use App\Http\Requests\Payments\CreatePaymentRequest;
 use App\Http\Requests\Payments\MakePaymentRequest;
 use App\Http\Requests\Payments\UpdatePaymentRequest;
@@ -32,8 +31,7 @@ class PaymentController extends Controller
                     return $paymentCategory;
                 }),
             'transactionCategories' => TransactionCategory::where('user_id', auth()->id())->latest()->get(),
-            'accounts' => app()->call(AccountsList::class, ['checkForExpiryDate' => true]),
-            'transactionStatusList' => TransactionStatus::toSelectOptions()
+            'accounts' => app()->call(AccountsList::class, ['checkForExpiryDate' => true])
         ]);
     }
 

@@ -97,3 +97,7 @@ export function buildQueryUrl(baseUrl, page, filters) {
 
     return `${baseUrl}?${params.toString()}`;
 }
+
+export function findKeyByValue(obj, value) {
+    return Object.keys(obj).find(key => obj[key] === value);
+}

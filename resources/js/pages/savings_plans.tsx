@@ -28,7 +28,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function SavingsPlans({ savings_plans, transactionCategories, relatedAccounts, total_savings_gain, savingsChartData, transactionStatusList }) {
+export default function SavingsPlans({ savings_plans, transactionCategories, relatedAccounts, total_savings_gain, savingsChartData }) {
     const [selectedSavingsPlanId, setSelectedSavingsPlanId] = useState(savings_plans[0]?.id);
 
     function selectSavingsPlan(savingsPlanId) {
@@ -237,7 +237,6 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
                         <AccountTransactions key={transactionsPaginator}
                                              transactionsPaginator={transactionsPaginator}
                                              setTransactionsPaginator={setTransactionsPaginator}
-                                             transactionStatusList={transactionStatusList}
                                              filters={filters} />
                     </div>
                 </main>

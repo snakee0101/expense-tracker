@@ -27,7 +27,6 @@ class SavingsPlanController extends Controller
             'relatedAccounts' => app()->call(AccountsList::class, ['checkForExpiryDate' => true]),
             'total_savings_gain' => app()->call(TotalSavingsGainQuery::class),
             'savingsChartData' => app()->call(SavingsChartDataQuery::class),
-            'transactionStatusList' => TransactionStatus::toSelectOptions()
         ]);
     }
 
