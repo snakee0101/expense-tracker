@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Button, Datepicker, Label, Modal, ModalBody, ModalHeader, Select, Textarea, TextInput } from 'flowbite-react';
-import { FaPlus } from 'react-icons/fa6';
 import { formatDate } from '@/lib/helpers';
 import dayjs from 'dayjs';
 import { MdOutlineModeEditOutline } from 'react-icons/md';
 
+import { useNotification } from '@/contexts/NotificationContext';
+
 export default function EditRecurringPaymentModal({ recurringPayment, transactionCategories, accounts }) {
+    const { showNotification } = useNotification();
+
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, put, processing, errors, clearErrors } = useForm({
@@ -26,17 +29,13 @@ export default function EditRecurringPaymentModal({ recurringPayment, transactio
         clearErrors();
     };
 
-    const handleCreate = (event) => {
+    const handleEdit = (event) => {
         event.preventDefault();
 
         put(route('recurring_payment.update', {'recurring_payment': recurringPayment.id}), {
             onSuccess: () => {
                 onCloseModal()
-
-                setNotificationMessage('Recurring payment updated')
-                setIsNotificationShown(true)
-
-                setTimeout(() => setIsNotificationShown(false), 2000)
+                showNotification('Recurring payment updated')
             }
         });
     };
@@ -55,7 +54,7 @@ export default function EditRecurringPaymentModal({ recurringPayment, transactio
                     Edit Recurring Payment
                 </ModalHeader>
                 <ModalBody>
-                    <form className="space-y-6" onSubmit={handleCreate}>
+                    <form className="space-y-6" onSubmit={handleEdit}>
                         <div>
                             <Label htmlFor="transaction-name" className="mb-2 block">Transaction Name</Label>
                             <TextInput

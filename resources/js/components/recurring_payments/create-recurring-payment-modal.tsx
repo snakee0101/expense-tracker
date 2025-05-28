@@ -4,9 +4,11 @@ import { Button, Datepicker, Label, Modal, ModalBody, ModalHeader, Select, Texta
 import { FaPlus } from 'react-icons/fa6';
 import { formatDate } from '@/lib/helpers';
 import dayjs from 'dayjs';
+import { useNotification } from '@/contexts/NotificationContext';
 
 export default function CreateRecurringPaymentModal({ transactionCategories, accounts }) {
     const [openModal, setOpenModal] = useState(false);
+    const { showNotification } = useNotification();
 
     const { data, setData, post, processing, errors, clearErrors } = useForm({
         name: '',
@@ -30,12 +32,8 @@ export default function CreateRecurringPaymentModal({ transactionCategories, acc
 
         post(route('recurring_payment.store'), {
             onSuccess: () => {
-                onCloseModal()
-
-                setNotificationMessage('Recurring payment created')
-                setIsNotificationShown(true)
-
-                setTimeout(() => setIsNotificationShown(false), 2000)
+                onCloseModal();
+                showNotification('Recurring payment created');
             }
         });
     };
