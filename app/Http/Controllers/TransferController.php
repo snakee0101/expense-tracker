@@ -6,7 +6,6 @@ use App\Actions\AccountsList;
 use App\Actions\SaveTransactionReceiptsAction;
 use App\Actions\Transfers\CreateTransferTransactionAction;
 use App\Actions\Transfers\DeductFromBalanceAction;
-use App\Enums\TransactionStatus;
 use App\Http\Requests\Transfers\CreateTransferRequest;
 use App\Models\Contact;
 use App\Models\TransactionCategory;
@@ -29,7 +28,6 @@ class TransferController extends Controller
                                 ->latest()
                                 ->get(),
             'accounts' => app()->call(AccountsList::class, ['checkForExpiryDate' => true]),
-            'transactionStatusList' => TransactionStatus::toSelectOptions()
         ]);
     }
 

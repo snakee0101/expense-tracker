@@ -22,7 +22,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Transfers({ contacts, transactionCategories, accounts, transactionStatusList }) {
+export default function Transfers({ contacts, transactionCategories, accounts }) {
     const { showNotification } = useNotification();
 
     const [selectedContactId, setSelectedContactId] = useState(contacts[0]?.id);
@@ -217,7 +217,6 @@ export default function Transfers({ contacts, transactionCategories, accounts, t
                         <AccountTransactions key={transactionsPaginator}
                                              transactionsPaginator={transactionsPaginator}
                                              setTransactionsPaginator={setTransactionsPaginator}
-                                             transactionStatusList={transactionStatusList}
                                              filters={filters} />
                     </div>
                 </main>
