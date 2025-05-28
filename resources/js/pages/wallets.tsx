@@ -21,7 +21,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Wallets({ wallets, transactionCategories, chartData }) {
+export default function Wallets({ wallets, chartData }) {
     const [selectedWalletId, setSelectedWalletId] = useState(wallets[0]?.id);
 
     let chartDataForCurrentWallet = Object.values(chartData)
@@ -95,7 +95,6 @@ export default function Wallets({ wallets, transactionCategories, chartData }) {
                                                  destination_type: 'App\\Models\\Wallet',
                                                  destination_id: selectedWalletId
                                              }}
-                                             transactionCategories={transactionCategories}
                                              refreshTransactionList={refreshTransactionList}
                         />}
                     </div>
