@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Button, FileInput, Label, Modal, ModalBody, ModalHeader, TextInput } from 'flowbite-react';
 import { FaPlus } from 'react-icons/fa6';
+import { useNotification } from '@/contexts/NotificationContext';
 
-export default function CreateContactModal({ setIsNotificationShown, setNotificationMessage }) {
+export default function CreateContactModal() {
+    const { showNotification } = useNotification();
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, post, errors, clearErrors, reset } = useForm({
@@ -25,9 +27,7 @@ export default function CreateContactModal({ setIsNotificationShown, setNotifica
             forceFormData: true,
             onSuccess: () => {
                 onCloseModal();
-                setNotificationMessage('Contact created');
-                setIsNotificationShown(true);
-                setTimeout(() => setIsNotificationShown(false), 2000);
+                showNotification('Contact created');
             },
         });
     };

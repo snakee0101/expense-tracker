@@ -5,39 +5,25 @@ import { Head } from '@inertiajs/react';
 import { formatCardNumber } from '../lib/helpers';
 
 import { useForm } from '@inertiajs/react';
-import { Toast, ToastToggle, createTheme, Card, Button, Label, TextInput, FileInput, Select, Textarea, Datepicker } from 'flowbite-react';
+import { Card, Button, Label, TextInput, FileInput, Select, Textarea, Datepicker } from 'flowbite-react';
 import { useEffect, useState } from 'react';
-import { HiCheck } from 'react-icons/hi';
 import '../../css/app.css';
 import dayjs from 'dayjs';
 import CreateContactModal from '@/components/transfers/create-contact-modal';
 import EditContactModal from '@/components/transfers/edit-contact-modal';
 import AccountTransactions from '@/components/main/account-transactions';
 import axios from 'axios';
+import { useNotification } from '@/contexts/NotificationContext';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Transfers',
-        href: route('savings_plan.index'),
+        href: route('transfer.index'),
     },
 ];
 
-const toastThemeWithAbsolutePositioning = createTheme({
-    toast: {
-        root: {
-            base: 'absolute top-2 right-2 flex w-full max-w-xs items-center rounded-lg bg-white p-4 text-gray-500 shadow dark:bg-gray-800 dark:text-gray-400',
-            closed: 'opacity-0 ease-out',
-        },
-        toggle: {
-            base: '-m-1.5 ml-auto inline-flex h-8 w-8 rounded-lg bg-white p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-900 focus:ring-2 focus:ring-gray-300 dark:bg-gray-800 dark:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-white',
-            icon: 'h-5 w-5 shrink-0',
-        },
-    },
-});
-
 export default function Transfers({ contacts, transactionCategories, accounts, transactionStatusList }) {
-    const [isNotificationShown, setIsNotificationShown] = useState(false);
-    const [notificationMessage, setNotificationMessage] = useState('');
+    const { showNotification } = useNotification();
 
     const [selectedContactId, setSelectedContactId] = useState(contacts[0]?.id);
 
@@ -65,11 +51,7 @@ export default function Transfers({ contacts, transactionCategories, accounts, t
         event.preventDefault();
 
         post(route('transfer.store'), {
-            onSuccess: () => {
-                setNotificationMessage('Transfer created');
-                setIsNotificationShown(true);
-                setTimeout(() => setIsNotificationShown(false), 3000);
-            },
+            onSuccess: () => showNotification('Transfer created'),
             forceFormData: true,
         });
     };
@@ -91,17 +73,6 @@ export default function Transfers({ contacts, transactionCategories, accounts, t
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            {isNotificationShown && (
-                <Toast theme={toastThemeWithAbsolutePositioning.toast}>
-                    <div
-                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-                        <HiCheck className="h-5 w-5" />
-                    </div>
-                    <div className="ml-3 text-sm font-normal">{notificationMessage}</div>
-                    <ToastToggle />
-                </Toast>
-            )}
-
             <Head title="Transfers" />
 
             <div className="flex min-h-screen">
@@ -110,8 +81,7 @@ export default function Transfers({ contacts, transactionCategories, accounts, t
                 <aside className="floating-sidebar">
                     <div className="mb-4 flex items-center justify-between">
                         <h2 className="text-xl font-bold">My Contacts</h2>
-                        <CreateContactModal setIsNotificationShown={setIsNotificationShown}
-                                            setNotificationMessage={setNotificationMessage} />
+                        <CreateContactModal />
                     </div>
 
                     {contacts.map((contact, index) => (
@@ -128,9 +98,7 @@ export default function Transfers({ contacts, transactionCategories, accounts, t
                                     <div className='flex'>
                                         <h5 className="text-md text-gray-700 mr-4">{formatCardNumber(contact.card_number)}</h5>
                                         <EditContactModal key={contact.id}
-                                                          contact={contact}
-                                                          setIsNotificationShown={setIsNotificationShown}
-                                                          setNotificationMessage={setNotificationMessage} />
+                                                          contact={contact} />
                                     </div>
                                 </div>
                             </div>

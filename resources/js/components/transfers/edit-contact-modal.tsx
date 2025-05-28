@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Button, FileInput, Label, Modal, ModalBody, ModalHeader, TextInput } from 'flowbite-react';
-import { FaPlus } from 'react-icons/fa6';
 import { MdOutlineModeEditOutline } from 'react-icons/md';
 import { formatCardNumber } from '@/lib/helpers';
+import { useNotification } from '@/contexts/NotificationContext';
 
-export default function EditContactModal({ contact, setIsNotificationShown, setNotificationMessage }) {
+export default function EditContactModal({ contact }) {
+    const { showNotification } = useNotification();
+
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, post, errors, clearErrors, reset } = useForm({
@@ -27,9 +29,7 @@ export default function EditContactModal({ contact, setIsNotificationShown, setN
             forceFormData: true,
             onSuccess: () => {
                 onCloseModal();
-                setNotificationMessage('Contact updated');
-                setIsNotificationShown(true);
-                setTimeout(() => setIsNotificationShown(false), 2000);
+                showNotification('Contact updated');
             },
         });
     };
