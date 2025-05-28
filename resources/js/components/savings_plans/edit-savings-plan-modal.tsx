@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Button, Datepicker, Label, Modal, ModalBody, ModalHeader, TextInput } from 'flowbite-react';
-import { FaPlus } from 'react-icons/fa6';
 import { formatDate } from '@/lib/helpers';
 import Editor from 'react-simple-wysiwyg';
 import { MdOutlineModeEditOutline } from 'react-icons/md';
 import dayjs from 'dayjs';
+import { useNotification } from '@/contexts/NotificationContext';
 
-export default function EditSavingsPlanModal({ savingsPlan, setIsNotificationShown, setNotificationMessage }) {
+export default function EditSavingsPlanModal({ savingsPlan }) {
+    const { showNotification } = useNotification();
+
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, put, processing, errors, clearErrors } = useForm({
@@ -30,9 +32,7 @@ export default function EditSavingsPlanModal({ savingsPlan, setIsNotificationSho
         put(route('savings_plan.update', {savings_plan: savingsPlan.id}), {
             onSuccess: () => {
                 onCloseModal();
-                setNotificationMessage('Savings plan updated');
-                setIsNotificationShown(true);
-                setTimeout(() => setIsNotificationShown(false), 2000);
+                showNotification('Savings plan updated');
             },
         });
     };

@@ -4,8 +4,11 @@ import { Button, Datepicker, Label, Modal, ModalBody, ModalHeader, TextInput } f
 import { FaPlus } from 'react-icons/fa6';
 import { formatDate } from '@/lib/helpers';
 import Editor from 'react-simple-wysiwyg';
+import { useNotification } from '@/contexts/NotificationContext';
 
-export default function CreateSavingsPlanModal({ setIsNotificationShown, setNotificationMessage }) {
+export default function CreateSavingsPlanModal() {
+    const { showNotification } = useNotification();
+
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, post, processing, errors, clearErrors } = useForm({
@@ -32,16 +35,10 @@ export default function CreateSavingsPlanModal({ setIsNotificationShown, setNoti
         post(route('savings_plan.store'), {
             onSuccess: () => {
                 onCloseModal();
-                setNotificationMessage('Savings plan created');
-                setIsNotificationShown(true);
-                setTimeout(() => setIsNotificationShown(false), 2000);
+                showNotification('Savings plan created');
             },
         });
     };
-
-    function onSavingsTipsChange(e) {
-        setData('savings_tips', e.target.value)
-    }
 
     return (
         <>
@@ -85,7 +82,7 @@ export default function CreateSavingsPlanModal({ setIsNotificationShown, setNoti
 
                         <div>
                             <Label htmlFor="savings-tips">Savings tips</Label>
-                            <Editor value={data.savings_tips} onChange={onSavingsTipsChange} />
+                            <Editor value={data.savings_tips} onChange={(e) => setData('savings_tips', e.target.value)} />
                             {errors.savings_tips && <p className="text-red-600 text-sm">{errors.savings_tips}</p>}
                         </div>
 

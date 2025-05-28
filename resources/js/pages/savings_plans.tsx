@@ -4,15 +4,8 @@ import { Head } from '@inertiajs/react';
 
 import { formatMoney, percent } from '../lib/helpers';
 
-import {
-    Toast,
-    ToastToggle,
-    createTheme,
-    Progress,
-    Card
-} from 'flowbite-react';
+import { Progress, Card } from 'flowbite-react';
 import { useEffect, useState } from 'react';
-import { HiCheck } from 'react-icons/hi';
 import { GoArrowUpRight } from "react-icons/go";
 import { GoArrowDownRight } from "react-icons/go";
 import { RiCoinsFill } from "react-icons/ri";
@@ -35,23 +28,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const toastThemeWithAbsolutePositioning = createTheme({
-    toast: {
-        root: {
-            base: 'absolute top-2 right-2 flex w-full max-w-xs items-center rounded-lg bg-white p-4 text-gray-500 shadow dark:bg-gray-800 dark:text-gray-400',
-            closed: 'opacity-0 ease-out',
-        },
-        toggle: {
-            base: '-m-1.5 ml-auto inline-flex h-8 w-8 rounded-lg bg-white p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-900 focus:ring-2 focus:ring-gray-300 dark:bg-gray-800 dark:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-white',
-            icon: 'h-5 w-5 shrink-0',
-        },
-    },
-});
-
 export default function SavingsPlans({ savings_plans, transactionCategories, relatedAccounts, total_savings_gain, savingsChartData, transactionStatusList }) {
-    const [isNotificationShown, setIsNotificationShown] = useState(false);
-    const [notificationMessage, setNotificationMessage] = useState('');
-
     const [selectedSavingsPlanId, setSelectedSavingsPlanId] = useState(savings_plans[0]?.id);
 
     function selectSavingsPlan(savingsPlanId) {
@@ -133,17 +110,6 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            {isNotificationShown && (
-                <Toast theme={toastThemeWithAbsolutePositioning.toast}>
-                    <div
-                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-none bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-                        <HiCheck className="h-5 w-5" />
-                    </div>
-                    <div className="ml-3 text-sm font-normal">{notificationMessage}</div>
-                    <ToastToggle />
-                </Toast>
-            )}
-
             <Head title="Savings Plans" />
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 px-4 mb-4">
@@ -184,8 +150,7 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
                 <aside className="floating-sidebar">
                     <div className="mb-4 flex items-center justify-between">
                         <h2 className="text-xl font-bold">My Savings Plans</h2>
-                        <CreateSavingsPlanModal setIsNotificationShown={setIsNotificationShown}
-                                                setNotificationMessage={setNotificationMessage} />
+                        <CreateSavingsPlanModal />
                     </div>
 
                     {savings_plans.map((savingsPlan) => (
@@ -218,9 +183,7 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
                             </div>
                             <div className='text-right my-2'>
                                 <EditSavingsPlanModal key={selectedSavingsPlanId}
-                                               savingsPlan={selectedSavingsPlan()}
-                                               setIsNotificationShown={setIsNotificationShown}
-                                               setNotificationMessage={setNotificationMessage} />
+                                                      savingsPlan={selectedSavingsPlan()} />
                             </div>
                             <Progress progress={savingsPlanCompletionPercentage(savingsPlan)} color="teal" />
                         </div>
@@ -239,8 +202,6 @@ export default function SavingsPlans({ savings_plans, transactionCategories, rel
                     </Card>
                     <div className='mt-4'>
                         {selectedSavingsPlanId && <AddOrWithdrawFromSavingsPlan key={selectedSavingsPlanId}
-                                                      setIsNotificationShown={setIsNotificationShown}
-                                                      setNotificationMessage={setNotificationMessage}
                                                       savingsPlanId={selectedSavingsPlanId}
                                                       transactionCategories={transactionCategories}
                                                       relatedAccounts={relatedAccounts}

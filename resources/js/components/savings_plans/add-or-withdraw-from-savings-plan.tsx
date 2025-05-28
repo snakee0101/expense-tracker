@@ -3,8 +3,11 @@ import { useForm } from '@inertiajs/react';
 import dayjs from 'dayjs';
 import { Button, Datepicker, Label, Modal, ModalBody, ModalHeader, Radio, Select, TextInput } from 'flowbite-react';
 import { FaPlus } from 'react-icons/fa6';
+import { useNotification } from '@/contexts/NotificationContext';
 
-export default function AddOrWithdrawFromSavingsPlan({ savingsPlanId, setIsNotificationShown, setNotificationMessage, transactionCategories, relatedAccounts, refreshTransactionList }) {
+export default function AddOrWithdrawFromSavingsPlan({ savingsPlanId, transactionCategories, relatedAccounts, refreshTransactionList }) {
+    const { showNotification } = useNotification();
+
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, post, processing, errors, clearErrors } = useForm({
@@ -46,9 +49,7 @@ export default function AddOrWithdrawFromSavingsPlan({ savingsPlanId, setIsNotif
             onSuccess: () => {
                 refreshTransactionList();
                 onCloseModal();
-                setNotificationMessage('Transaction created');
-                setIsNotificationShown(true);
-                setTimeout(() => setIsNotificationShown(false), 3000);
+                showNotification('Transaction created');
             },
         });
     };
