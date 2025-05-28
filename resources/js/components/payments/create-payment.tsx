@@ -12,7 +12,7 @@ import {
 import { FaPlus } from 'react-icons/fa6';
 import { useNotification } from '@/contexts/NotificationContext';
 
-export function CreatePayment({ transactionable, transactionCategories, paymentCategories }) {
+export function CreatePayment({ transactionCategories, paymentCategories }) {
     const { showNotification } = useNotification();
 
     const [openModal, setOpenModal] = useState(false);
