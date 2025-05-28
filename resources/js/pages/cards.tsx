@@ -11,7 +11,6 @@ import { HiCheck } from 'react-icons/hi';
 import '../../css/app.css';
 import { CreateIncomeExpense } from '@/components/main/create-income-expense';
 import CreateCardModal from '@/components/cards/create-card-modal';
-import EditWalletModal from '@/components/wallets/edit-wallet-modal';
 import EditCardModal from '@/components/cards/edit-card-modal';
 import TotalCashflow from '@/components/main/total-cashflow';
 import axios from 'axios';

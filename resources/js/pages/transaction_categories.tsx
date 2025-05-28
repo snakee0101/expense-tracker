@@ -11,7 +11,6 @@ import { HiCheck } from "react-icons/hi";
 import { createTheme } from "flowbite-react";
 import { useState } from "react";
 import CreateCategoryModal from '@/components/transaction_categories/create-category-modal';
-import EditContactModal from '@/components/transfers/edit-contact-modal';
 import EditCategoryModal from '@/components/transaction_categories/edit-category-modal';
 
 const breadcrumbs: BreadcrumbItem[] = [

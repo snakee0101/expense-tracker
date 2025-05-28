@@ -12,7 +12,7 @@ import {
     TableHeadCell,
     TableRow, Toast, ToastToggle
 } from 'flowbite-react';
-import { formatCardDate, formatMoney, getPageUrl } from '../lib/helpers';
+import { formatMoney, getPageUrl } from '../lib/helpers';
 
 import { createTheme } from 'flowbite-react';
 import dayjs from 'dayjs';

@@ -2,27 +2,15 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
-import { formatCardNumber, formatDate } from '../lib/helpers';
+import { formatCardNumber } from '../lib/helpers';
 
 import { useForm } from '@inertiajs/react';
-import {
-    Toast,
-    ToastToggle,
-    createTheme,
-    Card,
-    Button,
-    Modal,
-    ModalBody,
-    ModalHeader, Label, TextInput, FileInput, Select, Textarea, Datepicker
-} from 'flowbite-react';
+import { Toast, ToastToggle, createTheme, Card, Button, Label, TextInput, FileInput, Select, Textarea, Datepicker } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
 import '../../css/app.css';
-import { CreateSavingsPlanModal } from '@/pages/savings_plans';
-import { FaPlus } from 'react-icons/fa6';
 import dayjs from 'dayjs';
 import CreateContactModal from '@/components/transfers/create-contact-modal';
-import EditSavingsPlanModal from '@/components/savings_plans/edit-savings-plan-modal';
 import EditContactModal from '@/components/transfers/edit-contact-modal';
 import AccountTransactions from '@/components/main/account-transactions';
 import axios from 'axios';
