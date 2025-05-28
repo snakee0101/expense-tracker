@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\TransactionStatus;
 use App\Http\Requests\Wallets\CreateWalletRequest;
 use App\Http\Requests\Wallets\UpdateWalletRequest;
 use App\Models\TransactionCategory;
@@ -17,8 +16,7 @@ class WalletController extends Controller
         return Inertia::render('wallets', [
             'wallets' => Wallet::where('user_id', auth()->id())->latest()->get(),
             'transactionCategories' => TransactionCategory::where('user_id', auth()->id())->latest()->get(),
-            'chartData' => app()->call(WalletIncomeExpenseChartQuery::class),
-            'transactionStatusList' => TransactionStatus::toSelectOptions()
+            'chartData' => app()->call(WalletIncomeExpenseChartQuery::class)
         ]);
     }
 
