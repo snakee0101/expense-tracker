@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 
 import { CreatePayment } from '@/components/payments/create-payment';
 import CreateCategoryModal from '@/components/transaction_categories/create-category-modal';
@@ -36,7 +36,8 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Payments({ payments, paymentCategories, transactionCategories, accounts }) {
+export default function Payments({ payments, paymentCategories, accounts }) {
+    const { transactionCategories } = usePage().props;
     const { showNotification } = useNotification();
 
     const [selectedPaymentId, setSelectedPaymentId] = useState(payments[0]?.id);
@@ -120,8 +121,7 @@ export default function Payments({ payments, paymentCategories, transactionCateg
                     </div>
                     <div className="my-3 flex flex-row justify-between">
                         <CreateCategoryModal storeUrl={route('payment_category.store')} />
-                        <CreatePayment transactionCategories={transactionCategories}
-                                       paymentCategories={paymentCategories} />
+                        <CreatePayment paymentCategories={paymentCategories} />
                     </div>
 
                     {paymentCategories.length > 0 && (

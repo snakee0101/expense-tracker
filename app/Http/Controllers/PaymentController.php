@@ -11,7 +11,6 @@ use App\Http\Requests\Payments\MakePaymentRequest;
 use App\Http\Requests\Payments\UpdatePaymentRequest;
 use App\Models\Payment;
 use App\Models\PaymentCategory;
-use App\Models\TransactionCategory;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -30,7 +29,6 @@ class PaymentController extends Controller
                     $paymentCategory->image_path = Storage::url($paymentCategory->image_path);
                     return $paymentCategory;
                 }),
-            'transactionCategories' => TransactionCategory::where('user_id', auth()->id())->latest()->get(),
             'accounts' => app()->call(AccountsList::class, ['checkForExpiryDate' => true])
         ]);
     }

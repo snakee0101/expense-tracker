@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import {
     Button,
     Label,
@@ -12,7 +12,8 @@ import {
 import { FaPlus } from 'react-icons/fa6';
 import { useNotification } from '@/contexts/NotificationContext';
 
-export function CreatePayment({ transactionCategories, paymentCategories }) {
+export function CreatePayment({ paymentCategories }) {
+    const { transactionCategories } = usePage().props;
     const { showNotification } = useNotification();
 
     const [openModal, setOpenModal] = useState(false);

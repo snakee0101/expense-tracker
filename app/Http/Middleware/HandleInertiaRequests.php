@@ -4,7 +4,6 @@ namespace App\Http\Middleware;
 
 use App\Enums\TransactionStatus;
 use App\Models\TransactionCategory;
-use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
