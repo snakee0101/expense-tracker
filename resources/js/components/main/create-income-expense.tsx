@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import { Button, Datepicker, Label, Modal, ModalBody, ModalHeader, Radio, TextInput, Select, FileInput } from 'flowbite-react';
 import { FaPlus } from 'react-icons/fa6';
 import dayjs from 'dayjs';
 import { useNotification } from '@/contexts/NotificationContext';
 
 export function CreateIncomeExpense({ transactionable, transactionCategories, refreshTransactionList }) {
+    const { transactionStatusList } = usePage().props;
+
     const { showNotification } = useNotification();
 
     const [openModal, setOpenModal] = useState(false);

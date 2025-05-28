@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\TransactionStatus;
 use App\Http\Requests\Cards\CreateCardRequest;
 use App\Http\Requests\Cards\UpdateCardRequest;
 use App\Models\Card;
@@ -18,7 +17,6 @@ class CardController extends Controller
             'cards' => Card::where('user_id', auth()->id())->latest('expiry_date')->get(),
             'transactionCategories' => TransactionCategory::where('user_id', auth()->id())->latest()->get(),
             'chartData' => app()->call(CardIncomeExpenseChartQuery::class),
-            'transactionStatusList' => TransactionStatus::toSelectOptions()
         ]);
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\TransactionStatus;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -37,12 +38,9 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
-
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
                 'user' => $request->user(),
             ],
@@ -51,7 +49,8 @@ class HandleInertiaRequests extends Middleware
                 'location' => $request->url(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            'notificationCount' => $request->user()?->unreadNotifications->count() ?? 0
+            'notificationCount' => $request->user()?->unreadNotifications->count() ?? 0,
+            'transactionStatusList' => TransactionStatus::toSelectOptions()
         ];
     }
 }

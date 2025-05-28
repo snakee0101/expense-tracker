@@ -1,7 +1,10 @@
 import { Badge } from 'flowbite-react';
+import { usePage } from '@inertiajs/react';
 
-export default function TransactionStatus({status, statusList})
+export default function TransactionStatus({status})
 {
+    const { transactionStatusList } = usePage().props;
+
     let badgeColor = null;
 
     switch (status) {
@@ -16,5 +19,5 @@ export default function TransactionStatus({status, statusList})
             break;
     }
 
-    return <Badge color={badgeColor} className='inline'>{statusList[status]}</Badge>;
+    return <Badge color={badgeColor} className='inline'>{transactionStatusList[status]}</Badge>;
 }

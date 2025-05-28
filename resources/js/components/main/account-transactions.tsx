@@ -2,10 +2,9 @@ import { Card, Pagination, Table, TableBody, TableCell, TableHead, TableHeadCell
 import dayjs from 'dayjs';
 import { formatMoney, getPageUrl } from '@/lib/helpers';
 import TransactionStatus from '@/components/main/transaction-status';
-import { router } from '@inertiajs/react';
 import axios from 'axios';
 
-export default function AccountTransactions({transactionsPaginator, transactionStatusList, setTransactionsPaginator, filters}) {
+export default function AccountTransactions({transactionsPaginator, setTransactionsPaginator, filters}) {
     function isPayingAccount(accountName) {
         return accountName.includes('Wallet') || accountName.includes('Card');
     }
@@ -53,9 +52,7 @@ export default function AccountTransactions({transactionsPaginator, transactionS
                             </TableCell>
                             <TableCell>${formatMoney(transaction.amount)}</TableCell>
                             <TableCell>
-                                <TransactionStatus status={transaction.status}
-                                                   statusList={transactionStatusList}
-                                />
+                                <TransactionStatus status={transaction.status} />
                             </TableCell>
                         </TableRow>
                     ))}
