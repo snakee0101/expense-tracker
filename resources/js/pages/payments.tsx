@@ -22,15 +22,12 @@ import {
     Select,
     TextInput,
     Textarea,
-    Toast,
-    ToastToggle,
-    createTheme,
 } from 'flowbite-react';
 import { useEffect, useState } from 'react';
-import { HiCheck } from 'react-icons/hi';
 import '../../css/app.css';
 import AccountTransactions from '@/components/main/account-transactions';
 import axios from 'axios';
+import {useNotification} from '@/contexts/NotificationContext';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -39,22 +36,8 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const toastThemeWithAbsolutePositioning = createTheme({
-    toast: {
-        root: {
-            base: 'absolute top-2 right-2 flex w-full max-w-xs items-center rounded-lg bg-white p-4 text-gray-500 shadow dark:bg-gray-800 dark:text-gray-400',
-            closed: 'opacity-0 ease-out',
-        },
-        toggle: {
-            base: '-m-1.5 ml-auto inline-flex h-8 w-8 rounded-lg bg-white p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-900 focus:ring-2 focus:ring-gray-300 dark:bg-gray-800 dark:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-white',
-            icon: 'h-5 w-5 shrink-0',
-        },
-    },
-});
-
 export default function Payments({ payments, paymentCategories, transactionCategories, accounts, transactionStatusList }) {
-    const [isNotificationShown, setIsNotificationShown] = useState(false);
-    const [notificationMessage, setNotificationMessage] = useState('');
+    const { showNotification } = useNotification();
 
     const [selectedPaymentId, setSelectedPaymentId] = useState(payments[0]?.id);
 
@@ -96,21 +79,16 @@ export default function Payments({ payments, paymentCategories, transactionCateg
 
     function handleEdit() {
         put(route('payment.update', { payment: selectedPaymentId }), {
-            onSuccess: () => {
-                setNotificationMessage('Payment updated');
-                setIsNotificationShown(true);
-                setTimeout(() => setIsNotificationShown(false), 3000);
-            },
+            onSuccess: () => showNotification('Payment updated'),
         });
     }
 
     function handlePayment() {
         post(route('payment.transaction', { payment: selectedPaymentId }), {
             onSuccess: () => {
-                setNotificationMessage('Payment completed');
-                setIsNotificationShown(true);
-                setTimeout(() => setIsNotificationShown(false), 3000);
-            },
+                showNotification('Payment completed');
+                refreshTransactionList();
+            }
         });
     }
 
@@ -131,16 +109,6 @@ export default function Payments({ payments, paymentCategories, transactionCateg
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            {isNotificationShown && (
-                <Toast theme={toastThemeWithAbsolutePositioning.toast}>
-                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-                        <HiCheck className="h-5 w-5" />
-                    </div>
-                    <div className="ml-3 text-sm font-normal">{notificationMessage}</div>
-                    <ToastToggle />
-                </Toast>
-            )}
-
             <Head title="Payments" />
 
             <div className="flex min-h-screen">
@@ -151,17 +119,9 @@ export default function Payments({ payments, paymentCategories, transactionCateg
                         <h2 className="text-xl font-bold">Payments</h2>
                     </div>
                     <div className="my-3 flex flex-row justify-between">
-                        <CreateCategoryModal
-                            setIsNotificationShown={setIsNotificationShown}
-                            setNotificationMessage={setNotificationMessage}
-                            storeUrl={route('payment_category.store')}
-                        />
-                        <CreatePayment
-                            setIsNotificationShown={setIsNotificationShown}
-                            setNotificationMessage={setNotificationMessage}
-                            transactionCategories={transactionCategories}
-                            paymentCategories={paymentCategories}
-                        />
+                        <CreateCategoryModal storeUrl={route('payment_category.store')} />
+                        <CreatePayment transactionCategories={transactionCategories}
+                                       paymentCategories={paymentCategories} />
                     </div>
 
                     {paymentCategories.length > 0 && (
@@ -175,8 +135,6 @@ export default function Payments({ payments, paymentCategories, transactionCateg
                                             <EditCategoryModal
                                                 key={paymentCategory.id + paymentCategory.name}
                                                 category={paymentCategory}
-                                                setIsNotificationShown={setIsNotificationShown}
-                                                setNotificationMessage={setNotificationMessage}
                                                 updateUrl={route('payment_category.update', { category: paymentCategory.id })}
                                             />
                                         </div>

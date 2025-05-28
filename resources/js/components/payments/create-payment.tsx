@@ -2,20 +2,19 @@ import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import {
     Button,
-    Datepicker,
     Label,
     Modal,
     ModalBody,
     ModalHeader,
-    Radio,
     TextInput,
     Select,
-    FileInput
 } from 'flowbite-react';
 import { FaPlus } from 'react-icons/fa6';
-import dayjs from 'dayjs';
+import { useNotification } from '@/contexts/NotificationContext';
 
-export function CreatePayment({ transactionable, setIsNotificationShown, setNotificationMessage, transactionCategories, paymentCategories }) {
+export function CreatePayment({ transactionable, transactionCategories, paymentCategories }) {
+    const { showNotification } = useNotification();
+
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, post, processing, errors, clearErrors } = useForm({
@@ -44,9 +43,7 @@ export function CreatePayment({ transactionable, setIsNotificationShown, setNoti
         post(route('payment.store'), {
             onSuccess: () => {
                 onCloseModal();
-                setNotificationMessage('Payment created');
-                setIsNotificationShown(true);
-                setTimeout(() => setIsNotificationShown(false), 3000);
+                showNotification('Payment created');
             },
             forceFormData: true,
         });
