@@ -2,8 +2,11 @@ import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Button, Label, Modal, ModalBody, ModalHeader, TextInput } from 'flowbite-react';
 import { MdOutlineModeEditOutline } from "react-icons/md";
+import { useNotification } from '@/contexts/NotificationContext';
 
-export default function EditWalletModal({ wallet, setIsNotificationShown, setNotificationMessage }) {
+export default function EditWalletModal({ wallet }) {
+    const { showNotification } = useNotification();
+
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, put, processing, errors, clearErrors } = useForm({
@@ -21,12 +24,8 @@ export default function EditWalletModal({ wallet, setIsNotificationShown, setNot
 
         put(route('wallet.update', {'wallet': wallet.id}), {
             onSuccess: () => {
-                onCloseModal()
-
-                setNotificationMessage('Wallet updated')
-                setIsNotificationShown(true)
-
-                setTimeout(() => setIsNotificationShown(false), 2000)
+                onCloseModal();
+                showNotification('Wallet updated');
             }
         });
     };

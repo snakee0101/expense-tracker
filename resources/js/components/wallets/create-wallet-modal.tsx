@@ -2,8 +2,11 @@ import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Button, Label, Modal, ModalBody, ModalHeader, TextInput } from 'flowbite-react';
 import { FaPlus } from 'react-icons/fa6';
+import { useNotification } from '@/contexts/NotificationContext';
 
-export default function CreateWalletModal({ setIsNotificationShown, setNotificationMessage }) {
+export default function CreateWalletModal() {
+    const { showNotification } = useNotification();
+
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, post, processing, errors, clearErrors } = useForm({
@@ -21,12 +24,8 @@ export default function CreateWalletModal({ setIsNotificationShown, setNotificat
 
         post(route('wallet.store'), {
             onSuccess: () => {
-                onCloseModal()
-
-                setNotificationMessage('Wallet created')
-                setIsNotificationShown(true)
-
-                setTimeout(() => setIsNotificationShown(false), 2000)
+                onCloseModal();
+                showNotification('Wallet created');
             }
         });
     };
