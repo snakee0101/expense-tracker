@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import { Button, Datepicker, Label, Modal, ModalBody, ModalHeader, Select, Textarea, TextInput } from 'flowbite-react';
 import { formatDate } from '@/lib/helpers';
 import dayjs from 'dayjs';
@@ -7,7 +7,8 @@ import { MdOutlineModeEditOutline } from 'react-icons/md';
 
 import { useNotification } from '@/contexts/NotificationContext';
 
-export default function EditRecurringPaymentModal({ recurringPayment, transactionCategories, accounts }) {
+export default function EditRecurringPaymentModal({ recurringPayment, accounts }) {
+    const { transactionCategories } = usePage().props;
     const { showNotification } = useNotification();
 
     const [openModal, setOpenModal] = useState(false);

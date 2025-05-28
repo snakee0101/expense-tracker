@@ -6,7 +6,6 @@ use App\Actions\AccountsList;
 use App\Http\Requests\RecurringPayments\CreateRecurringPayment;
 use App\Http\Requests\RecurringPayments\UpdateRecurringPayment;
 use App\Models\RecurringPayment;
-use App\Models\TransactionCategory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -20,9 +19,6 @@ class RecurringPaymentController extends Controller
                                         ->latest('period_starting_date')
                                         ->with('destination', 'category')
                                         ->paginate(10),
-            'transactionCategories' => TransactionCategory::where('user_id', auth()->id())
-                ->latest()
-                ->get(),
             'accounts' => app()->call(AccountsList::class)
         ]);
     }

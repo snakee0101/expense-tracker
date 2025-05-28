@@ -29,7 +29,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function RecurringPayments({ payments, transactionCategories, accounts }) {
+export default function RecurringPayments({ payments, accounts }) {
     const { showNotification } = useNotification();
     const onPageChange = (page: number) => router.visit(getPageUrl(payments, page));
 
@@ -50,8 +50,7 @@ export default function RecurringPayments({ payments, transactionCategories, acc
             <Head title="Recurring Payments" />
 
             <div className='m-3'>
-                <CreateRecurringPaymentModal transactionCategories={transactionCategories}
-                                             accounts={accounts}/>
+                <CreateRecurringPaymentModal accounts={accounts}/>
             </div>
 
             <Table>
@@ -90,7 +89,6 @@ export default function RecurringPayments({ payments, transactionCategories, acc
                             <TableCell className='flex flex-row'>
                                 <EditRecurringPaymentModal key={payment.id}
                                                       recurringPayment={payment}
-                                                      transactionCategories={transactionCategories}
                                                       accounts={accounts} />
                                 {payment.is_active ? (
                                     <a href='#' onClick={(e) => {
