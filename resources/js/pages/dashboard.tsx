@@ -17,7 +17,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Dashboard({spendingLimit, amountSpent, expenseBreakdown, expenseBreakdownStartingDate, expenseBreakdownEndingDate, cashflow, accounts, savingsPlans, recentTransactions, transactionStatusList, incomeExpenseStatistics}) {
+export default function Dashboard({spendingLimit, amountSpent, expenseBreakdown, expenseBreakdownStartingDate, expenseBreakdownEndingDate, cashflow, accounts, savingsPlans, recentTransactions, incomeExpenseStatistics}) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -32,7 +32,7 @@ export default function Dashboard({spendingLimit, amountSpent, expenseBreakdown,
                 <SavingsPlans savingsPlans={savingsPlans}/>
             </div>
             <div className='flex flex-row m-2 items-start'>
-                <RecentTransactions transactions={recentTransactions} transactionStatusList={transactionStatusList} />
+                <RecentTransactions transactions={recentTransactions} />
                 <IncomeExpenseStatistics statistics={incomeExpenseStatistics} />
             </div>
         </AppLayout>

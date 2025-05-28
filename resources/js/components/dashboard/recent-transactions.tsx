@@ -1,13 +1,9 @@
 import { Card, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from 'flowbite-react';
 import dayjs from 'dayjs';
 import { formatMoney } from '@/lib/helpers';
-import { ImAttachment } from 'react-icons/im';
-import { CiRedo } from 'react-icons/ci';
-import { MdOutlineCancel } from 'react-icons/md';
-import { RiDeleteBin6Line } from 'react-icons/ri';
 import TransactionStatus from '@/components/main/transaction-status';
 
-export default function RecentTransactions({transactions, transactionStatusList}) {
+export default function RecentTransactions({transactions}) {
     function isPayingAccount(accountName) {
         return accountName.includes('Wallet') || accountName.includes('Card');
     }
@@ -51,9 +47,7 @@ export default function RecentTransactions({transactions, transactionStatusList}
                             </TableCell>
                             <TableCell>${formatMoney(transaction.amount)}</TableCell>
                             <TableCell>
-                                <TransactionStatus status={transaction.status}
-                                                   statusList={transactionStatusList}
-                                />
+                                <TransactionStatus status={transaction.status} />
                             </TableCell>
                         </TableRow>
                     ))}

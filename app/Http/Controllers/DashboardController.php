@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Actions\AccountsList;
 use App\Actions\Dashboard\ExpenseBreakdownDateRange;
-use App\Enums\TransactionStatus;
 use App\Models\SavingsPlan;
 use App\Models\SpendingLimit;
 use App\Queries\Dashboard\CashflowQuery;
@@ -39,7 +38,6 @@ class DashboardController extends Controller
             'accounts' => app()->call(AccountsList::class, ['checkForExpiryDate' => true]),
             'savingsPlans' => $savingsPlans,
             'recentTransactions' => app()->call(RecentTransactionsQuery::class)->get()->toArray(),
-            'transactionStatusList' => TransactionStatus::toSelectOptions(),
             'incomeExpenseStatistics' => app()->call(IncomeExpenseStatisticsQuery::class)->get()->toArray()
         ]);
     }
