@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Button, Label, Modal, ModalBody, ModalHeader, TextInput } from 'flowbite-react';
-import { formatCardDate, formatCardNumber, getDateFromExpiryDate } from '@/lib/helpers';
+import { formatCardDate, formatCardNumber } from '@/lib/helpers';
 import { MdOutlineModeEditOutline } from 'react-icons/md';
+import { useNotification } from '@/contexts/NotificationContext';
 
-export default function EditCardModal({ card, setIsNotificationShown, setNotificationMessage }) {
+export default function EditCardModal({ card }) {
+    const { showNotification } = useNotification();
+
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, put, processing, errors, clearErrors } = useForm({
@@ -27,9 +30,7 @@ export default function EditCardModal({ card, setIsNotificationShown, setNotific
         put(route('card.update', {card: card.id}), {
             onSuccess: () => {
                 onCloseModal();
-                setNotificationMessage('Card updated');
-                setIsNotificationShown(true);
-                setTimeout(() => setIsNotificationShown(false), 2000);
+                showNotification('Card updated');
             },
         });
     };

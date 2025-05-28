@@ -1,21 +1,13 @@
 import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
-import {
-    Button,
-    Datepicker,
-    Label,
-    Modal,
-    ModalBody,
-    ModalHeader,
-    Radio,
-    TextInput,
-    Select,
-    FileInput
-} from 'flowbite-react';
+import { Button, Datepicker, Label, Modal, ModalBody, ModalHeader, Radio, TextInput, Select, FileInput } from 'flowbite-react';
 import { FaPlus } from 'react-icons/fa6';
 import dayjs from 'dayjs';
+import { useNotification } from '@/contexts/NotificationContext';
 
-export function CreateIncomeExpense({ transactionable, setIsNotificationShown, setNotificationMessage, transactionCategories, refreshTransactionList }) {
+export function CreateIncomeExpense({ transactionable, transactionCategories, refreshTransactionList }) {
+    const { showNotification } = useNotification();
+
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, post, processing, errors, clearErrors } = useForm({
@@ -57,9 +49,7 @@ export function CreateIncomeExpense({ transactionable, setIsNotificationShown, s
             onSuccess: () => {
                 refreshTransactionList();
                 onCloseModal();
-                setNotificationMessage('Transaction created');
-                setIsNotificationShown(true);
-                setTimeout(() => setIsNotificationShown(false), 3000);
+                showNotification('Transaction created');
             },
             forceFormData: true,
         });

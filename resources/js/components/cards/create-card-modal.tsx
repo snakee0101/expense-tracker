@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Button, Label, Modal, ModalBody, ModalHeader, TextInput } from 'flowbite-react';
 import { FaPlus } from 'react-icons/fa6';
-import { getDateFromExpiryDate } from '@/lib/helpers';
+import { useNotification } from '@/contexts/NotificationContext';
 
-export default function CreateCardModal({ setIsNotificationShown, setNotificationMessage }) {
+export default function CreateCardModal() {
+    const { showNotification } = useNotification();
+
     const [openModal, setOpenModal] = useState(false);
 
     const { data, setData, post, processing, errors, clearErrors } = useForm({
@@ -29,9 +31,7 @@ export default function CreateCardModal({ setIsNotificationShown, setNotificatio
         post(route('card.store'), {
             onSuccess: () => {
                 onCloseModal();
-                setNotificationMessage('Card created');
-                setIsNotificationShown(true);
-                setTimeout(() => setIsNotificationShown(false), 2000);
+                showNotification('Card created');
             },
         });
     };
