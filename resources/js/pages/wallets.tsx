@@ -27,14 +27,6 @@ export default function Wallets({ wallets, chartData }) {
     let chartDataForCurrentWallet = Object.values(chartData)
                                                     .filter(chart => chart.wallet_id == selectedWalletId);
 
-    function selectWallet(walletId) {
-        setSelectedWalletId(walletId);
-    }
-
-    function selectedWallet() {
-        return wallets.find(w => w.id = selectedWalletId);
-    }
-
     const [transactionsPaginator, setTransactionsPaginator] = useState(null);
 
     const filters = {
@@ -67,7 +59,7 @@ export default function Wallets({ wallets, chartData }) {
                         <div
                             className={`card p-6 pb-20 ${selectedWalletId == wallet.id ? 'selected-card' : 'bg-white'}`}
                             key={wallet.id}
-                            onClick={() => selectWallet(wallet.id)}
+                            onClick={() => setSelectedWalletId(wallet.id)}
                         >
                             <div className="flex justify-between items-start">
                                 <h2 className="font-medium">{wallet.name}</h2>

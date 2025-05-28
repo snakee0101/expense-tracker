@@ -28,7 +28,7 @@ export default function Transfers({ contacts, accounts }) {
 
     const [selectedContactId, setSelectedContactId] = useState(contacts[0]?.id);
 
-    const { data, setData, post, errors, reset } = useForm({
+    const { data, setData, post, errors } = useForm({
         name: '',
         source_id: null,
         source_type: null,

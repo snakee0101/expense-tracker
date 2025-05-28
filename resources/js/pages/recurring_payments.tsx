@@ -33,7 +33,7 @@ export default function RecurringPayments({ payments, accounts }) {
     const { showNotification } = useNotification();
     const onPageChange = (page: number) => router.visit(getPageUrl(payments, page));
 
-    const { data, setData, put, processing, errors, clearErrors } = useForm({
+    const { data, put } = useForm({
         is_active: null,
     });
 

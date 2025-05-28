@@ -37,7 +37,7 @@ export default function Transactions({ transactions }) {
 
     const [transactionPaginator, setTransactionPaginator] = useState(transactions);
 
-    const { data, setData, delete: destroy, errors, reset } = useForm({});
+    const { delete: destroy } = useForm({});
 
     function handleDelete(event, transaction) {
         event.preventDefault();
