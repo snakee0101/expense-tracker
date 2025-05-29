@@ -57,7 +57,7 @@ export default function IncomeExpenseStatistics({statistics}) {
                                 {stat.icon}
                             </div>
                             <div className="flex flex-col w-full">
-                                <h5 className="text-md font-medium text-gray-700 flex justify-between items-center">
+                                <h5 className="text-md font-medium text-gray-700 dark:text-gray-300 flex justify-between items-center">
                                     <span>{stat.title}</span>
 
                                     <span
@@ -70,7 +70,7 @@ export default function IncomeExpenseStatistics({statistics}) {
                                         {stat.change}
                                     </span>
                                 </h5>
-                                <p className="text-2xl font-bold text-gray-900">
+                                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                                     {stat.value}
                                 </p>
                             </div>
