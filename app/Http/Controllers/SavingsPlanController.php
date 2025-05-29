@@ -18,11 +18,11 @@ class SavingsPlanController extends Controller
     public function index()
     {
         return Inertia::render('savings_plans', [
-            'savings_plans' => SavingsPlan::where('user_id', auth()->id())
+            'savingsPlans' => SavingsPlan::where('user_id', auth()->id())
                 ->latest()
                 ->get(),
             'relatedAccounts' => app()->call(AccountsList::class, ['checkForExpiryDate' => true]),
-            'total_savings_gain' => app()->call(TotalSavingsGainQuery::class),
+            'totalSavingsGain' => app()->call(TotalSavingsGainQuery::class),
             'savingsChartData' => app()->call(SavingsChartDataQuery::class),
         ]);
     }

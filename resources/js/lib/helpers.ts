@@ -101,3 +101,14 @@ export function buildQueryUrl(baseUrl, page, filters) {
 export function findKeyByValue(obj, value) {
     return Object.keys(obj).find(key => obj[key] === value);
 }
+
+export function daysRemainingUntil(targetDate) {
+    const differenceInMilliseconds = new Date(targetDate) - new Date();
+    const millisecondsInADay = 1000 * 60 * 60 * 24;
+
+    return Math.ceil(differenceInMilliseconds / millisecondsInADay)
+}
+
+export function savingsPlanCompletionPercentage(savingsPlan) {
+    return percent(savingsPlan.balance / savingsPlan.target_balance);
+}

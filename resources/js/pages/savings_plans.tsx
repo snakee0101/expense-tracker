@@ -2,15 +2,10 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
-import { formatMoney, percent } from '../lib/helpers';
+import { formatMoney, daysRemainingUntil, savingsPlanCompletionPercentage } from '../lib/helpers';
 
 import { Progress, Card } from 'flowbite-react';
 import { useState } from 'react';
-import { GoArrowUpRight } from "react-icons/go";
-import { GoArrowDownRight } from "react-icons/go";
-import { RiCoinsFill } from "react-icons/ri";
-import { TfiTarget } from "react-icons/tfi";
-import { GrPlan } from "react-icons/gr";
 
 import '../../css/app.css';
 import dayjs from 'dayjs';
@@ -20,6 +15,7 @@ import EditSavingsPlanModal from '@/components/savings_plans/edit-savings-plan-m
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import AccountTransactions from '@/components/main/account-transactions';
 import { useTransactions } from '@/hooks/use-transactions';
+import SavingsPlansStatistics from '@/components/savings_plans/savings-plans-statistics';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -28,35 +24,16 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function SavingsPlans({ savings_plans, relatedAccounts, total_savings_gain, savingsChartData }) {
-    const [selectedSavingsPlanId, setSelectedSavingsPlanId] = useState(savings_plans[0]?.id);
+export default function SavingsPlans({ savingsPlans, relatedAccounts, totalSavingsGain, savingsChartData }) {
+    const [selectedSavingsPlanId, setSelectedSavingsPlanId] = useState(savingsPlans[0]?.id);
 
     function selectSavingsPlan(savingsPlanId) {
         setSelectedSavingsPlanId(savingsPlanId);
     }
 
-    function savingsPlanCompletionPercentage(savingsPlan) {
-        return percent(savingsPlan.balance / savingsPlan.target_balance);
-    }
-
-    function daysRemainingUntil(targetDate) {
-        const differenceInMilliseconds = new Date(targetDate) - new Date();
-        const millisecondsInADay = 1000 * 60 * 60 * 24;
-
-        return Math.ceil(differenceInMilliseconds / millisecondsInADay)
-    }
-
     function selectedSavingsPlan() {
-        return savings_plans.filter(plan => plan.id == selectedSavingsPlanId)[0] ?? null;
+        return savingsPlans.filter(plan => plan.id == selectedSavingsPlanId)[0] ?? null;
     }
-
-    const totalTarget = savings_plans.reduce(function(total, plan) {
-        return total + Number(plan.target_balance);
-    }, 0);
-
-    const totalSavings = savings_plans.reduce(function(total, plan) {
-        return total + Number(plan.balance);
-    }, 0);
 
     let chartDataForCurrentSavingsPlan = Object.values(savingsChartData).filter(savingsChart => savingsChart.savings_plan_id == selectedSavingsPlanId);
 
@@ -69,67 +46,13 @@ export default function SavingsPlans({ savings_plans, relatedAccounts, total_sav
         });
     }
 
-    const stats = [
-        {
-            title: 'Total Savings',
-            value: `$ ${formatMoney(totalSavings)}`,
-            change: total_savings_gain + ' %',
-            increase: total_savings_gain > 0,
-            icon: <RiCoinsFill size={36} />
-        },
-        {
-            title: 'Total Target',
-            value: `$ ${formatMoney(totalTarget)}`,
-            change: null,
-            increase: false,
-            icon: <TfiTarget size={36} />
-        },
-        {
-            title: 'Total Plans',
-            value: savings_plans.length,
-            change: null,
-            increase: true,
-            icon: <GrPlan size={36} />
-        },
-    ];
-
     const {transactionsPaginator, setTransactionsPaginator, filters, refreshTransactionList} = useTransactions("App\\Models\\SavingsPlan", selectedSavingsPlanId);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Savings Plans" />
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 px-4 mb-4">
-                {stats.map((stat, index) => (
-                    <Card key={index}
-                          className="bg-green-50 flex rounded-none shadow-sm"
-                    >
-                        <div className="flex w-full flex-row justify-between items-center">
-                            <div className="flex flex-col">
-                                <h5 className="text-md font-medium text-gray-700">{stat.title}</h5>
-                                <p className="text-2xl font-bold text-gray-900 mt-1">
-                                    {stat.value}
-
-                                    {stat.change != null && <span
-                                        className={`inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full ml-2 mt-2 ${stat.increase ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
-                                        {stat.increase ? (
-                                             <GoArrowUpRight className="w-4 h-4 mr-1" />
-                                        ) : (
-                                             <GoArrowDownRight className="w-4 h-4 mr-1" />
-                                        )}
-                                        {stat.change}
-                                    </span>}
-
-                                    {stat.change != null && <span className='text-sm ml-2 font-thin'>Compared to previous month</span>}
-                                </p>
-                            </div>
-                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white">
-                                {stat.icon}
-                            </div>
-                        </div>
-                    </Card>
-                ))}
-            </div>
+            <SavingsPlansStatistics savingsPlans={savingsPlans} totalSavingsGain={totalSavingsGain} />
 
             <div className="flex min-h-screen">
                 <div className="w-4"></div>
@@ -140,7 +63,7 @@ export default function SavingsPlans({ savings_plans, relatedAccounts, total_sav
                         <CreateSavingsPlanModal />
                     </div>
 
-                    {savings_plans.map((savingsPlan) => (
+                    {savingsPlans.map((savingsPlan) => (
                         <div
                             className={`small-card ${selectedSavingsPlanId == savingsPlan.id ? 'selected-card' : 'bg-white'}`}
                             onClick={() => selectSavingsPlan(savingsPlan.id)}
