@@ -12,10 +12,10 @@ import dayjs from 'dayjs';
 import CreateSavingsPlanModal from '@/components/savings_plans/create-savings-plan-modal';
 import AddOrWithdrawFromSavingsPlan from '@/components/savings_plans/add-or-withdraw-from-savings-plan';
 import EditSavingsPlanModal from '@/components/savings_plans/edit-savings-plan-modal';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import AccountTransactions from '@/components/main/account-transactions';
 import { useTransactions } from '@/hooks/use-transactions';
 import SavingsPlansStatistics from '@/components/savings_plans/savings-plans-statistics';
+import SavingsChart from '@/components/savings_plans/savings-chart';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -33,17 +33,6 @@ export default function SavingsPlans({ savingsPlans, relatedAccounts, totalSavin
 
     function selectedSavingsPlan() {
         return savingsPlans.filter(plan => plan.id == selectedSavingsPlanId)[0] ?? null;
-    }
-
-    let chartDataForCurrentSavingsPlan = Object.values(savingsChartData).filter(savingsChart => savingsChart.savings_plan_id == selectedSavingsPlanId);
-
-    let processedChartData = [];
-
-    for (let chartItem of chartDataForCurrentSavingsPlan ?? []) {
-        processedChartData.push({
-            name: chartItem.month,
-            balance: chartItem.savings_plan_balance,
-        });
     }
 
     const {transactionsPaginator, setTransactionsPaginator, filters, refreshTransactionList} = useTransactions("App\\Models\\SavingsPlan", selectedSavingsPlanId);
@@ -117,31 +106,7 @@ export default function SavingsPlans({ savingsPlans, relatedAccounts, totalSavin
                                                       refreshTransactionList={refreshTransactionList}
                         />}
                     </div>
-                    <div className='mt-4 text-center'>
-                        <h2 className='font-bold text-2xl my-4'>Savings plan balance change over this year</h2>
-
-                        {processedChartData.length > 0 ?
-                        <ResponsiveContainer height={500} width={600} className='m-auto'>
-                            <LineChart
-                                width={500}
-                                height={300}
-                                data={processedChartData}
-                                margin={{
-                                    top: 5,
-                                    right: 30,
-                                    left: 20,
-                                    bottom: 5,
-                                }}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" label={{ value: 'Month number', position: 'insideBottomRight', offset: 0 }} />
-                                <YAxis label={{ value: 'Balance ($)', angle: -90, position: 'insideLeft' }}  />
-                                <Tooltip />
-                                <Legend />
-                                <Line type="monotone" dataKey="balance" stroke="#8884d8" activeDot={{ r: 8 }} />
-                            </LineChart>
-                        </ResponsiveContainer> : <p>No savings yet</p>}
-                    </div>
+                    <SavingsChart savingsChartData={savingsChartData} selectedSavingsPlanId={selectedSavingsPlanId} />
                     <div className='mt-5'>
                         <AccountTransactions key={transactionsPaginator}
                                              transactionsPaginator={transactionsPaginator}
