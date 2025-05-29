@@ -5,7 +5,7 @@ import { Head } from '@inertiajs/react';
 import { formatMoney, percent } from '../lib/helpers';
 
 import { Progress, Card } from 'flowbite-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { GoArrowUpRight } from "react-icons/go";
 import { GoArrowDownRight } from "react-icons/go";
 import { RiCoinsFill } from "react-icons/ri";
@@ -19,7 +19,7 @@ import AddOrWithdrawFromSavingsPlan from '@/components/savings_plans/add-or-with
 import EditSavingsPlanModal from '@/components/savings_plans/edit-savings-plan-modal';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import AccountTransactions from '@/components/main/account-transactions';
-import axios from 'axios';
+import { useTransactions } from '@/hooks/use-transactions';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -93,20 +93,7 @@ export default function SavingsPlans({ savings_plans, relatedAccounts, total_sav
         },
     ];
 
-    const [transactionsPaginator, setTransactionsPaginator] = useState(null);
-
-    const filters = {
-        account_type: "App\\Models\\SavingsPlan",
-        account_id: selectedSavingsPlanId
-    };
-
-    const refreshTransactionList = () => axios.post(route('account_transactions.index'), filters).then(
-        response => setTransactionsPaginator(response.data)
-    );
-
-    useEffect(() => {
-        refreshTransactionList();
-    }, [selectedSavingsPlanId]);
+    const {transactionsPaginator, setTransactionsPaginator, filters, refreshTransactionList} = useTransactions("App\\Models\\SavingsPlan", selectedSavingsPlanId);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

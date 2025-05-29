@@ -4,7 +4,7 @@ import { Head } from '@inertiajs/react';
 
 import { formatMoney } from '../lib/helpers';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import '../../css/app.css';
 import { CreateIncomeExpense } from '@/components/main/create-income-expense';
@@ -12,7 +12,7 @@ import CreateWalletModal from '@/components/wallets/create-wallet-modal';
 import EditWalletModal from '@/components/wallets/edit-wallet-modal';
 import TotalCashflow from '@/components/main/total-cashflow';
 import AccountTransactions from '@/components/main/account-transactions';
-import axios from 'axios';
+import { useTransactions } from '@/hooks/use-transactions';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -27,20 +27,7 @@ export default function Wallets({ wallets, chartData }) {
     let chartDataForCurrentWallet = Object.values(chartData)
                                                     .filter(chart => chart.wallet_id == selectedWalletId);
 
-    const [transactionsPaginator, setTransactionsPaginator] = useState(null);
-
-    const filters = {
-        account_type: "App\\Models\\Wallet",
-        account_id: selectedWalletId
-    };
-
-    const refreshTransactionList = () => axios.post(route('account_transactions.index'), filters).then(
-        response => setTransactionsPaginator(response.data)
-    );
-
-    useEffect(() => {
-        refreshTransactionList();
-    }, [selectedWalletId]);
+    const {transactionsPaginator, setTransactionsPaginator, filters, refreshTransactionList} = useTransactions("App\\Models\\Wallet", selectedWalletId);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

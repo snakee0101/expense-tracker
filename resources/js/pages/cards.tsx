@@ -3,15 +3,15 @@ import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
 import { formatMoney, formatCardDate, formatCardNumber } from '../lib/helpers';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import '../../css/app.css';
 import { CreateIncomeExpense } from '@/components/main/create-income-expense';
 import CreateCardModal from '@/components/cards/create-card-modal';
 import EditCardModal from '@/components/cards/edit-card-modal';
 import TotalCashflow from '@/components/main/total-cashflow';
-import axios from 'axios';
 import AccountTransactions from '@/components/main/account-transactions';
+import { useTransactions } from '@/hooks/use-transactions';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -26,28 +26,7 @@ export default function Cards({ cards, chartData }) {
     let chartDataForCurrentCard = Object.values(chartData)
                                                    .filter(chart => chart.card_id == selectedCardId);
 
-    function selectCard(cardId) {
-        setSelectedCardId(cardId);
-    }
-
-    function selectedCard() {
-        return cards.find(c => c.id = selectedCardId);
-    }
-
-    const [transactionsPaginator, setTransactionsPaginator] = useState(null);
-
-    const filters = {
-        account_type: "App\\Models\\Card",
-        account_id: selectedCardId
-    };
-
-    const refreshTransactionList = () => axios.post(route('account_transactions.index'), filters).then(
-        response => setTransactionsPaginator(response.data)
-    );
-
-    useEffect(() => {
-        refreshTransactionList();
-    }, [selectedCardId]);
+    const {transactionsPaginator, setTransactionsPaginator, filters, refreshTransactionList} = useTransactions("App\\Models\\Card", selectedCardId);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -66,7 +45,7 @@ export default function Cards({ cards, chartData }) {
                         <div
                             className={`card p-6 pb-10 ${selectedCardId == card.id ? 'selected-card' : 'bg-white'} ${card.is_expired && 'text-gray-400'}`}
                             key={card.id}
-                            onClick={() => selectCard(card.id)}
+                            onClick={() => setSelectedCardId(card.id)}
                         >
                             <div className="flex items-start justify-between">
                                 <h2 className="font-medium">{card.name}</h2>

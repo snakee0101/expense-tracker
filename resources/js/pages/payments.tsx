@@ -23,11 +23,11 @@ import {
     TextInput,
     Textarea,
 } from 'flowbite-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import '../../css/app.css';
 import AccountTransactions from '@/components/main/account-transactions';
-import axios from 'axios';
 import {useNotification} from '@/contexts/NotificationContext';
+import { useTransactions } from '@/hooks/use-transactions';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -42,7 +42,7 @@ export default function Payments({ payments, paymentCategories, accounts }) {
 
     const [selectedPaymentId, setSelectedPaymentId] = useState(payments[0]?.id);
 
-    const { data, setData, post, put, errors, reset } = useForm({
+    const { data, setData, post, put, errors } = useForm({
         payment_id: payments[0]?.id,
         date: dayjs().format('YYYY-MM-DD'),
         time: dayjs().format('HH:mm:ss'),
@@ -93,20 +93,7 @@ export default function Payments({ payments, paymentCategories, accounts }) {
         });
     }
 
-    const [transactionsPaginator, setTransactionsPaginator] = useState(null);
-
-    const filters = {
-        account_type: "App\\Models\\Payment",
-        account_id: selectedPaymentId
-    };
-
-    const refreshTransactionList = () => axios.post(route('account_transactions.index'), filters).then(
-        response => setTransactionsPaginator(response.data)
-    );
-
-    useEffect(() => {
-        refreshTransactionList();
-    }, [selectedPaymentId]);
+    const {transactionsPaginator, setTransactionsPaginator, filters, refreshTransactionList} = useTransactions("App\\Models\\Payment", selectedPaymentId);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

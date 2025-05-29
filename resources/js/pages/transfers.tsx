@@ -6,14 +6,14 @@ import { formatCardNumber } from '../lib/helpers';
 
 import { useForm } from '@inertiajs/react';
 import { Card, Button, Label, TextInput, FileInput, Select, Textarea, Datepicker } from 'flowbite-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import '../../css/app.css';
 import dayjs from 'dayjs';
 import CreateContactModal from '@/components/transfers/create-contact-modal';
 import EditContactModal from '@/components/transfers/edit-contact-modal';
 import AccountTransactions from '@/components/main/account-transactions';
-import axios from 'axios';
 import { useNotification } from '@/contexts/NotificationContext';
+import { useTransactions } from '@/hooks/use-transactions';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -57,20 +57,7 @@ export default function Transfers({ contacts, accounts }) {
         });
     };
 
-    const [transactionsPaginator, setTransactionsPaginator] = useState(null);
-
-    const filters = {
-        account_type: "App\\Models\\Contact",
-        account_id: selectedContactId
-    };
-
-    const refreshTransactionList = () => axios.post(route('account_transactions.index'), filters).then(
-        response => setTransactionsPaginator(response.data)
-    );
-
-    useEffect(() => {
-        refreshTransactionList();
-    }, [selectedContactId]);
+    const {transactionsPaginator, setTransactionsPaginator, filters, refreshTransactionList} = useTransactions("App\\Models\\Contact", selectedContactId);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
