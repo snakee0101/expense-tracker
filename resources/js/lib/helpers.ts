@@ -1,4 +1,7 @@
 import dayjs from 'dayjs';
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 export function getPageUrl(paginator, pageNumber) {
     const link = paginator.links.find(item => item.label === String(pageNumber));
@@ -144,7 +147,10 @@ export function hslToHex(h, s, l) {
     return `#${f(0)}${f(8)}${f(4)}`;
 }
 
-export function getFilterFromDates(startStr, endStr) {
+export function getFilterFromDates(startStrTz, endStrTz) {
+    const startStr = dayjs(startStrTz).utc().format('YYYY-MM-DD HH:mm:ss');
+    const endStr = dayjs(endStrTz).utc().format('YYYY-MM-DD HH:mm:ss');
+
     if(startStr == false || endStr == false) {
         return 'this month';
     }

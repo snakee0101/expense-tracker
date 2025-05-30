@@ -1,10 +1,7 @@
-import { Card, Datepicker, Select } from 'flowbite-react';
+import { Card, Select } from 'flowbite-react';
 import { Legend, RadialBar, RadialBarChart, ResponsiveContainer } from 'recharts';
-import dayjs from 'dayjs';
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "flowbite-react";
-import { useState } from 'react';
-import { router } from '@inertiajs/react';
-import { extractDateFromDateTime, getFilterFromDates, generateUniqueChartColors } from '@/lib/helpers';
+import { getFilterFromDates, generateUniqueChartColors } from '@/lib/helpers';
+import { handleSelectExpenseBreakdownFilter } from '@/components/dashboard/handle-select-expense-breakdown-filter';
 
 export default function ExpenseBreakdown({breakdown, expenseBreakdownStartingDate, expenseBreakdownEndingDate}) {
     let data = [];
@@ -25,97 +22,18 @@ export default function ExpenseBreakdown({breakdown, expenseBreakdownStartingDat
         lineHeight: '24px',
     };
 
-    const [openModal, setOpenModal] = useState(false);
-    const [dateRangeStart, setDateRangeStart] = useState(null);
-    const [dateRangeEnd, setDateRangeEnd] = useState(null);
-
-    let selectedFilter = getFilterFromDates(expenseBreakdownStartingDate, expenseBreakdownEndingDate);
-
-    function handleSelectFilter(event) {
-        let expenseBreakdownDateRangeStart = null;
-        let expenseBreakdownDateRangeEnd = null;
-
-        if(event.target.value != 'custom') {
-            const today = dayjs();
-
-            switch (event.target.value) {
-                case 'this year':
-                    expenseBreakdownDateRangeStart = today.startOf('year');
-                    expenseBreakdownDateRangeEnd = today.endOf('year');
-                    break;
-                case 'these 6 months': {
-                    const month = today.month();
-                    if (month < 6) {
-                        expenseBreakdownDateRangeStart = today.startOf('year');
-                        expenseBreakdownDateRangeEnd = dayjs().month(5).endOf('month'); // June
-                    } else {
-                        expenseBreakdownDateRangeStart = dayjs().month(6).startOf('month'); // July
-                        expenseBreakdownDateRangeEnd = today.endOf('year');
-                    }
-                    break;
-                }
-                case 'this month':
-                    expenseBreakdownDateRangeStart = today.startOf('month');
-                    expenseBreakdownDateRangeEnd = today.endOf('month');
-                    break;
-                case 'this week':
-                    expenseBreakdownDateRangeStart = today.startOf('week');
-                    expenseBreakdownDateRangeEnd = today.endOf('week');
-                    break;
-                case 'this day':
-                    expenseBreakdownDateRangeStart = today.startOf('day');
-                    expenseBreakdownDateRangeEnd = today.endOf('day');
-                    break;
-                default:
-                    return;
-            }
-
-            router.get(route('dashboard', {
-                'expenseBreakdownDateRangeStart': expenseBreakdownDateRangeStart.format('YYYY-MM-DD HH:mm:ss'),
-                'expenseBreakdownDateRangeEnd': expenseBreakdownDateRangeEnd.format('YYYY-MM-DD HH:mm:ss')
-            }));
-        } else {
-            setOpenModal(true);
-        }
-    }
-
-    function handleFilterByDateRange() {
-        router.get(route('dashboard', {
-            'expenseBreakdownDateRangeStart': dateRangeStart.format('YYYY-MM-DD HH:mm:ss'),
-            'expenseBreakdownDateRangeEnd': dateRangeEnd.format('YYYY-MM-DD HH:mm:ss')
-        }));
-
-        setOpenModal(false);
-    }
+    const selectedFilter = getFilterFromDates(expenseBreakdownStartingDate, expenseBreakdownEndingDate);
 
     return (
         <Card>
-            <Modal dismissible show={openModal} onClose={() => setOpenModal(false)}>
-                <ModalHeader>Filter expense breakdown by date</ModalHeader>
-                <ModalBody>
-                    <div className="space-y-6 flex content-center mb-100">
-                        <Datepicker onChange={date => setDateRangeStart(dayjs(date).startOf('day'))} />
-                        <span className='mt-2 mx-3'>-</span>
-                        <Datepicker onChange={date => setDateRangeEnd(dayjs(date).endOf('day'))} />
-                    </div>
-                </ModalBody>
-                <ModalFooter>
-                    <Button onClick={handleFilterByDateRange}>Filter</Button>
-                    <Button color="gray" onClick={() => setOpenModal(false)}>
-                        Cancel
-                    </Button>
-                </ModalFooter>
-            </Modal>
-
             <div className="flex justify-between">
                 <h5 className="mr-3 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Expense Breakdown</h5>
-                <Select id="expenseBreakdownFilters" onChange={handleSelectFilter} value={selectedFilter}>
+                <Select id="expenseBreakdownFilters" onChange={(e) => handleSelectExpenseBreakdownFilter(e)} value={selectedFilter}>
                     <option value='this year'>This year</option>
                     <option value='these 6 months'>These 6 months</option>
                     <option value='this month'>This month</option>
                     <option value='this week'>This week</option>
                     <option value='this day'>This day</option>
-                    <option value='custom'>Custom <span>{extractDateFromDateTime(expenseBreakdownStartingDate)} - {extractDateFromDateTime(expenseBreakdownEndingDate)}</span></option>
                 </Select>
             </div>
 
