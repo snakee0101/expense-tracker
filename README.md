@@ -32,7 +32,20 @@ COINEST is an educational project built with intention to learn React.
 - **Inbox** (reading emails(notifications) sent by admins - INCOMPLETE FEATURE)
 - **Recurring Payments** - recurring payments on a specific day of each month 
 
+# Login credentials
+
+Email: test@example.com
+Password: 12345
+
 # How to run
+
+1. run this command from project directory: 
+sudo docker compose up --build
+
+2. after starting the application run these commands (get id of the expense-tracker-app container through docker ps):
+sudo docker exec -it container-id-of-expense-tracker-app-container php artisan migrate:fresh --seed
+
+3. Site is accessible at http://127.0.0.1:8000/
 
 # Author
 Danil Lebediantsev, snakee0101@gmail.com

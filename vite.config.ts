@@ -22,4 +22,12 @@ export default defineConfig({
     optimizeDeps: {
         exclude: ['react-simple-wysiwyg']
     },
+    server: {
+        host: '0.0.0.0',
+        port: 5173,
+        strictPort: true,
+        hmr: {
+            host: 'localhost',
+        },
+    },
 });
