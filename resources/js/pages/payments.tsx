@@ -112,7 +112,7 @@ export default function Payments({ payments, paymentCategories, accounts }) {
                     </div>
 
                     {paymentCategories.length > 0 && (
-                        <Accordion className="bg-white">
+                        <Accordion className="bg-white dark:bg-gray-800">
                             {paymentCategories.map((paymentCategory) => (
                                 <AccordionPanel>
                                     <AccordionTitle className="cursor-pointer">
@@ -154,7 +154,7 @@ export default function Payments({ payments, paymentCategories, accounts }) {
                 <div className="w-4"></div>
 
                 <main className="min-h-screen flex-1 p-6">
-                    <div className="mx-auto max-w-xl rounded-none bg-green-50 p-6 shadow-md" key={selectedPaymentId}>
+                    <div className="mx-auto max-w-xl rounded-none bg-green-50 dark:bg-gray-800 p-6 shadow-md" key={selectedPaymentId}>
                         <h3 className="mb-4 text-xl font-bold">Make a payment</h3>
 
                         {/* Payment Name */}

@@ -43,7 +43,7 @@ export default function Cards({ cards, chartData }) {
 
                     {cards.map((card) => (
                         <div
-                            className={`card p-6 pb-10 ${selectedCardId == card.id ? 'selected-card' : 'bg-white'} ${card.is_expired && 'text-gray-400'}`}
+                            className={`card p-6 pb-10 ${selectedCardId == card.id ? 'selected-card' : 'bg-white dark:bg-gray-800'} ${card.is_expired && 'text-gray-400'}`}
                             key={card.id}
                             onClick={() => setSelectedCardId(card.id)}
                         >
@@ -59,12 +59,12 @@ export default function Cards({ cards, chartData }) {
 
                             <div className="text-xl flex justify-between">
                                 <div>
-                                    <span className="block text-sm text-gray-600">Card Number</span>
+                                    <span className="block text-sm text-gray-600 dark:text-gray-300">Card Number</span>
                                     <span>{formatCardNumber(card.card_number)}</span>
                                 </div>
 
                                 <div>
-                                    <span className="block text-sm text-gray-600">Expiry Date</span>
+                                    <span className="block text-sm text-gray-600 dark:text-gray-300">Expiry Date</span>
                                     <span>{formatCardDate(card.expiry_date)}</span>
                                 </div>
                             </div>

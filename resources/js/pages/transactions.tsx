@@ -81,15 +81,15 @@ export default function Transactions({ transactions }) {
                                         <img src={transaction.category.imageUrl} className='rounded-full' />
                                     </div>
                                     <div className="flex flex-col">
-                                        <h5 className="text-lg font-bold text-gray-700">{transaction.name}</h5>
-                                        <h5 className="text-md text-gray-500">{transaction.category.name}</h5>
+                                        <h5 className="text-lg font-bold text-gray-700 dark:text-gray-100">{transaction.name}</h5>
+                                        <h5 className="text-md text-gray-500 dark:text-gray-300">{transaction.category.name}</h5>
                                     </div>
                                 </div>
                             </TableCell>
                             <TableCell><b>{transaction.source?.typeName}</b> {transaction.source?.name}</TableCell>
                             <TableCell><b>{transaction.destination?.typeName}</b> {transaction.destination?.name}</TableCell>
                             <TableCell>
-                                <p className="text-black font-bold">{dayjs(transaction.date).format('YYYY-MM-DD')}</p>
+                                <p className="text-black dark:text-gray-100 font-bold">{dayjs(transaction.date).format('YYYY-MM-DD')}</p>
                                 <p className="text-gray-400">{dayjs(transaction.date).format('hh:mm A')}</p>
                             </TableCell>
                             <TableCell>${formatMoney(transaction.amount)}</TableCell>

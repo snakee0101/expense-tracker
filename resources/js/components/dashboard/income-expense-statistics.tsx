@@ -50,10 +50,10 @@ export default function IncomeExpenseStatistics({statistics}) {
             <div className="grid grid-cols-2 gap-4 px-4 mb-4">
                 {stats.map((stat, index) => (
                     <Card key={index}
-                          className="bg-green-50 flex rounded-none shadow-sm"
+                          className="bg-green-50 flex rounded-none shadow-sm dark:border-gray-400"
                     >
                         <div className="flex w-full flex-row justify-between items-center">
-                            <div className="flex items-center justify-center rounded-full bg-white mr-2">
+                            <div className="flex items-center justify-center rounded-full bg-white mr-2 dark:text-green-500 p-1">
                                 {stat.icon}
                             </div>
                             <div className="flex flex-col w-full">

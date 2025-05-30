@@ -44,7 +44,7 @@ export default function Wallets({ wallets, chartData }) {
 
                     {wallets.map(wallet => (
                         <div
-                            className={`card p-6 pb-20 ${selectedWalletId == wallet.id ? 'selected-card' : 'bg-white'}`}
+                            className={`card p-6 pb-20 ${selectedWalletId == wallet.id ? 'selected-card' : 'bg-white dark:bg-gray-800'}`}
                             key={wallet.id}
                             onClick={() => setSelectedWalletId(wallet.id)}
                         >

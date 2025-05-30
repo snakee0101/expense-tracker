@@ -51,13 +51,13 @@ export default function Inbox({ notifications }) {
 
                     {notifications.length > 0 && notifications.map((notification) => (
                         <div
-                            className={`small-card ${selectedNotificationId == notification.id ? 'selected-card' : 'bg-white'} ${notification.read_at ? 'text-gray-400' : 'text-black'}`}
+                            className={`small-card ${selectedNotificationId == notification.id ? 'selected-card' : 'bg-white dark:bg-gray-800'} ${notification.read_at ? 'text-gray-400' : 'text-black'}`}
                             onClick={() => selectNotification(notification.id)}
                             key={notification.id}>
                             <div className="flex justify-between items-start">
                                 <div>
                                     <div className='flex justify-between'>
-                                        <h3 className="text-lg font-semibold">{notification.data.header}</h3>
+                                        <h3 className="text-lg font-semibold dark:text-gray-100">{notification.data.header}</h3>
                                         <p>{dayjs(notification.created_at).format('MMM D HH:mm')}</p>
                                     </div>
                                     <div className="text-sm mt-1">

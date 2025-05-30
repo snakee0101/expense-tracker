@@ -82,9 +82,9 @@ export default function Transfers({ contacts, accounts }) {
                                     <img src={contact.avatar_path} className='rounded-full' />
                                 </div>
                                 <div className="flex flex-col">
-                                    <h5 className="text-lg text-gray-700 font-bold">{contact.name}</h5>
+                                    <h5 className="text-lg text-gray-700 dark:text-gray-100 font-bold">{contact.name}</h5>
                                     <div className='flex'>
-                                        <h5 className="text-md text-gray-700 mr-4">{formatCardNumber(contact.card_number)}</h5>
+                                        <h5 className="text-md text-gray-700 dark:text-gray-300 mr-4">{formatCardNumber(contact.card_number)}</h5>
                                         <EditContactModal key={contact.id}
                                                           contact={contact} />
                                     </div>
@@ -100,7 +100,7 @@ export default function Transfers({ contacts, accounts }) {
                 <div className="w-4"></div>
 
                 <main className="min-h-screen flex-1 p-6">
-                    {selectedContactId && <form className="max-w-xl mx-auto p-6 bg-green-50 rounded-none shadow-md"
+                    {selectedContactId && <form className="max-w-xl mx-auto p-6 bg-green-50 dark:bg-gray-800 rounded-none shadow-md"
                           onSubmit={handleCreateTransfer}>
                         <h3 className='font-bold text-xl mb-4'>Create Transfer</h3>
 

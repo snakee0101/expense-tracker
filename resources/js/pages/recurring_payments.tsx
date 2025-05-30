@@ -72,8 +72,8 @@ export default function RecurringPayments({ payments, accounts }) {
                                         <img src={payment.category.imageUrl} className='rounded-full' />
                                     </div>
                                     <div className="flex flex-col">
-                                        <h5 className="text-lg font-bold text-gray-700">{payment.name}</h5>
-                                        <h5 className="text-md text-gray-500">{payment.category.name}</h5>
+                                        <h5 className="text-lg font-bold text-gray-700 dark:text-gray-100">{payment.name}</h5>
+                                        <h5 className="text-md text-gray-500 dark:text-gray-300">{payment.category.name}</h5>
                                     </div>
                                 </div>
                             </TableCell>

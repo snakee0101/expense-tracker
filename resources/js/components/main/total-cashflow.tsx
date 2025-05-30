@@ -2,7 +2,6 @@ import { Card } from 'flowbite-react';
 import {
     BarChart,
     Bar,
-    Cell,
     XAxis,
     YAxis,
     Label,

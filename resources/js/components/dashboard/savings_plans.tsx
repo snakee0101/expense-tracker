@@ -1,7 +1,5 @@
 import { Card, Progress } from 'flowbite-react';
-import { formatCardNumber, formatMoney, percent } from '@/lib/helpers';
-import { FaCreditCard } from "react-icons/fa";
-import { PiMoneyWavy } from "react-icons/pi";
+import { formatMoney, percent } from '@/lib/helpers';
 
 export default function SavingsPlans({savingsPlans})
 {
@@ -29,7 +27,7 @@ export default function SavingsPlans({savingsPlans})
                             <div className="space-x-4">
                                 <p className='mb-3'>{plan.name}</p>
 
-                                <Progress progress={savingsPlanCompletionPercentage(plan)} color="teal" />
+                                <Progress progress={savingsPlanCompletionPercentage(plan)} color="teal" className='dark:bg-white'/>
 
                                 <div className="text-sm flex items-center mt-3 justify-between">
                                     <p>

@@ -174,7 +174,7 @@
 }
 
 .small-card {
-    @apply bg-white shadow-lg p-6 max-w-md mb-4 cursor-pointer rounded-none;
+    @apply shadow-lg p-6 max-w-md mb-4 cursor-pointer rounded-none;
 }
 
 .selected-card {
@@ -189,7 +189,7 @@
 .floating-sidebar {
     @apply max-h-screen overflow-y-scroll rounded-none p-4 shadow-xl;
 
-    background: var(--color-green-25);
+    background: var(--sidebar);
     width: 400px;
 }
 

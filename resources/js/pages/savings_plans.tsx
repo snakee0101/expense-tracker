@@ -54,7 +54,7 @@ export default function SavingsPlans({ savingsPlans, relatedAccounts, totalSavin
 
                     {savingsPlans.map((savingsPlan) => (
                         <div
-                            className={`small-card ${selectedSavingsPlanId == savingsPlan.id ? 'selected-card' : 'bg-white'}`}
+                            className={`small-card ${selectedSavingsPlanId == savingsPlan.id ? 'selected-card' : 'bg-white dark:bg-gray-800'}`}
                             onClick={() => selectSavingsPlan(savingsPlan.id)}
                             key={savingsPlan.id}>
                             <div className="flex justify-between items-start">
@@ -84,7 +84,7 @@ export default function SavingsPlans({ savingsPlans, relatedAccounts, totalSavin
                                 <EditSavingsPlanModal key={selectedSavingsPlanId}
                                                       savingsPlan={selectedSavingsPlan()} />
                             </div>
-                            <Progress progress={savingsPlanCompletionPercentage(savingsPlan)} color="teal" />
+                            <Progress progress={savingsPlanCompletionPercentage(savingsPlan)} color="teal" className='dark:bg-white'/>
                         </div>
                     ))}
                 </aside>

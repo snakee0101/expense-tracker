@@ -47,8 +47,8 @@ export default function SavingsPlansStatistics({savingsPlans, totalSavingsGain})
                 >
                     <div className="flex w-full flex-row justify-between items-center">
                         <div className="flex flex-col">
-                            <h5 className="text-md font-medium text-gray-700">{stat.title}</h5>
-                            <p className="text-2xl font-bold text-gray-900 mt-1">
+                            <h5 className="text-md font-medium text-gray-700 dark:text-gray-300">{stat.title}</h5>
+                            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
                                 {stat.value}
 
                                 {stat.change != null && <span
@@ -64,7 +64,7 @@ export default function SavingsPlansStatistics({savingsPlans, totalSavingsGain})
                                 {stat.change != null && <span className='text-sm ml-2 font-thin'>Compared to previous month</span>}
                             </p>
                         </div>
-                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white">
+                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white dark:text-green-500">
                             {stat.icon}
                         </div>
                     </div>

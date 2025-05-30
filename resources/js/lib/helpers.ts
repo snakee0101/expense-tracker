@@ -112,3 +112,91 @@ export function daysRemainingUntil(targetDate) {
 export function savingsPlanCompletionPercentage(savingsPlan) {
     return percent(savingsPlan.balance / savingsPlan.target_balance);
 }
+
+export function generateUniqueChartColors(count) {
+    const colors = new Set();
+
+    while (colors.size < count) {
+        // Generate a color with distinct hue
+        const hue = Math.floor((360 / count) * colors.size); // evenly spaced hue
+        const saturation = 70 + Math.floor(Math.random() * 20); // 70–90%
+        const lightness = 50 + Math.floor(Math.random() * 10); // 50–60%
+
+        const color = hslToHex(hue, saturation, lightness);
+        colors.add(color);
+    }
+
+    return Array.from(colors);
+}
+
+// Helper function to convert HSL to HEX
+export function hslToHex(h, s, l) {
+    s /= 100;
+    l /= 100;
+
+    const k = n => (n + h / 30) % 12;
+    const a = s * Math.min(l, 1 - l);
+    const f = n => {
+        const c = l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+        return Math.round(255 * c).toString(16).padStart(2, '0');
+    };
+
+    return `#${f(0)}${f(8)}${f(4)}`;
+}
+
+export function getFilterFromDates(startStr, endStr) {
+    if(startStr == false || endStr == false) {
+        return 'this month';
+    }
+
+    // This Year
+    if (
+        startStr == dayjs().startOf('year').set('hours', 0).set('minutes', 0).set('seconds', 0).format('YYYY-MM-DD HH:mm:ss') &&
+        endStr == dayjs().endOf('year').set('hours', 23).set('minutes', 59).set('seconds', 59).format('YYYY-MM-DD HH:mm:ss')
+    ) {
+        return 'this year';
+    }
+
+    // These 6 Months (Half-Year)
+    const month = dayjs().month();
+    if (month < 6) {
+        const firstHalfStart = dayjs().startOf('year').set('hours', 0).set('minutes', 0).set('seconds', 0).format('YYYY-MM-DD HH:mm:ss');
+        const firstHalfEnd = dayjs().month(5).endOf('month').set('hours', 23).set('minutes', 59).set('seconds', 59).format('YYYY-MM-DD HH:mm:ss');
+        if (startStr == firstHalfStart && endStr == firstHalfEnd) {
+            return 'these 6 months';
+        }
+    } else {
+        const secondHalfStart = dayjs().month(6).startOf('month').set('hours', 0).set('minutes', 0).set('seconds', 0).format('YYYY-MM-DD HH:mm:ss');
+        const secondHalfEnd = dayjs().endOf('year').set('hours', 23).set('minutes', 59).set('seconds', 59).format('YYYY-MM-DD HH:mm:ss');
+        if (startStr == secondHalfStart && endStr == secondHalfEnd) {
+            return 'these 6 months';
+        }
+    }
+
+    // This Month
+    if (
+        startStr == dayjs().startOf('month').set('hours', 0).set('minutes', 0).set('seconds', 0).format('YYYY-MM-DD HH:mm:ss') &&
+        endStr == dayjs().endOf('month').set('hours', 23).set('minutes', 59).set('seconds', 59).format('YYYY-MM-DD HH:mm:ss')
+    ) {
+        return 'this month';
+    }
+
+    // This Week
+    if (
+        startStr == dayjs().startOf('week').set('hours', 0).set('minutes', 0).set('seconds', 0).format('YYYY-MM-DD HH:mm:ss') &&
+        endStr == dayjs().endOf('week').set('hours', 23).set('minutes', 59).set('seconds', 59).format('YYYY-MM-DD HH:mm:ss')
+    ) {
+        return 'this week';
+    }
+
+    // This Day
+    if (
+        startStr == dayjs().startOf('day').set('hours', 0).set('minutes', 0).set('seconds', 0).format('YYYY-MM-DD HH:mm:ss') &&
+        endStr ==  dayjs().endOf('day').set('hours', 23).set('minutes', 59).set('seconds', 59).format('YYYY-MM-DD HH:mm:ss')
+    ) {
+        return 'this day';
+    }
+
+    // If none match, it's a custom range
+    return `custom`;
+}

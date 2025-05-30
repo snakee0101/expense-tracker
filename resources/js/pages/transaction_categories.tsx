@@ -43,7 +43,7 @@ export default function TransactionCategories({ transactionCategoryPaginator }) 
                                         <img src={transactionCategory.imageUrl} className='rounded-full' />
                                     </div>
                                     <div className="flex flex-col">
-                                        <h5 className="text-gray-700">{transactionCategory.name}</h5>
+                                        <h5 className="text-gray-700 dark:text-gray-100">{transactionCategory.name}</h5>
                                     </div>
                                 </div>
                             </TableCell>
