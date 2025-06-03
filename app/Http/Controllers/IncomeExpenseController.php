@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\IncomeExpense\CreateIncomeExpenseTransaction;
-use App\Actions\IncomeExpense\UpdateAccountBalance;
-use App\Actions\SaveTransactionReceiptsAction;
 use App\Http\Requests\IncomeExpenseRequest;
+use App\Actions\SaveTransactionReceiptsAction;
+use App\Actions\IncomeExpense\UpdateAccountBalance;
+use App\DataTransferObjects\IncomeExpense\IncomeExpenseDto;
+use App\Actions\IncomeExpense\CreateIncomeExpenseTransaction;
 
 class IncomeExpenseController extends Controller
 {
     public function store(IncomeExpenseRequest $request)
     {
         $transaction = app()->call(CreateIncomeExpenseTransaction::class, [
-            'request' => $request
+            'dto' => IncomeExpenseDto::fromRequest($request)
         ]);
 
         app()->call(UpdateAccountBalance::class, [

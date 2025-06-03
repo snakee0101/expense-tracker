@@ -2,28 +2,33 @@
 
 namespace App\Actions\IncomeExpense;
 
+use App\DataTransferObjects\IncomeExpense\IncomeExpenseDTO;
 use App\Enums\TransactionStatus;
-use App\Http\Requests\IncomeExpenseRequest;
 use App\Models\Transaction;
 use Carbon\Carbon;
 
 class CreateIncomeExpenseTransaction
 {
-    public function __invoke(IncomeExpenseRequest $request): Transaction
+    public function __invoke(IncomeExpenseDTO $dto): Transaction
     {
-        $income = $request->boolean('is_income') ? $request->amount : -$request->amount;
-        $transaction_date = Carbon::parse("{$request->date} {$request->time}");
+        $income = $dto->is_income ? $dto->amount 
+                                  : -$dto->amount;
+                                  
+        $transaction_date = Carbon::parse("{$dto->date} {$dto->time}");
+
+        $status = $transaction_date->isFuture() ? TransactionStatus::Pending 
+                                                : TransactionStatus::Completed;
 
         return Transaction::create([
-            'name' => $request->name,
+            'name' => $dto->name,
             'date' => $transaction_date,
             'amount' => $income,
-            'note' => $request->note,
+            'note' => $dto->note,
             'user_id' => auth()->id(),
-            'destination_type' => $request->destination_type,
-            'destination_id' => $request->destination_id,
-            'category_id' => $request->category_id,
-            'status' => $transaction_date->isFuture() ? TransactionStatus::Pending : TransactionStatus::Completed
+            'destination_type' => $dto->destination_type,
+            'destination_id' => $dto->destination_id,
+            'category_id' => $dto->category_id,
+            'status' => $status,
         ]);
     }
 }
