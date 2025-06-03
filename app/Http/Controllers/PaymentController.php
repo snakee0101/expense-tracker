@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\AccountsList;
-use App\Actions\Payments\CreatePaymentTransactionAction;
-use App\Actions\Payments\DeductFromBalanceAction;
-use App\Actions\SaveTransactionReceiptsAction;
-use App\Http\Requests\Payments\CreatePaymentRequest;
-use App\Http\Requests\Payments\MakePaymentRequest;
-use App\Http\Requests\Payments\UpdatePaymentRequest;
+use Inertia\Inertia;
 use App\Models\Payment;
+use App\Actions\AccountsList;
 use App\Models\PaymentCategory;
 use Illuminate\Support\Facades\Storage;
-use Inertia\Inertia;
+use App\Actions\SaveTransactionReceiptsAction;
+use App\Actions\Payments\DeductFromBalanceAction;
+use App\Http\Requests\Payments\MakePaymentRequest;
+use App\DataTransferObjects\TransactionReceiptsDto;
+use App\Http\Requests\Payments\CreatePaymentRequest;
+use App\Http\Requests\Payments\UpdatePaymentRequest;
+use App\Actions\Payments\CreatePaymentTransactionAction;
+use App\DataTransferObjects\Payments\DeductFromBalanceDto;
+use App\DataTransferObjects\Payments\CreatePaymentTransactionDto;
 
 class PaymentController extends Controller
 {
@@ -52,11 +55,11 @@ class PaymentController extends Controller
 
     public function transaction(MakePaymentRequest $request, Payment $payment)
     {
-        $transaction = app()->call(CreatePaymentTransactionAction::class, ['request' => $request, 'payment' => $payment]);
+        $transaction = app()->call(CreatePaymentTransactionAction::class, ['dto' => CreatePaymentTransactionDto::fromPayment($request, $payment)]);
 
-        app()->call(DeductFromBalanceAction::class, ['transaction' => $transaction, 'payment' => $payment]);
+        app()->call(DeductFromBalanceAction::class, ['dto' => DeductFromBalanceDto::fromTransactionData($transaction, $payment)]);
 
-        app()->call(SaveTransactionReceiptsAction::class, ['request' => $request, 'transaction' => $transaction]);
+        app()->call(SaveTransactionReceiptsAction::class, ['dto' => TransactionReceiptsDto::fromTransactionData($request, $transaction)]);
 
         return to_route('payment.index');
     }

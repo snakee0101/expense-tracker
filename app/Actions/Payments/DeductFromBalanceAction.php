@@ -2,15 +2,14 @@
 
 namespace App\Actions\Payments;
 
-use App\Models\Payment;
-use App\Models\Transaction;
+use App\DataTransferObjects\Payments\DeductFromBalanceDto;
 
 class DeductFromBalanceAction
 {
-    public function __invoke(Transaction $transaction, Payment $payment)
+    public function __invoke(DeductFromBalanceDto $dto)
     {
-        if ($transaction->date->isNowOrPast()) {
-            $transaction->source->decrement('balance', $payment->amount);
+        if ($dto->date->isNowOrPast()) {
+            $dto->source->decrement('balance', $dto->amount);
         }
     }
 }
