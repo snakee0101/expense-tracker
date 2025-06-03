@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DataTransferObjects\IncomeExpense;
+namespace App\DataTransferObjects;
 
 use App\Http\Requests\IncomeExpenseRequest;
 

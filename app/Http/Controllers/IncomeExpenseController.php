@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\IncomeExpenseRequest;
 use App\Actions\SaveTransactionReceiptsAction;
 use App\Actions\IncomeExpense\UpdateAccountBalance;
-use App\DataTransferObjects\IncomeExpense\IncomeExpenseDto;
+use App\DataTransferObjects\IncomeExpenseDto;
 use App\Actions\IncomeExpense\CreateIncomeExpenseTransaction;
+use App\DataTransferObjects\TransactionReceiptsDto;
 
 class IncomeExpenseController extends Controller
 {
@@ -17,13 +18,11 @@ class IncomeExpenseController extends Controller
         ]);
 
         app()->call(UpdateAccountBalance::class, [
-            'transaction' => $transaction,
-            'income' => $transaction->amount
+            'transaction' => $transaction
         ]);
 
         app()->call(SaveTransactionReceiptsAction::class, [
-            'request' => $request,
-            'transaction' => $transaction
+            'dto' => TransactionReceiptsDto::fromTransactionData($request, $transaction),
         ]);
 
         return back();

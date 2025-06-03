@@ -2,7 +2,7 @@
 
 namespace App\Actions\IncomeExpense;
 
-use App\DataTransferObjects\IncomeExpense\IncomeExpenseDTO;
+use App\DataTransferObjects\IncomeExpenseDTO;
 use App\Enums\TransactionStatus;
 use App\Models\Transaction;
 use Carbon\Carbon;
@@ -13,7 +13,7 @@ class CreateIncomeExpenseTransaction
     {
         $income = $dto->is_income ? $dto->amount 
                                   : -$dto->amount;
-                                  
+
         $transaction_date = Carbon::parse("{$dto->date} {$dto->time}");
 
         $status = $transaction_date->isFuture() ? TransactionStatus::Pending 

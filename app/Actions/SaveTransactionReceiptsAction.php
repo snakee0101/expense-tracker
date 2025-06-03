@@ -2,22 +2,16 @@
 
 namespace App\Actions;
 
-use App\Models\Transaction;
+use App\DataTransferObjects\TransactionReceiptsDto;
 
 class SaveTransactionReceiptsAction
 {
-    public function __invoke($request, Transaction $transaction)
+    public function __invoke(TransactionReceiptsDto $dto)
     {
-        $receipts = [];
-
-        if ($request->receipts) {
-            $receipts = $request->file('receipts');
-        }
-
-        foreach ($receipts as $file) {
+        foreach ($dto->receipts as $file) {
             $filePath = $file->store('attachments', 'public');
 
-            $transaction->attachments()->create([
+            $dto->transaction->attachments()->create([
                 'original_filename' => $file->getClientOriginalName(),
                 'storage_location' => $filePath
             ]);
