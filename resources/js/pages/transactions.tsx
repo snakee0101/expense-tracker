@@ -14,6 +14,7 @@ import TransactionStatus from '@/components/main/transaction-status';
 import Filters from '@/components/dashboard/filters';
 import axios from 'axios';
 import { useNotification } from '@/contexts/NotificationContext';
+import { EditTransactionModal } from '@/components/main/edit-transaction-modal';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -116,6 +117,9 @@ export default function Transactions({ transactions }) {
                                             <MdOutlineCancel className='mr-1' size={18}/> Cancel
                                         </a>)
                                 }
+                                
+                                <EditTransactionModal transaction={transaction} />
+                                
                                 <a href="#" onClick={(event) => handleDelete(event, transaction)} className='text-red-800 hover:underline flex items-center'>
                                     <RiDeleteBin6Line className='mr-1' size={18}/> Delete
                                 </a>

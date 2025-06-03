@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
+use App\Models\Transaction;
+use App\Actions\RedoTransaction;
 use App\Actions\CancelTransaction;
 use App\Actions\DeleteTransaction;
-use App\Actions\RedoTransaction;
-use App\Actions\Transactions\GetFilteredTransactionAction;
 use App\Exports\TransactionsExport;
-use App\Http\Requests\TransactionRequest;
-use App\Models\Transaction;
-use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Http\Requests\TransactionRequest;
+use App\Http\Requests\IncomeExpenseRequest;
+use App\Actions\Transactions\GetFilteredTransactionAction;
 
 class TransactionController extends Controller
 {
@@ -51,6 +52,25 @@ class TransactionController extends Controller
         );
 
         return to_route('transaction.index');
+    }
+
+    public function update(IncomeExpenseRequest $request, Transaction $transaction)
+    {
+/*
+        $transaction = app()->call(CreateIncomeExpenseTransaction::class, [
+            'dto' => IncomeExpenseDto::fromRequest($request)
+        ]);
+
+        app()->call(UpdateAccountBalance::class, [
+            'transaction' => $transaction
+        ]);
+
+        app()->call(SaveTransactionReceiptsAction::class, [
+            'dto' => TransactionReceiptsDto::fromTransactionData($request, $transaction),
+        ]);
+
+        return back();
+*/
     }
 
     public function destroy(TransactionRequest $request, Transaction $transaction)
