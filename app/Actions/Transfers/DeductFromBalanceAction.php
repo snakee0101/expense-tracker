@@ -2,17 +2,17 @@
 
 namespace App\Actions\Transfers;
 
-use App\Models\Transaction;
+use App\DataTransferObjects\Transfers\DeductFromBalanceDto;
 
 /**
  * Changes balance of wallet/card where you transfer money from
  **/
 class DeductFromBalanceAction
 {
-    public function __invoke(Transaction $transaction)
+    public function __invoke(DeductFromBalanceDto $dto)
     {
-        if ($transaction->date->isNowOrPast()) {
-            $transaction->source->decrement('balance', $transaction->amount);
+        if ($dto->date->isNowOrPast()) {
+            $dto->source->decrement('balance', $dto->amount);
         }
     }
 }

@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\AccountsList;
-use App\Actions\SaveTransactionReceiptsAction;
-use App\Actions\Transfers\CreateTransferTransactionAction;
-use App\Actions\Transfers\DeductFromBalanceAction;
-use App\Http\Requests\Transfers\CreateTransferRequest;
-use App\Models\Contact;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use App\Models\Contact;
+use App\Actions\AccountsList;
+use Illuminate\Support\Facades\Storage;
+use App\Actions\SaveTransactionReceiptsAction;
+use App\Actions\Transfers\DeductFromBalanceAction;
+use App\DataTransferObjects\TransactionReceiptsDto;
+use App\Http\Requests\Transfers\CreateTransferRequest;
+use App\Actions\Transfers\CreateTransferTransactionAction;
+use App\DataTransferObjects\Transfers\DeductFromBalanceDto;
+use App\DataTransferObjects\Transfers\TransferTransactionDto;
 
 class TransferController extends Controller
 {
@@ -29,11 +32,11 @@ class TransferController extends Controller
 
     public function store(CreateTransferRequest $request)
     {
-        $transaction = app()->call(CreateTransferTransactionAction::class, ['request' => $request]);
+        $transaction = app()->call(CreateTransferTransactionAction::class, ['dto' => TransferTransactionDto::fromRequest($request)]);
 
-        app()->call(DeductFromBalanceAction::class, ['transaction' => $transaction]);
+        app()->call(DeductFromBalanceAction::class, ['dto' => DeductFromBalanceDto::fromTransaction($transaction)]);
 
-        app()->call(SaveTransactionReceiptsAction::class, ['request' => $request, 'transaction' => $transaction]);
+        app()->call(SaveTransactionReceiptsAction::class, ['dto' => TransactionReceiptsDto::fromTransactionData($request, $transaction)]);
 
         return to_route('transfer.index');
     }
