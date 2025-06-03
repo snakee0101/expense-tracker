@@ -2,6 +2,7 @@
 
 namespace App\Actions\SavingsPlans;
 
+use App\DataTransferObjects\SavingsPlans\CreateSavingsTransactionDto;
 use App\Enums\TransactionStatus;
 use App\Models\SavingsPlan;
 use App\Models\Transaction;
@@ -9,18 +10,14 @@ use Carbon\Carbon;
 
 class CreateSavingsTransactionAction
 {
-    public function __invoke($request): Transaction
+    public function __invoke(CreateSavingsTransactionDto $dto): Transaction
     {
-        list($relatedModelIdField, $relatedModelTypeField, $savingsPlanIdField, $savingsPlanTypeField) = $this->getModelColumns($request);
-
-        $transactionDate = Carbon::parse("{$request->date} {$request->time}");
-
-        return $this->createTransaction($request, $transactionDate, $relatedModelIdField, $relatedModelTypeField, $savingsPlanIdField, $savingsPlanTypeField);
+        return $this->createTransaction($dto, ...$this->getModelColumns($dto->isWithdraw));
     }
 
-    public function getModelColumns($request): array
+    public function getModelColumns(bool $isWithdraw): array
     {
-        if ($request->boolean('is_withdraw')) {
+        if ($isWithdraw) {
             $relatedModelIdField = 'destination_id';
             $relatedModelTypeField = 'destination_type';
             $savingsPlanIdField = 'source_id';
@@ -32,23 +29,31 @@ class CreateSavingsTransactionAction
             $savingsPlanTypeField = 'destination_type';
         }
 
-        return [$relatedModelIdField, $relatedModelTypeField, $savingsPlanIdField, $savingsPlanTypeField];
+        return [
+            'relatedModelIdField' => $relatedModelIdField, 
+            'relatedModelTypeField' => $relatedModelTypeField, 
+            'savingsPlanIdField' => $savingsPlanIdField, 
+            'savingsPlanTypeField' => $savingsPlanTypeField
+        ];
     }
 
-    public function createTransaction($request, $transactionDate, $relatedModelIdField, $relatedModelTypeField, $savingsPlanIdField, $savingsPlanTypeField)
+    public function createTransaction(CreateSavingsTransactionDto $dto, $relatedModelIdField, $relatedModelTypeField, $savingsPlanIdField, $savingsPlanTypeField)
     {
+        $status = $dto->date->isFuture() ? TransactionStatus::Pending 
+                                        : TransactionStatus::Completed;
+
         return Transaction::create([
-            'name' => $request->name,
-            'date' => $transactionDate,
-            'amount' => $request->amount,
-            'note' => $request->note,
+            'name' => $dto->name,
+            'date' => $dto->date,
+            'amount' => $dto->amount,
+            'note' => $dto->note,
             'user_id' => auth()->id(),
-            'category_id' => $request->category_id,
-            $relatedModelIdField => $request->related_account_id,
-            $relatedModelTypeField => $request->related_account_type,
-            $savingsPlanIdField => $request->savings_plan_id,
+            'category_id' => $dto->categoryId,
+            $relatedModelIdField => $dto->relatedAccountId,
+            $relatedModelTypeField => $dto->relatedAccountType,
+            $savingsPlanIdField => $dto->savingsPlanId,
             $savingsPlanTypeField => SavingsPlan::class,
-            'status' => $transactionDate->isFuture() ? TransactionStatus::Pending : TransactionStatus::Completed
+            'status' => $status
         ]);
     }
 }

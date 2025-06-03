@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Actions\AccountsList;
 use App\Actions\SavingsPlans\CreateSavingsTransactionAction;
 use App\Actions\SavingsPlans\DeductFromBalanceAction;
+use App\DataTransferObjects\SavingsPlans\CreateSavingsTransactionDto;
+use App\DataTransferObjects\SavingsPlans\DeductFromBalanceDto;
 use App\Http\Requests\SavingsPlans\CreateSavingsPlanRequest;
 use App\Http\Requests\SavingsPlans\CreateTransactionRequest;
 use App\Http\Requests\SavingsPlans\UpdateSavingsPlanRequest;
@@ -54,9 +56,9 @@ class SavingsPlanController extends Controller
 
     public function transaction(CreateTransactionRequest $request)
     {
-        $transaction = app()->call(CreateSavingsTransactionAction::class, ['request' => $request]);
+        $transaction = app()->call(CreateSavingsTransactionAction::class, ['dto' => CreateSavingsTransactionDto::fromRequest($request)]);
 
-        app()->call(DeductFromBalanceAction::class, ['transaction' => $transaction, 'request' => $request]);
+        app()->call(DeductFromBalanceAction::class, ['dto' => DeductFromBalanceDto::fromTransactionData($request, $transaction)]);
 
         return to_route('savings_plan.index');
     }
