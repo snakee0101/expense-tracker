@@ -4,6 +4,7 @@ import { Button, Datepicker, Label, Modal, ModalBody, ModalHeader, Radio, TextIn
 import { MdOutlineModeEditOutline } from 'react-icons/md';
 import dayjs from 'dayjs';
 import { useNotification } from '@/contexts/NotificationContext';
+import { RiCloseLine } from "react-icons/ri";
 
 export function EditTransactionModal({ transaction }) {
     const { transactionStatusList, transactionCategories } = usePage().props;
@@ -22,7 +23,8 @@ export function EditTransactionModal({ transaction }) {
         category_id: transaction.category_id,
         destination_type: transaction.destination_type,
         destination_id: transaction.destination_id,
-        receipts: [],
+        new_receipts: [],
+        existing_receipts: transaction.attachments,
         card: '' //fake attribute to place validation errors in if card is expired
     });
 
@@ -31,18 +33,18 @@ export function EditTransactionModal({ transaction }) {
         clearErrors();
     };
 
-    const handleEdit = (event) => {
-        console.log(data);
-        
-        event.preventDefault();
+    
 
-        /*put(route('transaction.update', {transaction: transaction.id}), {
+    const handleEdit = (event) => {
+        event.preventDefault();
+ 
+        put(route('transaction.update', {transaction: transaction.id}), {
             onSuccess: () => {
                 onCloseModal();
                 showNotification('Transaction updated');
             },
             forceFormData: true,
-        });*/
+        });
     };
 
     return (
@@ -100,7 +102,33 @@ export function EditTransactionModal({ transaction }) {
                         <div className="mb-4">
                             <Label htmlFor="files">Upload receipts</Label>
                             <FileInput id="files" multiple
-                                       onChange={e => setData('receipts', e.target.files)} />
+                                       onChange={e => setData('new_receipts', e.target.files)} />
+                        </div>
+                        
+                        <div className="mb-4">
+                            <Label htmlFor="files">Existing receipts</Label>
+                                {data.existing_receipts && data.existing_receipts.length > 0 ? (
+                                    <ul className="mt-1 space-y-1">
+                                        {data.existing_receipts.map((receipt, index) => (
+                                            <li key={receipt.id} className="flex justify-between items-center bg-gray-100 p-2 rounded">
+                                                <span className="text-sm">{receipt.original_filename}</span>
+                                                <Button
+                                                    className='outline-none'
+                                                    color="failure"
+                                                    size="xs"
+                                                    onClick={() => {
+                                                        const updatedReceipts = data.existing_receipts.filter((existing_receipt, key) => key !== index);
+                                                        setData('existing_receipts', updatedReceipts);
+                                                    }}
+                                                >
+                                                    <RiCloseLine size={18} className='cursor-pointer' color='red'/>
+                                                </Button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p className="text-sm text-gray-500 mt-2">No existing receipts.</p>
+                                )}
                         </div>
 
                         <div className="mb-4 flex max-w-md flex-col gap-4">

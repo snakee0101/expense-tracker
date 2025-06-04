@@ -118,7 +118,7 @@ export default function Transactions({ transactions }) {
                                         </a>)
                                 }
                                 
-                                <EditTransactionModal transaction={transaction} />
+                                <EditTransactionModal transaction={transaction} key={transaction.id} />
                                 
                                 <a href="#" onClick={(event) => handleDelete(event, transaction)} className='text-red-800 hover:underline flex items-center'>
                                     <RiDeleteBin6Line className='mr-1' size={18}/> Delete

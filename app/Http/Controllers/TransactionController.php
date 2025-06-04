@@ -12,6 +12,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\TransactionRequest;
 use App\Http\Requests\IncomeExpenseRequest;
 use App\Actions\Transactions\GetFilteredTransactionAction;
+use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
@@ -54,8 +55,9 @@ class TransactionController extends Controller
         return to_route('transaction.index');
     }
 
-    public function update(IncomeExpenseRequest $request, Transaction $transaction)
+    public function update(Request $request, Transaction $transaction)
     {
+        dd($request);
 /*
         $transaction = app()->call(CreateIncomeExpenseTransaction::class, [
             'dto' => IncomeExpenseDto::fromRequest($request)
